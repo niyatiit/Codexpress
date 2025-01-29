@@ -9179,6 +9179,7 @@ button:focus {
 }
 
 .dashboard-body {
+    width: 80vw;
     padding-block-start: 24px;
     padding-block-end: 24px;
 }
@@ -9693,10 +9694,11 @@ button:focus {
 /* ======================== Auth Css Start ============================= */
 .auth {
     min-height: 100vh;
+   
 }
 
 .auth-left {
-    width: 55%;
+    width: 50%;
 }
 
 @media screen and (max-width: 1199px) {
@@ -9712,7 +9714,10 @@ button:focus {
 }
 
 .auth-right {
-    width: 45%;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 @media screen and (max-width: 1199px) {
@@ -9728,11 +9733,11 @@ button:focus {
 }
 
 .auth-right__inner {
-    max-width: 400px;
+    max-width: 600px;
 }
 
 .auth-right__logo {
-    margin-bottom: clamp(2rem, -1.651rem + 7.607vw, 5rem);
+    margin-bottom: clamp(2rem,  -1.651rem + 7.607vw, 5rem);
 }
 
 .divider::before {

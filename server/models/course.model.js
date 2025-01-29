@@ -7,6 +7,7 @@ const CourseSchema = new mongoose.Schema({
   duration: { type: String, required: true },     // Duration of the course (e.g., "6 months")
   faculty_id: { type: mongoose.Schema.Types.ObjectId, ref: 'faculty' }, // Reference to the faculty teaching the course
   description: { type: String },                 // Optional description of the course
+  thumbnail: { type: String },
   created_at: { type: Date, default: Date.now }, // Automatically set the creation date
 });
 
