@@ -5,6 +5,8 @@ import AddCourse from './AddCourse';
 import { Link } from "react-router-dom";
 import AddStudent from './AddStudent';
 import ManageCourses from './ManageCourses';
+import { BookLoaderComponent } from '../../components/BookLoaderComponent';
+import AssignCourse from './AssignCourse';
 
 
 const AdminDashboard = () => {
@@ -15,6 +17,7 @@ const AdminDashboard = () => {
             <div class="preloader">
                 <div class="loader"></div>
             </div>
+           
             {/* <!--==================== Preloader End ====================--> */}
 
             {/* <!--==================== Sidebar Overlay End ====================--> */}
@@ -65,7 +68,29 @@ const AdminDashboard = () => {
                                         <Link to="/admin/add/course" class="sidebar-submenu__link"> Create Courses </Link>
                                     </li>
                                     <li class="sidebar-submenu__item">
+                                        <Link to="/admin/assign/course" class="sidebar-submenu__link"> Assign Course </Link>
+                                    </li>
+                                    <li class="sidebar-submenu__item">
                                         <Link to="/admin/manage/courses" class="sidebar-submenu__link"> View All Courses </Link>
+                                    </li>
+                                    {/* <li class="sidebar-submenu__item">
+                                <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
+                            </li> */}
+                                </ul>
+                                {/* <!-- Submenu End --> */}
+                            </li>
+                            <li class="sidebar-menu__item has-dropdown">
+                                <a href="javascript:void(0)" class="sidebar-menu__link">
+                                    <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                                    <span class="text">Batch</span>
+                                </a>
+                                {/* <!-- Submenu start --> */}
+                                <ul class="sidebar-submenu">
+                                    <li class="sidebar-submenu__item">
+                                        <Link to="/admin/add/batch" class="sidebar-submenu__link"> Add New Batch </Link>
+                                    </li>
+                                    <li class="sidebar-submenu__item">
+                                        <Link to="/admin/manage/batch" class="sidebar-submenu__link"> Manage Batches </Link>
                                     </li>
                                     {/* <li class="sidebar-submenu__item">
                                 <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
@@ -124,12 +149,23 @@ const AdminDashboard = () => {
                             </li> */}
                                 </ul>
                             </li>
-
-                            <li class="sidebar-menu__item">
-                                <Link to="/admin/resources" class="sidebar-menu__link">
-                                    <span class="icon"><i class="ph ph-books"></i></span>
-                                    <span class="text">Resources </span>
-                                </Link>
+                            <li class="sidebar-menu__item has-dropdown">
+                                <a href="javascript:void(0)" class="sidebar-menu__link">
+                                    <span class="icon"><i class="ph ph-users-three"></i></span>
+                                    <span class="text">Resources</span>
+                                </a>
+                                <ul class="sidebar-submenu">
+                                    <li class="sidebar-submenu__item">
+                                        {/* <span class="icon"><i class="ph ph-user-plus"></i></span> */}
+                                        <Link to="/admin/add/resource" class="sidebar-submenu__link"> Upload New Resource </Link>
+                                    </li>
+                                    <li class="sidebar-submenu__item">
+                                        <Link to="/admin/manage/resources" class="sidebar-submenu__link"> View All Resources </Link>
+                                    </li>
+                                    {/* <li class="sidebar-submenu__item">
+                                <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
+                            </li> */}
+                                </ul>
                             </li>
                             <li class="sidebar-menu__item">
                                 <Link to="/admin/manage/notifications" class="sidebar-menu__link">
@@ -145,7 +181,7 @@ const AdminDashboard = () => {
                             <li class="sidebar-menu__item">
                                 <a href="/admin/manage/attendance" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-pen"></i></span>
-                                    <span class="text"> Attendance </span>
+                                    <span class="text">Manage Attendance </span>
                                 </a>
                             </li>
                             <li class="sidebar-menu__item">
@@ -453,6 +489,7 @@ const AdminDashboard = () => {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="add/course" element={<AddCourse />} />
                     <Route path="add/student" element={<AddStudent />} />
+                    <Route path="assign/course" element={<AssignCourse />} />
                     <Route path="manage/courses" element={<ManageCourses />} />
                     <Route path="*" element={<h2>Page Not Found</h2>} />  {/* Handle unknown routes */}
 
