@@ -5,8 +5,21 @@ import AddCourse from './AddCourse';
 import { Link } from "react-router-dom";
 import AddStudent from './AddStudent';
 import ManageCourses from './ManageCourses';
-import { BookLoaderComponent } from '../../components/BookLoaderComponent';
 import AssignCourse from './AssignCourse';
+import AddBatch from './AddBatch';
+import ManageBatches from './ManageBatches';
+import AddFaculty from './AddFaculty';
+import ManageFaculty from './ManageFaculty';
+import ManageStudents from './ManageStudents';
+import UploadResource from './UploadResource.JSX';
+import ManageResources from './ManageResources';
+import AddNotice from './AddNotice';
+import ManageNotifications from './ManageNotifications';
+import Attendance from './Attendance';
+import IssueCertificate from './IssueCertificate';
+import ManageCertificates from './ManageCertificates ';
+import ManageFeedback from './ManageFeedback';
+import ManageFees from './ManageFees';
 
 
 const AdminDashboard = () => {
@@ -90,7 +103,7 @@ const AdminDashboard = () => {
                                         <Link to="/admin/add/batch" class="sidebar-submenu__link"> Add New Batch </Link>
                                     </li>
                                     <li class="sidebar-submenu__item">
-                                        <Link to="/admin/manage/batch" class="sidebar-submenu__link"> Manage Batches </Link>
+                                        <Link to="/admin/manage/batches" class="sidebar-submenu__link"> Manage Batches </Link>
                                     </li>
                                     {/* <li class="sidebar-submenu__item">
                                 <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
@@ -151,13 +164,13 @@ const AdminDashboard = () => {
                             </li>
                             <li class="sidebar-menu__item has-dropdown">
                                 <a href="javascript:void(0)" class="sidebar-menu__link">
-                                    <span class="icon"><i class="ph ph-users-three"></i></span>
+                                    <span class="icon"><i class="ph ph-books"></i></span>
                                     <span class="text">Resources</span>
                                 </a>
                                 <ul class="sidebar-submenu">
                                     <li class="sidebar-submenu__item">
                                         {/* <span class="icon"><i class="ph ph-user-plus"></i></span> */}
-                                        <Link to="/admin/add/resource" class="sidebar-submenu__link"> Upload New Resource </Link>
+                                        <Link to="/admin/upload/resource" class="sidebar-submenu__link"> Upload New Resource </Link>
                                     </li>
                                     <li class="sidebar-submenu__item">
                                         <Link to="/admin/manage/resources" class="sidebar-submenu__link"> View All Resources </Link>
@@ -167,13 +180,24 @@ const AdminDashboard = () => {
                             </li> */}
                                 </ul>
                             </li>
-                            <li class="sidebar-menu__item">
-                                <Link to="/admin/manage/notifications" class="sidebar-menu__link">
+                            <li class="sidebar-menu__item has-dropdown">
+                                <a href="javascript:void(0)" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-notification"></i></span>
-                                    <span class="text">Notification </span>
-                                </Link>
+                                    <span class="text">Notifications</span>
+                                </a>
+                                <ul class="sidebar-submenu">
+                                    <li class="sidebar-submenu__item">
+                                        {/* <span class="icon"><i class="ph ph-user-plus"></i></span> */}
+                                        <Link to="/admin/add/notification" class="sidebar-submenu__link"> Send Notification </Link>
+                                    </li>
+                                    <li class="sidebar-submenu__item">
+                                        <Link to="/admin/manage/notifications" class="sidebar-submenu__link"> Manage Notifications </Link>
+                                    </li>
+                                    {/* <li class="sidebar-submenu__item">
+                                <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
+                            </li> */}
+                                </ul>
                             </li>
-
                             {/* <li class="sidebar-menu__item">
                         <span class="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">Settings</span>
                     </li> */}
@@ -184,11 +208,23 @@ const AdminDashboard = () => {
                                     <span class="text">Manage Attendance </span>
                                 </a>
                             </li>
-                            <li class="sidebar-menu__item">
-                                <a href="/admin/manage/certificates" class="sidebar-menu__link">
+                            <li class="sidebar-menu__item has-dropdown">
+                                <a href="javascript:void(0)" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-certificate"></i></span>
-                                    <span class="text"> Certificate </span>
+                                    <span class="text">Certficate</span>
                                 </a>
+                                <ul class="sidebar-submenu">
+                                    <li class="sidebar-submenu__item">
+                                        {/* <span class="icon"><i class="ph ph-user-plus"></i></span> */}
+                                        <Link to="/admin/issue/certificate" class="sidebar-submenu__link"> Issue Certificate </Link>
+                                    </li>
+                                    <li class="sidebar-submenu__item">
+                                        <Link to="/admin/manage/certificates" class="sidebar-submenu__link"> Manage Certificate </Link>
+                                    </li>
+                                    {/* <li class="sidebar-submenu__item">
+                                <a href="create-course.html" class="sidebar-submenu__link"> Create Course </a>
+                            </li> */}
+                                </ul>
                             </li>
                             <li class="sidebar-menu__item">
                                 <a href="/admin/manage/feedback" class="sidebar-menu__link">
@@ -489,8 +525,22 @@ const AdminDashboard = () => {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="add/course" element={<AddCourse />} />
                     <Route path="add/student" element={<AddStudent />} />
+                    <Route path="add/batch" element={<AddBatch />} />
+                    <Route path="add/faculty" element={<AddFaculty />} />
                     <Route path="assign/course" element={<AssignCourse />} />
                     <Route path="manage/courses" element={<ManageCourses />} />
+                    <Route path="manage/students" element={<ManageStudents />} />
+                    <Route path="manage/faculty" element={<ManageFaculty />} />
+                    <Route path="manage/batches" element={<ManageBatches />} />
+                    <Route path="upload/resource" element={<UploadResource />} />
+                    <Route path="manage/resources" element={<ManageResources />} />
+                    <Route path="add/notification" element={<AddNotice />} />
+                    <Route path="manage/notifications" element={<ManageNotifications />} />
+                    <Route path="manage/feedback" element={<ManageFeedback />} />
+                    <Route path="manage/certificates" element={<ManageCertificates />} />
+                    <Route path="manage/attendance" element={<Attendance />} />
+                    <Route path="issue/certificate" element={<IssueCertificate />} />
+                    <Route path='manage/fees' element={<ManageFees/>}/>
                     <Route path="*" element={<h2>Page Not Found</h2>} />  {/* Handle unknown routes */}
 
                     {/* Add more routes as needed */}

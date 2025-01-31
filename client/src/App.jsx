@@ -3,6 +3,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgetPassword from "./pages/auth/ForgetPassword";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <main className="content w-full p-4">
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgetPassword/>} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin/*" element={<AdminDashboard />} /> {/* Use wildcard for sub-routes */}
           </Routes>
