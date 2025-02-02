@@ -47,7 +47,7 @@ const Login = () => {
                             </div>
                             <button type="submit" class="btn btn-main rounded-pill w-100">Sign In</button>
                             <p class="mt-32 text-gray-600 text-center">New on our platform?
-                                <Link to class="text-main-600 hover-text-decoration-underline">Create an account</Link>
+                                <Link to="/register" class="text-main-600 hover-text-decoration-underline">Create an account</Link>
                             </p>
 
                             <div class="divider my-32 position-relative text-center">

@@ -203,10 +203,10 @@ const AdminDashboard = () => {
                     </li> */}
                             
                             <li class="sidebar-menu__item">
-                                <a href="/admin/manage/attendance" class="sidebar-menu__link">
+                                <Link to="/admin/manage/attendance" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-pen"></i></span>
                                     <span class="text">Manage Attendance </span>
-                                </a>
+                                </Link>
                             </li>
                             <li class="sidebar-menu__item has-dropdown">
                                 <a href="javascript:void(0)" class="sidebar-menu__link">
@@ -227,22 +227,22 @@ const AdminDashboard = () => {
                                 </ul>
                             </li>
                             <li class="sidebar-menu__item">
-                                <a href="/admin/manage/feedback" class="sidebar-menu__link">
+                                <Link to="/admin/manage/feedback" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-chat-teardrop-text"></i></span>
                                     <span class="text"> Feedback & Review </span>
-                                </a>
+                                </Link>
                             </li>
                             <li class="sidebar-menu__item ">
-                                <a href="/admin/manage/fees" class="sidebar-menu__link">
+                                <Link to="/admin/manage/fees" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-money"></i></span>
                                     <span class="text">Fees</span>
-                                </a>
+                                </Link>
                             </li>
                             <li class="sidebar-menu__item">
-                                <a href="/admin/manage/refund" class="sidebar-menu__link">
+                                <Link to="/admin/manage/refund" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-hand-coins"></i></span>
                                     <span class="text">Refund & Cancellation </span>
-                                </a>
+                                </Link>
                             </li>
 
                             <li class="sidebar-menu__item has-dropdown">

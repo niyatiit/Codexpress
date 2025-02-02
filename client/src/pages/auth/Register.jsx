@@ -42,12 +42,10 @@ const Register = () => {
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input flex-shrink-0 rounded-4" type="checkbox" value="" id="remember"/>
                             <label class="form-check-label text-15 flex-grow-1" for="remember">Remember Me </label>
-                        </div>
-                        <a href="forgot-password.html" class="text-main-600 hover-text-decoration-underline text-15 fw-medium">Forgot Password?</a>
-                    </div>
+                        </div>                    </div>
                     <button type="submit" class="btn btn-main rounded-pill w-100">Sign Up</button>
                     <p class="mt-32 text-gray-600 text-center">Already have an account?
-                        <a href="/" class="text-main-600 hover-text-decoration-underline"> Log In</a>
+                        <Link to="/" class="text-main-600 hover-text-decoration-underline"> Log In</Link>
                     </p>
 
                     <div class="divider my-32 position-relative text-center">
