@@ -3,400 +3,1185 @@ import Dashboard from './Dashboard'
 import { Link, NavLink } from 'react-router-dom'
 import { Routes, Route } from "react-router-dom";
 import MyCourses from './MyCourses';
-
+import logo from '../../../assets/logo.png';
 
 const StudentDashboard = () => {
     return (
-        <div>
-
-            {/* <!--==================== Preloader Start ====================--> */}
-            <div class="preloader">
-                <div class="loader"></div>
-            </div>
-           
-            {/* <!--==================== Preloader End ====================--> */}
-
-            {/* <!--==================== Sidebar Overlay End ====================--> */}
-            <div class="side-overlay"></div>
-            {/* <!--==================== Sidebar Overlay End ====================--> */}
-
-            {/* <!-- ============================ Sidebar Start ============================ --> */}
-
-            <aside class="sidebar">
-    {/* <!-- sidebar close btn --> */}
-    <button type="button" class="sidebar-close-btn text-gray-500 hover-text-white hover-bg-main-600 text-md w-24 h-24 border border-gray-100 hover-border-main-600 d-xl-none d-flex flex-center rounded-circle position-absolute"><i class="ph ph-x"></i></button>
-    {/* <!-- sidebar close btn --> */}
-
-    <a href="index.html" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10">
-        <h3>&lt;Codexpress/&gt;</h3>
-    </a>
-
-    <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
-        <div class="p-20 pt-10">
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-squares-four"></i></span>
-                        <span class="text">Dashboard</span>
-                    </NavLink>
-                </li>
-                
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/my-courses" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-graduation-cap"></i></span>
-                        <span class="text">My Courses</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/assignments" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-file-text"></i></span>
-                        <span class="text">Assignments</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/quizzes" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-list-checks"></i></span>
-                        <span class="text">Quizzes</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/exam-schedule" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-calendar"></i></span>
-                        <span class="text">Exam Schedule</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/certificates" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-certificate"></i></span>
-                        <span class="text">My Certificates</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/resources" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-books"></i></span>
-                        <span class="text">Study Resources</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/notifications" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-notification"></i></span>
-                        <span class="text">Notifications</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/attendance" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-pen"></i></span>
-                        <span class="text">My Attendance</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item">
-                    <NavLink to="/student/feedback" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-chat-teardrop-text"></i></span>
-                        <span class="text">Feedback & Reviews</span>
-                    </NavLink>
-                </li>
-
-                <li class="sidebar-menu__item has-dropdown">
-                    <NavLink to="javascript:void(0)" className="sidebar-menu__link" activeClassName="bg-main-600 text-white">
-                        <span class="icon"><i class="ph ph-shield-check"></i></span>
-                        <span class="text">Authentication</span>
-                    </NavLink>
-                    <ul class="sidebar-submenu">
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/sign-in" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Sign In</NavLink>
-                        </li>
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/sign-up" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Sign Up</NavLink>
-                        </li>
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/forgot-password" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Forgot Password</NavLink>
-                        </li>
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/reset-password" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Reset Password</NavLink>
-                        </li>
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/verify-email" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Verify Email</NavLink>
-                        </li>
-                        <li class="sidebar-submenu__item">
-                            <NavLink to="/two-step-verification" className="sidebar-submenu__link" activeClassName="bg-main-600 text-white">Two-Step Verification</NavLink>
-                        </li>
+        <>
+        <div class="extra_main_div">
+          {/* <!-- Header --> */}
+          <header class="header header-page">
+            <div class="header-fixed">
+              <nav class="navbar navbar-expand-lg header-nav scroll-sticky">
+                <div class="container">
+                  <div class="navbar-header">
+                    <a id="mobile_btn" href="javascript:void(0);">
+                      <span class="bar-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </span>
+                    </a>
+                   
+                 <Link to="/" className="sidebar__logo py-40 position-sticky">
+                             <img src={logo} alt="Logo" className="h-32" />
+                           </Link>
+                  </div>
+                  <div class="main-menu-wrapper">
+                    <div class="menu-header">
+                      <a href="index.html" class="menu-logo">
+                        <img
+                          src="assets/img/logo.svg"
+                          class="img-fluid"
+                          alt="Logo"
+                        />
+                      </a>
+                      <a
+                        id="menu_close"
+                        class="menu-close"
+                        href="javascript:void(0);"
+                      >
+                        <i class="fas fa-times"></i>
+                      </a>
+                    </div>
+                    <ul class="main-nav">
+                      <li class="has-submenu">
+                        <a href="#">
+                          Home <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="submenu">
+                          <li>
+                            <a href="index.html">Home</a>
+                          </li>
+                          <li>
+                            <a href="index-two.html">Home Two</a>
+                          </li>
+                          <li>
+                            <a href="index-three.html">Home Three</a>
+                          </li>
+                          <li>
+                            <a href="index-four.html">Home Four</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="has-submenu">
+                        <a href="#">
+                          Instructor <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="submenu">
+                          <li class="has-submenu">
+                            <a href="instructor-list.html">Instructor</a>
+                            <ul class="submenu">
+                              <li>
+                                <a href="instructor-list.html">List</a>
+                              </li>
+                              <li>
+                                <a href="instructor-grid.html">Grid</a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li>
+                            <a href="instructor-dashboard.html">Dashboard</a>
+                          </li>
+                          <li>
+                            <a href="instructor-profile.html">My Profile</a>
+                          </li>
+                          <li>
+                            <a href="instructor-course.html">My Course</a>
+                          </li>
+                          <li>
+                            <a href="instructor-wishlist.html">Wishlist</a>
+                          </li>
+                          <li>
+                            <a href="instructor-reviews.html">Reviews</a>
+                          </li>
+                          <li>
+                            <a href="instructor-quiz.html">My Quiz Attempts</a>
+                          </li>
+                          <li>
+                            <a href="instructor-orders.html">Orders</a>
+                          </li>
+                          <li>
+                            <a href="instructor-qa.html">Question & Answer</a>
+                          </li>
+                          <li>
+                            <a href="instructor-referral.html">Referrals</a>
+                          </li>
+                          <li>
+                            <a href="instructor-chat.html">Messages</a>
+                          </li>
+                          <li>
+                            <a href="instructor-tickets.html">Support Ticket</a>
+                          </li>
+                          <li>
+                            <a href="instructor-notifications.html">
+                              Notifications
+                            </a>
+                          </li>
+                          <li>
+                            <a href="instructor-settings.html">Settings</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="has-submenu active">
+                        <a href="#">
+                          Student <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="submenu first-submenu">
+                          <li class="has-submenu">
+                            <a href="students-list.html">Student</a>
+                            <ul class="submenu">
+                              <li>
+                                <a href="students-list.html">List</a>
+                              </li>
+                              <li>
+                                <a href="students-grid.html">Grid</a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li class="active">
+                            <a href="student-dashboard.html">Student Dashboard</a>
+                          </li>
+                          <li>
+                            <a href="student-profile.html">My Profile</a>
+                          </li>
+                          <li>
+                            <a href="student-courses.html">Enrolled Courses</a>
+                          </li>
+                          <li>
+                            <a href="student-wishlist.html">Wishlist</a>
+                          </li>
+                          <li>
+                            <a href="student-reviews.html">Reviews</a>
+                          </li>
+                          <li>
+                            <a href="student-quiz.html">My Quiz Attempts</a>
+                          </li>
+                          <li>
+                            <a href="student-order-history.html">Orders</a>
+                          </li>
+                          <li>
+                            <a href="student-qa.html">Question & Answer</a>
+                          </li>
+                          <li>
+                            <a href="student-referral.html">Referrals</a>
+                          </li>
+                          <li>
+                            <a href="student-messages.html">Messages</a>
+                          </li>
+                          <li>
+                            <a href="student-tickets.html">Support Ticket</a>
+                          </li>
+                          <li>
+                            <a href="student-settings.html">Settings</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="has-submenu">
+                        <a href="#">
+                          Pages <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="submenu">
+                          <li>
+                            <a href="notifications.html">Notification</a>
+                          </li>
+                          <li>
+                            <a href="pricing-plan.html">Pricing Plan</a>
+                          </li>
+                          <li>
+                            <a href="wishlist.html">Wishlist</a>
+                          </li>
+                          <li class="has-submenu">
+                            <a href="course-list.html">Course</a>
+                            <ul class="submenu">
+                              <li>
+                                <a href="add-course.html">Add Course</a>
+                              </li>
+                              <li>
+                                <a href="course-list.html">Course List</a>
+                              </li>
+                              <li>
+                                <a href="course-grid.html">Course Grid</a>
+                              </li>
+                              <li>
+                                <a href="course-details.html">Course Details</a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li class="has-submenu">
+                            <a href="come-soon.html">Error</a>
+                            <ul class="submenu">
+                              <li>
+                                <a href="come-soon.html">Coming Soon</a>
+                              </li>
+                              <li>
+                                <a href="error-404.html">404</a>
+                              </li>
+                              <li>
+                                <a href="error-500.html">500</a>
+                              </li>
+                              <li>
+                                <a href="under-construction.html">
+                                  Under Construction
+                                </a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li>
+                            <a href="faq.html">FAQ</a>
+                          </li>
+                          <li>
+                            <a href="support.html">Support</a>
+                          </li>
+                          <li>
+                            <a href="job-category.html">Category</a>
+                          </li>
+                          <li>
+                            <a href="cart.html">Cart</a>
+                          </li>
+                          <li>
+                            <a href="checkout.html">Checkout</a>
+                          </li>
+                          <li>
+                            <a href="login.html">Login</a>
+                          </li>
+                          <li>
+                            <a href="register.html">Register</a>
+                          </li>
+                          <li>
+                            <a href="forgot-password.html">Forgot Password</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="has-submenu">
+                        <a href="#">
+                          Blog <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="submenu">
+                          <li>
+                            <a href="blog-list.html">Blog List</a>
+                          </li>
+                          <li>
+                            <a href="blog-grid.html">Blog Grid</a>
+                          </li>
+                          <li>
+                            <a href="blog-masonry.html">Blog Masonry</a>
+                          </li>
+                          <li>
+                            <a href="blog-modern.html">Blog Modern</a>
+                          </li>
+                          <li>
+                            <a href="blog-details.html">Blog Details</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="login-link">
+                        <a href="login.html">Login / Signup</a>
+                      </li>
                     </ul>
-                </li>
-            </ul>
-        </div>
-
-        <div class="p-20 pt-80">
-            <div class="bg-main-50 p-20 pt-0 rounded-16 text-center mt-74">
-                <span class="border border-5 bg-white mx-auto border-primary-50 w-114 h-114 rounded-circle flex-center">
-                    <i class="ph ph-smiley"></i>
-                </span>
-                <p class="text-muted fs-14">Looking to get started? <Link to="/sign-up" class="text-main-500">Sign Up</Link> now</p>
+                  </div>
+                  <ul class="nav header-navbar-rht">
+                    <li class="nav-item user-nav">
+                      <div>
+                        <a
+                          href="javascript:void(0);"
+                          id="dark-mode-toggle"
+                          class="dark-mode-toggle  "
+                        >
+                          <i class="fa-solid fa-moon"></i>
+                        </a>
+                        <a
+                          href="javascript:void(0);"
+                          id="light-mode-toggle"
+                          class="dark-mode-toggle "
+                        >
+                          <i class="fa-solid fa-sun"></i>
+                        </a>
+                      </div>
+                    </li>
+                    <li class="nav-item user-nav">
+                      <a
+                        href="#"
+                        class="dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                      >
+                        <span class="user-img">
+                          <img src="assets/img/user/user16.jpg" alt="Img" />
+                          <span class="status online"></span>
+                        </span>
+                      </a>
+                      <div
+                        class="users dropdown-menu dropdown-menu-right"
+                        data-popper-placement="bottom-end"
+                      >
+                        <div class="user-header">
+                          <div class="avatar avatar-sm">
+                            <img
+                              src="assets/img/user/user16.jpg"
+                              alt="User Image"
+                              class="avatar-img rounded-circle"
+                            />
+                          </div>
+                          <div class="user-text">
+                            <h6>Rolands R</h6>
+                            <p class="text-muted mb-0">Student</p>
+                          </div>
+                        </div>
+                        <a class="dropdown-item" href="student-dashboard.html">
+                          <i class="feather-home me-1"></i> Dashboard
+                        </a>
+                        <a class="dropdown-item" href="student-settings.html">
+                          <i class="feather-user me-1"></i> Profile
+                        </a>
+                        <a
+                          class="dropdown-item"
+                          href="setting-student-subscription.html"
+                        >
+                          <i class="feather-star me-1"></i> Subscription
+                        </a>
+  
+                        <a class="dropdown-item" href="index.html">
+                          <i class="feather-log-out me-1"></i>
+                          Logout
+                        </a>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
             </div>
-        </div>
-    </div>
-</aside>
-
-            {/* <!-- ============================ Sidebar End  ============================ --> */}
-
-            <div class="dashboard-main-wrapper">
-                <div class="top-navbar flex-between gap-16">
-
-                    <div class="flex-align gap-16">
-                        {/* <!-- Toggle Button Start --> */}
-                        <button type="button" class="toggle-btn d-xl-none d-flex text-26 text-gray-500"><i class="ph ph-list"></i></button>
-                        {/* <!-- Toggle Button End --> */}
-
-                        <form action="#" class="w-350 d-sm-block d-none">
-                            <div class="position-relative">
-                                {/* <button type="submit" class="input-icon text-xl d-flex text-gray-100 pointer-event-none">/*<i class="ph ph-magnifying-glass"></i></button>  */}
-                                <input type="text" class="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15" placeholder="Search..." />
+          </header>
+          {/* <!-- /Header --> */}
+  
+          {/* <!-- Breadcrumb --> */}
+          <div class="breadcrumb-bar breadcrumb-bar-info">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12 col-12">
+                  <div class="breadcrumb-list">
+                    <h2 class="breadcrumb-title">Dashboard</h2>
+                    <nav aria-label="breadcrumb" class="page-breadcrumb">
+                      <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                          <a href="index.html">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                          Dashboard
+                        </li>
+                      </ol>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <!-- /Breadcrumb --> */}
+  
+          {/* <!-- Page Content --> */}
+          <div class="page-content">
+            <div class="container">
+              <div class="row">
+                {/* <!-- sidebar --> */}
+                <div class="col-xl-3 col-lg-3 theiaStickySidebar">
+                  <div class="settings-widget dash-profile">
+                    <div class="settings-menu">
+                      <div class="profile-bg">
+                        <div class="profile-img">
+                          <a href="student-profile.html">
+                            <img src="assets/img/user/user16.jpg" alt="Img" />
+                          </a>
+                        </div>
+                      </div>
+                      <div class="profile-group">
+                        <div class="profile-name text-center">
+                          <h4>
+                            <a href="student-profile.html">Rolands Richard</a>
+                          </h4>
+                          <p>Student</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="settings-widget account-settings">
+                    <div class="settings-menu">
+                      <h3>Dashboard</h3>
+                      <ul>
+                        <li class="nav-item active">
+                          <a href="student-dashboard.html" class="nav-link">
+                            <i class="bx bxs-tachometer"></i>Dashboard
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-profile.html" class="nav-link">
+                            <i class="bx bxs-user"></i>My Profile
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-courses.html" class="nav-link">
+                            <i class="bx bxs-graduation"></i>Enrolled Courses
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-wishlist.html" class="nav-link">
+                            <i class="bx bxs-heart"></i>Wishlist
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-reviews.html" class="nav-link">
+                            <i class="bx bxs-star"></i>Reviews
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-quiz.html" class="nav-link">
+                            <i class="bx bxs-shapes"></i>My Quiz Attempts
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-order-history.html" class="nav-link">
+                            <i class="bx bxs-cart"></i>Order History
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-qa.html" class="nav-link">
+                            <i class="bx bxs-bookmark-alt"></i>Question & Answer
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-referral.html" class="nav-link">
+                            <i class="bx bxs-user-plus"></i>Referrals
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-messages.html" class="nav-link">
+                            <i class="bx bxs-chat"></i>Messages
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="student-tickets.html" class="nav-link">
+                            <i class="bx bxs-coupon"></i>Support Tickets
+                          </a>
+                        </li>
+                      </ul>
+                      <h3>Account Settings</h3>
+                      <ul>
+                        <li class="nav-item">
+                          <a href="student-settings.html" class="nav-link ">
+                            <i class="bx bxs-cog"></i>Settings
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a href="index.html" class="nav-link">
+                            <i class="bx bxs-log-out"></i>Logout
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {/* <!-- /Sidebar --> */}
+  
+                {/* <!-- Student Dashboard --> */}
+                <div class="col-xl-9 col-lg-9">
+                  {/* <!-- Dashboard Grid --> */}
+                  <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 d-flex">
+                      <div class="card dash-info flex-fill">
+                        <div class="card-body">
+                          <h5>Enrolled Courses</h5>
+                          <h2>12</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex">
+                      <div class="card dash-info flex-fill">
+                        <div class="card-body">
+                          <h5>Active Courses</h5>
+                          <h2>03</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex">
+                      <div class="card dash-info flex-fill">
+                        <div class="card-body">
+                          <h5>Completed Courses</h5>
+                          <h2>13</h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <!-- /Dashboard Grid --> */}
+  
+                  <div class="dashboard-title">
+                    <h4>Recently Enrolled Courses</h4>
+                  </div>
+                  <div class="row">
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-02.jpg"
+                              />
+                            </a>
+                            <div class="price">
+                              <h3>
+                                $80 <span>$99.00</span>
+                              </h3>
                             </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user2.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">Cooper</a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Wordpress for Beginners - Master Wordpress Quickly
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>12+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>70hr 30min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>5.0</span> (20)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+  
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-03.jpg"
+                              />
+                            </a>
+                            <div class="price combo">
+                              <h3>FREE</h3>
+                            </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user5.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">Jenny</a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Sketch from A to Z (2024): Become an app designer
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>10+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>40hr 10min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star"></i>
+                              <i class="fas fa-star"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>3.0</span> (18)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+  
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-04.jpg"
+                              />
+                            </a>
+                            <div class="price">
+                              <h3>
+                                $65 <span>$70.00</span>
+                              </h3>
+                            </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user4.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">
+                                      Nicole Brown
+                                    </a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Learn Angular Fundamentals From beginning to
+                                advance lavel
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>15+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>80hr 40min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>4.0</span> (10)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+  
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-05.jpg"
+                              />
+                            </a>
+                            <div class="price combo">
+                              <h3>FREE</h3>
+                            </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user3.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">
+                                      John Smith
+                                    </a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Build Responsive Real World Websites with Crash
+                                Course
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>12+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>70hr 30min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>4.0</span> (15)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+  
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-07.jpg"
+                              />
+                            </a>
+                            <div class="price">
+                              <h3>
+                                $70 <span>$80.00</span>
+                              </h3>
+                            </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user6.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">
+                                      Stella Johnson
+                                    </a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Learn JavaScript and Express to become a Expert
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>15+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>70hr 30min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>4.6</span> (15)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+  
+                    {/* <!-- Course Grid --> */}
+                    <div class="col-xxl-4 col-md-6 d-flex">
+                      <div class="course-box flex-fill">
+                        <div class="product">
+                          <div class="product-img">
+                            <a href="course-details.html">
+                              <img
+                                class="img-fluid"
+                                alt="Img"
+                                src="assets/img/course/course-08.jpg"
+                              />
+                            </a>
+                            <div class="price combo">
+                              <h3>FREE</h3>
+                            </div>
+                          </div>
+                          <div class="product-content">
+                            <div class="course-group d-flex">
+                              <div class="course-group-img d-flex">
+                                <a href="instructor-profile.html">
+                                  <img
+                                    src="assets/img/user/user1.jpg"
+                                    alt="Img"
+                                    class="img-fluid"
+                                  />
+                                </a>
+                                <div class="course-name">
+                                  <h4>
+                                    <a href="instructor-profile.html">
+                                      Nicole Brown
+                                    </a>
+                                  </h4>
+                                  <p>Instructor</p>
+                                </div>
+                              </div>
+                              <div class="course-share d-flex align-items-center justify-content-center">
+                                <a href="#">
+                                  <i class="fa-regular fa-heart"></i>
+                                </a>
+                              </div>
+                            </div>
+                            <h3 class="title instructor-text">
+                              <a href="course-details.html">
+                                Introduction to Programming- Python & Java
+                              </a>
+                            </h3>
+                            <div class="course-info d-flex align-items-center">
+                              <div class="rating-img d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-01.svg"
+                                  alt="Img"
+                                />
+                                <p>10+ Lesson</p>
+                              </div>
+                              <div class="course-view d-flex align-items-center">
+                                <img
+                                  src="assets/img/icon/icon-02.svg"
+                                  alt="Img"
+                                />
+                                <p>70hr 30min</p>
+                              </div>
+                            </div>
+                            <div class="rating mb-0">
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <i class="fas fa-star filled"></i>
+                              <span class="d-inline-block average-rating">
+                                <span>5.0</span> (13)
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* <!-- /Course Grid --> */}
+                  </div>
+                  <div class="dash-pagination">
+                    <div class="row align-items-center">
+                      <div class="col-6">
+                        <p>Page 1 of 2</p>
+                      </div>
+                      <div class="col-6">
+                        <ul class="pagination">
+                          <li class="active">
+                            <a href="#">1</a>
+                          </li>
+                          <li>
+                            <a href="#">2</a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              <i class="bx bx-chevron-right"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* <!-- Student Dashboard --> */}
+              </div>
+            </div>
+          </div>
+          {/* <!-- /Page Content --> */}
+  
+          {/* <!-- Footer --> */}
+          <footer class="footer">
+            {/* <!-- Footer Top --> */}
+            <div class="footer-top">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-4 col-md-6">
+                    {/* <!-- Footer Widget --> */}
+                    <div class="footer-widget footer-about">
+                      <div class="footer-logo">
+                        <img src="assets/img/logo.svg" alt="logo" />
+                      </div>
+                      <div class="footer-about-content">
+                        <p>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                          Ut consequat mauris Lorem ipsum dolor sit amet,
+                          consectetur adipiscing elit. Ut consequat mauris
+                        </p>
+                      </div>
+                    </div>
+                    {/* <!-- /Footer Widget --> */}
+                  </div>
+  
+                  <div class="col-lg-2 col-md-6">
+                    {/* <!-- Footer Widget --> */}
+                    <div class="footer-widget footer-menu">
+                      <h2 class="footer-title">For Instructor</h2>
+                      <ul>
+                        <li>
+                          <a href="instructor-profile.html">Profile</a>
+                        </li>
+                        <li>
+                          <a href="login.html">Login</a>
+                        </li>
+                        <li>
+                          <a href="register.html">Register</a>
+                        </li>
+                        <li>
+                          <a href="instructor-list.html">Instructor</a>
+                        </li>
+                        <li>
+                          <a href="instructor-dashboard.html"> Dashboard</a>
+                        </li>
+                      </ul>
+                    </div>
+                    {/* <!-- /Footer Widget --> */}
+                  </div>
+  
+                  <div class="col-lg-2 col-md-6">
+                    {/* <!-- Footer Widget --> */}
+                    <div class="footer-widget footer-menu">
+                      <h2 class="footer-title">For Student</h2>
+                      <ul>
+                        <li>
+                          <a href="student-profile.html">Profile</a>
+                        </li>
+                        <li>
+                          <a href="login.html">Login</a>
+                        </li>
+                        <li>
+                          <a href="register.html">Register</a>
+                        </li>
+                        <li>
+                          <a href="students-list.html">Student</a>
+                        </li>
+                        <li>
+                          <a href="student-dashboard.html"> Dashboard</a>
+                        </li>
+                      </ul>
+                    </div>
+                    {/* <!-- /Footer Widget --> */}
+                  </div>
+  
+                  <div class="col-lg-4 col-md-6">
+                    {/* <!-- Footer Widget --> */}
+                    <div class="footer-widget footer-contact">
+                      <h2 class="footer-title">News letter</h2>
+                      <div class="news-letter">
+                        <form>
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Enter your email address"
+                            name="email"
+                          />
                         </form>
-                    </div>
-
-                    <div class="flex-align gap-16">
-                        <div class="flex-align gap-8">
-                            {/* <!-- Notification Start --> */}
-                            <div class="dropdown">
-                                <button class="dropdown-btn shaking-animation text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="position-relative">
-                                        <i class="ph ph-bell"></i>
-                                        <span class="alarm-notify position-absolute end-0"></span>
-                                    </span>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                                    <div class="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
-                                        <div class="card-body p-0">
-                                            <div class="py-8 px-24 bg-main-600">
-                                                <div class="flex-between">
-                                                    <h5 class="text-xl fw-semibold text-white mb-0">Notifications</h5>
-                                                    <div class="flex-align gap-12">
-                                                        <button type="button" class="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600"> New </button>
-                                                        <button type="button" class="close-dropdown hover-scale-1 text-xl text-white"><i class="ph ph-x"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="p-24 max-h-270 overflow-y-auto scroll-sm">
-                                                <div class="d-flex align-items-start gap-12">
-                                                    <img src="assets/images/thumbs/notification-img1.png" alt="" class="w-48 h-48 rounded-circle object-fit-cover" />
-                                                    <div class="border-bottom border-gray-100 mb-24 pb-24">
-                                                        <div class="flex-align gap-4">
-                                                            <a href="#" class="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2">Ashwin Bose is requesting access to Design File - Final Project. </a>
-                                                            {/* <!-- Three Dot Dropdown Start --> */}
-                                                            <div class="dropdown flex-shrink-0">
-                                                                <button class="text-gray-200 rounded-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ph-fill ph-dots-three-outline"></i>
-                                                                </button>
-                                                                <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                                                    <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                                                        <div class="card-body p-12">
-                                                                            <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                                                                <ul>
-                                                                                    <li class="mb-0">
-                                                                                        <a href="#" class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                            <span class="text">Mark as read</span>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                    <li class="mb-0">
-                                                                                        <a href="#" class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                            <span class="text">Delete Notification</span>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                    <li class="mb-0">
-                                                                                        <a href="#" class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                            <span class="text">Report</span>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            {/* <!-- Three Dot Dropdown End --> */}
-                                                        </div>
-                                                        <div class="flex-align gap-6 mt-8">
-                                                            <img src="assets/images/icons/google-drive.png" alt="" />
-                                                            <div class="flex-align gap-4">
-                                                                <p class="text-gray-900 text-sm text-line-1">Design brief and ideas.txt</p>
-                                                                <span class="text-xs text-gray-200 flex-shrink-0">2.2 MB</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mt-16 flex-align gap-8">
-                                                            <button type="button" class="btn btn-main py-8 text-15 fw-normal px-16">Accept</button>
-                                                            <button type="button" class="btn btn-outline-gray py-8 text-15 fw-normal px-16">Decline</button>
-                                                        </div>
-                                                        <span class="text-gray-200 text-13 mt-8">2 mins ago</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-start gap-12">
-                                                    <img src="assets/images/thumbs/notification-img2.png" alt="" class="w-48 h-48 rounded-circle object-fit-cover" />
-                                                    <div class="">
-                                                        <a href="#" class="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2">Patrick added a comment on Design Assets - Smart Tags file:</a>
-                                                        <span class="text-gray-200 text-13">2 mins ago</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline"> View All </a>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <!-- Notification Start --> */}
-
-                            {/* <!-- Language Start --> */}
-                            <div class="dropdown">
-                                <button class="text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ph ph-globe"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                    <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                        <div class="card-body">
-                                            <div class="max-h-270 overflow-y-auto scroll-sm pe-8">
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="arabic">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag1.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Arabic</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="arabic" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="germany">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag2.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Germany</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="germany" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="english">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag3.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">English</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="english" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="spanish">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag4.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Spanish</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="spanish" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <!-- Language Start --> */}
+                      </div>
+                      <div class="footer-contact-info">
+                        <div class="footer-address">
+                          <img
+                            src="assets/img/icon/icon-20.svg"
+                            alt="Img"
+                            class="img-fluid"
+                          />
+                          <p>
+                            {" "}
+                            3556 Beech Street, San Francisco,
+                            <br /> California, CA 94108{" "}
+                          </p>
                         </div>
-
-
-                        {/* <!-- User Profile Start --> */}
-                        <div class="dropdown">
-                            <button class="users arrow-down-icon border border-gray-200 rounded-pill p-4 d-inline-block pe-40 position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="position-relative">
-                                    <img src="assets/images/thumbs/user-img.png" alt="Image" class="h-32 w-32 rounded-circle" />
-                                    <span class="activation-badge w-8 h-8 position-absolute inset-block-end-0 inset-inline-end-0"></span>
-                                </span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                                <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                    <div class="card-body">
-                                        <div class="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
-                                            <img src="assets/images/thumbs/user-img.png" alt="" class="w-54 h-54 rounded-circle" />
-                                            <div class="">
-                                                <h4 class="mb-0">Michel John</h4>
-                                                <p class="fw-medium text-13 text-gray-200">examplemail@mail.com</p>
-                                            </div>
-                                        </div>
-                                        <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
-                                            <li class="mb-4">
-                                                <a href="setting.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-gear"></i></span>
-                                                    <span class="text">Account Settings</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="pricing-plan.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chart-bar"></i></span>
-                                                    <span class="text">Upgrade Plan</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="analytics.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chart-line-up"></i></span>
-                                                    <span class="text">Daily Activity</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="message.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chats-teardrop"></i></span>
-                                                    <span class="text">Inbox</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="email.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-envelope-simple"></i></span>
-                                                    <span class="text">Email</span>
-                                                </a>
-                                            </li>
-                                            <li class="pt-8 border-top border-gray-100">
-                                                <a href="sign-in.html" class="py-12 text-15 px-20 hover-bg-danger-50 text-gray-300 hover-text-danger-600 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-danger-600 d-flex"><i class="ph ph-sign-out"></i></span>
-                                                    <span class="text">Log Out</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/* <!-- User Profile Start --> */}
-
+                        <p>
+                          <img
+                            src="assets/img/icon/icon-19.svg"
+                            alt="Img"
+                            class="img-fluid"
+                          />
+                          <a
+                            href="https://dreamslms.dreamstechnologies.com/cdn-cgi/l/email-/protection"
+                            class="__cf_email_/_"
+                            data-cfemail="f3978196929e809f9e80b3968b929e839f96dd909c9e"
+                          >
+                            [email&/#160;protected]
+                          </a>
+                        </p>
+                        <p class="mb-0">
+                          <img
+                            src="assets/img/icon/icon-21.svg"
+                            alt="Img"
+                            class="img-fluid"
+                          />
+                          +19 123-456-7890
+                        </p>
+                      </div>
                     </div>
+                    {/* <!-- /Footer Widget --> */}
+                  </div>
                 </div>
-
-
-                {/* <div class="dashboard-body"> */}
-                <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="my-courses" element={<MyCourses />} />
-                    <Route path="*" element={<h2>Page Not Found</h2>} />  {/* Handle unknown routes */}
-
-                    {/* Add more routes as needed */}
-                </Routes>
-                <div class="dashboard-footer">
-                    <div class="flex-between flex-wrap gap-16">
-                        <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright Edmate 2024, All Right Reserverd</p>
-                        <div class="flex-align flex-wrap gap-16">
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">License</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">More Themes</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Documentation</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Support</a>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
-
-
-
+            {/* <!-- /Footer Top --> */}
+  
+            {/* <!-- Footer Bottom --> */}
+            <div class="footer-bottom">
+              <div class="container">
+                {/* <!-- Copyright --> */}
+                <div class="copyright">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="privacy-policy">
+                        <ul>
+                          <li>
+                            <a href="term-condition.html">Terms</a>
+                          </li>
+                          <li>
+                            <a href="privacy-policy.html">Privacy</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="copyright-text">
+                        <p class="mb-0">
+                          &copy; 2024 DreamsLMS. All rights reserved.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* <!-- /Copyright --> */}
+              </div>
+            </div>
+            {/* <!-- /Footer Bottom --> */}
+          </footer>
+          {/* <!-- /Footer --> */}
         </div>
+      </>
     )
 }
 
