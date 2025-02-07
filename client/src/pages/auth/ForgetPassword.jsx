@@ -43,10 +43,9 @@ const ForgetPassword = () => {
             </button>
 
             <Link
-              to="/"
+              to="/login"
               class="my-32 text-main-600 flex-align gap-8 justify-content-center"
             >
-              {" "}
               <i class="ph ph-arrow-left d-flex"></i> Back To Login
             </Link>
 

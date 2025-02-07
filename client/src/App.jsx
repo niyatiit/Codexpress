@@ -5,6 +5,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgetPassword from "./pages/auth/ForgetPassword";
 import StudentDashboard from "./pages/student/home/StudentDashboard";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -12,7 +13,8 @@ const App = () => {
       <div className="app-container flex">
         <main className="content w-full p-4">
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgetPassword/>} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin/*" element={<AdminDashboard />} /> {/* Use wildcard for sub-routes */}

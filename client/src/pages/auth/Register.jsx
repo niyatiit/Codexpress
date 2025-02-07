@@ -45,7 +45,7 @@ const Register = () => {
                         </div>                    </div>
                     <button type="submit" class="btn btn-main rounded-pill w-100">Sign Up</button>
                     <p class="mt-32 text-gray-600 text-center">Already have an account?
-                        <Link to="/" class="text-main-600 hover-text-decoration-underline"> Log In</Link>
+                        <Link to="/login" class="text-main-600 hover-text-decoration-underline"> Log In</Link>
                     </p>
 
                     <div class="divider my-32 position-relative text-center">
