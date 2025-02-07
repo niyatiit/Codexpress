@@ -20,6 +20,7 @@ import IssueCertificate from './IssueCertificate';
 import ManageCertificates from './ManageCertificates ';
 import ManageFeedback from './ManageFeedback';
 import ManageFees from './ManageFees';
+import logo from '../../assets/logo.png'
 
 
 const AdminDashboard = () => {
@@ -44,9 +45,9 @@ const AdminDashboard = () => {
                 <button type="button" class="sidebar-close-btn text-gray-500 hover-text-white hover-bg-main-600 text-md w-24 h-24 border border-gray-100 hover-border-main-600 d-xl-none d-flex flex-center rounded-circle position-absolute"><i class="ph ph-x"></i></button>
                 {/* <!-- sidebar close btn --> */}
 
-                <a href="index.html" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10">
-                    <h3>&lt;Codexpress/&gt;</h3>
-                </a>
+                <Link to="/admin" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 px-36 pt-20 py-42">
+                        <img src={logo} alt="" />
+                    </Link>
 
                 <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
                     <div class="p-20 pt-10">

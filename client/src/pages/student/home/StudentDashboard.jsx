@@ -3,7 +3,7 @@ import Dashboard from './Dashboard'
 import { Link, NavLink } from 'react-router-dom'
 import { Routes, Route } from "react-router-dom";
 import MyCourses from './MyCourses';
-
+import logo from './../../../assets/logo.png'
 
 const StudentDashboard = () => {
     return (
@@ -27,9 +27,9 @@ const StudentDashboard = () => {
     <button type="button" class="sidebar-close-btn text-gray-500 hover-text-white hover-bg-main-600 text-md w-24 h-24 border border-gray-100 hover-border-main-600 d-xl-none d-flex flex-center rounded-circle position-absolute"><i class="ph ph-x"></i></button>
     {/* <!-- sidebar close btn --> */}
 
-    <a href="index.html" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10">
-        <h3>&lt;Codexpress/&gt;</h3>
-    </a>
+    <Link to="/student" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 px-36 pt-20 py-42">
+        <img src={logo} alt="" />
+    </Link>
 
     <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
         <div class="p-20 pt-10">
@@ -148,20 +148,6 @@ const StudentDashboard = () => {
 
             <div class="dashboard-main-wrapper">
                 <div class="top-navbar flex-between gap-16">
-
-                    <div class="flex-align gap-16">
-                        {/* <!-- Toggle Button Start --> */}
-                        <button type="button" class="toggle-btn d-xl-none d-flex text-26 text-gray-500"><i class="ph ph-list"></i></button>
-                        {/* <!-- Toggle Button End --> */}
-
-                        <form action="#" class="w-350 d-sm-block d-none">
-                            <div class="position-relative">
-                                {/* <button type="submit" class="input-icon text-xl d-flex text-gray-100 pointer-event-none">/*<i class="ph ph-magnifying-glass"></i></button>  */}
-                                <input type="text" class="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15" placeholder="Search..." />
-                            </div>
-                        </form>
-                    </div>
-
                     <div class="flex-align gap-16">
                         <div class="flex-align gap-8">
                             {/* <!-- Notification Start --> */}
@@ -253,57 +239,7 @@ const StudentDashboard = () => {
                             </div>
                             {/* <!-- Notification Start --> */}
 
-                            {/* <!-- Language Start --> */}
-                            <div class="dropdown">
-                                <button class="text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ph ph-globe"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                    <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                        <div class="card-body">
-                                            <div class="max-h-270 overflow-y-auto scroll-sm pe-8">
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="arabic">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag1.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Arabic</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="arabic" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="germany">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag2.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Germany</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="germany" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="english">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag3.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">English</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="english" />
-                                                </div>
-                                                <div class="form-check form-radio d-flex align-items-center justify-content-between ps-0">
-                                                    <label class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light" for="spanish">
-                                                        <span class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                            <img src="assets/images/thumbs/flag4.png" alt="" class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0" />
-                                                            <span class="text-15 fw-semibold mb-0">Spanish</span>
-                                                        </span>
-                                                    </label>
-                                                    <input class="form-check-input" type="radio" name="language" id="spanish" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <!-- Language Start --> */}
+                           
                         </div>
 
 
@@ -333,27 +269,9 @@ const StudentDashboard = () => {
                                                 </a>
                                             </li>
                                             <li class="mb-4">
-                                                <a href="pricing-plan.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chart-bar"></i></span>
-                                                    <span class="text">Upgrade Plan</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="analytics.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chart-line-up"></i></span>
-                                                    <span class="text">Daily Activity</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
                                                 <a href="message.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                                     <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-chats-teardrop"></i></span>
                                                     <span class="text">Inbox</span>
-                                                </a>
-                                            </li>
-                                            <li class="mb-4">
-                                                <a href="email.html" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                                    <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-envelope-simple"></i></span>
-                                                    <span class="text">Email</span>
                                                 </a>
                                             </li>
                                             <li class="pt-8 border-top border-gray-100">

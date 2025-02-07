@@ -1,20 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import logo from '../../assets/logo.png'
 const ForgetPassword = () => {
   return (
     <section class="auth d-flex">
       <div class="auth-left bg-main-50 flex-center p-24">
         <img src="assets/images/thumbs/auth-img3.png" alt="" />
       </div>
-      <div class="auth-right py-40 px-24 flex-center flex-column">
+      <div class="auth-right pb-140 px-120 flex-center flex-column">
         <div class="auth-right__inner mx-auto w-100">
-          <Link
-            to="/"
-            class="sidebar__logo p-2 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-30  "
-          >
-            <h3>&lt;Codexpress/&gt;</h3>
+          <Link to="/" className="sidebar__logo py-40 position-sticky">
+            <img src={logo} alt="Logo" className="h-32" />
           </Link>
+
           <h2 class="mb-8">Forgot Password?</h2>
           <p class="text-gray-600 text-15 mb-32">
             Lost your password? Please enter your email address. You will
