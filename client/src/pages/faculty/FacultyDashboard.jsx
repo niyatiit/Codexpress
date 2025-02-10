@@ -143,9 +143,9 @@ const FacultyDashboard = () => {
                                     <li className="sidebar-submenu__item">
                                         <Link to="/faculty/assignment/submission" className="sidebar-submenu__link">Assignment Submission</Link>
                                     </li>
-                                    <li className="sidebar-submenu__item">
+                                    {/* <li className="sidebar-submenu__item">
                                         <Link to="/faculty/view/assignments" className="sidebar-submenu__link">View Assignments</Link>
-                                    </li>
+                                    </li> */}
                                 </ul>
                             </li>
 
@@ -219,11 +219,6 @@ const FacultyDashboard = () => {
                                     <li className="sidebar-submenu__item">
                                         <Link to="/faculty/send/notice" className="sidebar-submenu__link">Send Notice to Students</Link>
                                     </li>
-
-                                    {/* Notice Settings (Optional, for managing notification preferences) */}
-                                    <li className="sidebar-submenu__item">
-                                        <Link to="/faculty/notification/settings" className="sidebar-submenu__link">Notification Settings</Link>
-                                    </li>
                                 </ul>
                             </li>
                             <li className="sidebar-menu__item has-dropdown">
@@ -238,9 +233,7 @@ const FacultyDashboard = () => {
                                     <li className="sidebar-submenu__item">
                                         <Link to="/faculty/view/schedule" className="sidebar-submenu__link">View Schedule</Link> {/* View uploaded schedule */}
                                     </li>
-                                    <li className="sidebar-submenu__item">
-                                        <Link to="/faculty/view/admin/schedule" className="sidebar-submenu__link">View Admin Schedule</Link> {/* View schedule uploaded by admin */}
-                                    </li>
+            
                                 </ul>
                             </li>
 
