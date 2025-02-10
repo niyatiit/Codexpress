@@ -131,23 +131,148 @@ const FacultyDashboard = () => {
                             </li>
 
                             {/* Assignments */}
-                            <li className="sidebar-menu__item has-dropdown">
-                                <a href="javascript:void(0)" className="sidebar-menu__link">
-                                    <span className="icon"><i className="ph ph-pencil"></i></span>
-                                    <span className="text">Assignments</span>
-                                </a>
-                                <ul className="sidebar-submenu">
-                                    <li className="sidebar-submenu__item">
-                                        <Link to="/faculty/create/assignment" className="sidebar-submenu__link">Create Assignment</Link>
-                                    </li>
-                                    <li className="sidebar-submenu__item">
-                                        <Link to="/faculty/assignment/submission" className="sidebar-submenu__link">Assignment Submission</Link>
-                                    </li>
-                                    <li className="sidebar-submenu__item">
-                                        <Link to="/faculty/view/assignments" className="sidebar-submenu__link">View Assignments</Link>
-                                    </li>
-                                </ul>
-                            </li>
+                            <div className="col-xl-3 col-lg-3 theiaStickySidebar">
+                                <div className="settings-widget dash-profile">
+                                    <div className="settings-menu">
+                                        <div className="profile-bg">
+                                            <div className="profile-img">
+                                                <a href="/student-profile">
+                                                    <img src="assets/img/user/user16.jpg" alt="Student Profile" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div className="profile-group">
+                                            <div className="profile-name text-center">
+                                                <h4>
+                                                    <a href="/student">Rolands Richard</a>
+                                                </h4>
+                                                <p>Student</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="settings-widget account-settings">
+                                    <div className="settings-menu">
+
+                                        {/* Dashboard Section */}
+                                        <h3>Dashboard</h3>
+                                        <ul>
+                                            <li className="nav-item active">
+                                                <Link to="/student-dashboard" className="nav-link">
+                                                    <i className="bx bxs-tachometer"></i> Dashboard
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-profile" className="nav-link">
+                                                    <i className="bx bxs-user"></i> My Profile
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-courses" className="nav-link">
+                                                    <i className="bx bxs-graduation"></i> Enrolled Courses
+                                                </Link>
+                                            </li>
+
+                                            {/* Submenu for Assignments */}
+                                            <li className="sidebar-menu__item has-dropdown">
+                                                <a href="javascript:void(0)" className="sidebar-menu__link">
+                                                    <span className="icon"><i className="bx bxs-file"></i></span>
+                                                    <span className="text">Assignments</span>
+                                                </a>
+                                                <ul className="sidebar-submenu">
+                                                    <li className="sidebar-submenu__item">
+                                                        <Link to="/student/view-assignments" className="sidebar-submenu__link">View Assignments</Link>
+                                                    </li>
+                                                    <li className="sidebar-submenu__item">
+                                                        <Link to="/student/submit-assignment" className="sidebar-submenu__link">Submit Assignment</Link>
+                                                    </li>
+                                                    <li className="sidebar-submenu__item">
+                                                        <Link to="/student/assignment-status" className="sidebar-submenu__link">Check Submission Status</Link>
+                                                    </li>
+                                                </ul>
+                                            </li>
+
+                                            <li className="nav-item">
+                                                <Link to="/student-certificates" className="nav-link">
+                                                    <i className="bx bxs-award"></i> My Certificates
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-attendance" className="nav-link">
+                                                    <i className="bx bxs-calendar-check"></i> Attendance
+                                                </Link>
+                                            </li>
+                                        </ul>
+
+                                        {/* Admin Features for Students */}
+                                        <h3>Admin Features</h3>
+                                        <ul>
+                                            <li className="nav-item">
+                                                <Link to="/student-batch" className="nav-link">
+                                                    <i className="bx bxs-group"></i> My Batch Details
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-payment-history" className="nav-link">
+                                                    <i className="bx bxs-credit-card"></i> Payment History
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-progress" className="nav-link">
+                                                    <i className="bx bxs-bar-chart"></i> Course Progress
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-reports" className="nav-link">
+                                                    <i className="bx bxs-report"></i> Reports & Feedback
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-support" className="nav-link">
+                                                    <i className="bx bxs-help-circle"></i> Request Support
+                                                </Link>
+                                            </li>
+                                        </ul>
+
+                                        {/* Community & Support Section */}
+                                        <h3>Community & Support</h3>
+                                        <ul>
+                                            <li className="nav-item">
+                                                <Link to="/student-qa" className="nav-link">
+                                                    <i className="bx bxs-bookmark-alt"></i> Q&A Forum
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-messages" className="nav-link">
+                                                    <i className="bx bxs-chat"></i> Messages
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/student-tickets" className="nav-link">
+                                                    <i className="bx bxs-coupon"></i> Support Tickets
+                                                </Link>
+                                            </li>
+                                        </ul>
+
+                                        {/* Account Section */}
+                                        <h3>Account</h3>
+                                        <ul>
+                                            <li className="nav-item">
+                                                <Link to="/student-settings" className="nav-link">
+                                                    <i className="bx bxs-cog"></i> Settings
+                                                </Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/" className="nav-link">
+                                                    <i className="bx bxs-log-out"></i> Logout
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             {/* Quizzes */}
                             <li className="sidebar-menu__item has-dropdown">
