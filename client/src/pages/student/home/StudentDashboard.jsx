@@ -31,69 +31,83 @@ const StudentDashboard = () => {
             </div>
           </div>
           <div className="settings-widget account-settings">
-            <div className="settings-menu">
-              <h3>Dashboard</h3>
-              <ul>
-                <li className="nav-item active">
-                  <Link to="/student-dashboard" className="nav-link">
-                    <i className="bx bxs-tachometer"></i>Dashboard
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student/student-profile" className="nav-link">
-                    <i className="bx bxs-user"></i>My Profile
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student/student-courses" className="nav-link">
-                    <i className="bx bxs-graduation"></i>Enrolled Courses
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-quiz" className="nav-link">
-                    <i className="bx bxs-shapes"></i>My Quiz Attempts
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-order-history" className="nav-link">
-                    <i className="bx bxs-cart"></i>Order History
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-qa" className="nav-link">
-                    <i className="bx bxs-bookmark-alt"></i>Question & Answer
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-referral" className="nav-link">
-                    <i className="bx bxs-user-plus"></i>Referrals
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-messages" className="nav-link">
-                    <i className="bx bxs-chat"></i>Messages
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/student-tickets" className="nav-link">
-                    <i className="bx bxs-coupon"></i>Support Tickets
-                  </Link>
-                </li>
-              </ul>
-              <h3>Account Settings</h3>
-              <ul>
-                <li className="nav-item">
-                  <Link to="/student-settings" className="nav-link">
-                    <i className="bx bxs-cog"></i>Settings
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/" className="nav-link">
-                    <i className="bx bxs-log-out"></i>Logout
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <div className="settings-menu">
+  {/* Dashboard Section */}
+  <h3>Dashboard</h3>
+  <ul>
+    <li className="nav-item active">
+      <Link to="/student-dashboard" className="nav-link">
+        <i className="bx bxs-tachometer"></i> Dashboard
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student/student-profile" className="nav-link">
+        <i className="bx bxs-user"></i> My Profile
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student/student-courses" className="nav-link">
+        <i className="bx bxs-graduation"></i> Enrolled Courses
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-quiz" className="nav-link">
+        <i className="bx bxs-shapes"></i> My Quiz Attempts
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-assignments" className="nav-link">
+        <i className="bx bxs-file"></i> Assignments
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-certificates" className="nav-link">
+        <i className="bx bxs-award"></i> My Certificates
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-attendance" className="nav-link">
+        <i className="bx bxs-calendar-check"></i> Attendance
+      </Link>
+    </li>
+  </ul>
+
+  {/* Community & Support Section */}
+  <h3>Community & Support</h3>
+  <ul>
+    <li className="nav-item">
+      <Link to="/student-qa" className="nav-link">
+        <i className="bx bxs-bookmark-alt"></i> Q&A Forum
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-messages" className="nav-link">
+        <i className="bx bxs-chat"></i> Messages
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/student-tickets" className="nav-link">
+        <i className="bx bxs-coupon"></i> Support Tickets
+      </Link>
+    </li>
+  </ul>
+
+  {/* Account Section */}
+  <h3>Account</h3>
+  <ul>
+    <li className="nav-item">
+      <Link to="/student-settings" className="nav-link">
+        <i className="bx bxs-cog"></i> Settings
+      </Link>
+    </li>
+    <li className="nav-item">
+      <Link to="/" className="nav-link">
+        <i className="bx bxs-log-out"></i> Logout
+      </Link>
+    </li>
+  </ul>
+</div>
+
           </div>
         </div>
         <div>
