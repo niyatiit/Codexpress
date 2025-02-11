@@ -33,7 +33,7 @@ const Dashboard = () => {
         {/* <!-- /Breadcrumb --> */}
 
         {/* <!-- Page Content --> */}
-        <div className="page-content">
+        <div className="mt-50">
           <div className="container">
             <div className="row flex justify-center items-center">
               {/* <!-- sidebar --> */}

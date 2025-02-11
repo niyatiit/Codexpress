@@ -625,7 +625,7 @@ input[type=number] {
 }
 
 .common-tab .nav-item .nav-link {
-    color: var(--gray-600);
+    color: #0073ff; /* Updated color */
     padding: 4px 12px;
     border: 1px solid var(--gray-200);
     border-radius: 50px;
@@ -633,13 +633,13 @@ input[type=number] {
 }
 
 .common-tab .nav-item .nav-link.active {
-    color: var(--main-600);
+    color: #0073ff; /* Updated color */
     background-color: var(--main-50);
     border-color: var(--main-50);
 }
 
 .common-tab .nav-item .nav-link:hover {
-    color: var(--main-600);
+    color: #0073ff; /* Updated color */
     border-color: var(--main-200);
 }
 
@@ -659,7 +659,8 @@ input[type=number] {
         font-size: 0.8125rem !important;
     }
 }
-/* ================================= Tab Css End =========================== */
+
+/* ================= Tab Css End =========================== */
 /* ================= Common Card Css Start ========================= */
 .card {
     border: 0;
@@ -703,8 +704,9 @@ input[type=number] {
 }
 
 button.show {
-    background-color: var(--main-200) !important;
+    background-color: #0073ff !important; /* Updated color */
 }
+
 
 /* =========================== Dropdown Css End ======================== */
 /* ================================= Pagination Css Start =========================== */

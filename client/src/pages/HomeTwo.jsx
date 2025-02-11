@@ -3707,7 +3707,7 @@ const HomeTwo = () => {
             {/* <!-- /Become An Instructor --> */}
 
             {/* <!-- Leading Companies --> */}
-            <section class="px-56 lead-companies-three">
+            {/* <section class="px-56 lead-companies-three">
                 <div class="container">
                     <div class="home-three-head section-header-title aos-init aos-animate">
                         <div class="row align-items-center d-flex justify-content-between">
@@ -3751,11 +3751,11 @@ const HomeTwo = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* <!-- /Leading Companies --> */}
 
             {/* <!-- Testimonial --> */}
-            <section class="px-56 testimonial-three">
+            {/* <section class="px-56 testimonial-three">
                 <div class="container">
                     <div class="testimonial-pattern">
                         <img class="pattern-left img-fluid" alt="Img" src="assets/img/bg/pattern-05.svg" />
@@ -3770,17 +3770,17 @@ const HomeTwo = () => {
                                     </h4>
                                 </div>
 
-                                {/* <!-- View all Testimonail --> */}
+                                <!-- View all Testimonail -->
                                 <a href="instructor-profile.html" class="btn btn-action aos-init aos-animate"
                                     data-aos="fade-up">View all Testimonail</a>
-                                {/* <!-- View all Testimonail --> */}
+                                <!-- View all Testimonail -->
 
                             </div>
                             <div class="col-xl-6 col-lg-12 col-md-12" data-aos="fade-down">
                                 <div class="swiper-testimonial-three">
                                     <div class="swiper-wrapper">
 
-                                        {/* <!-- Swiper Slide --> */}
+                                        <!-- Swiper Slide -->
                                         <div class="swiper-slide">
                                             <div class="testimonial-item-five">
                                                 <div class="testimonial-quote">
@@ -3815,9 +3815,9 @@ const HomeTwo = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <!-- /Swiper Slide --> */}
+                                        <!-- /Swiper Slide -->
 
-                                        {/* <!-- Swiper Slide --> */}
+                                        <!-- Swiper Slide -->
                                         <div class="swiper-slide">
                                             <div class="testimonial-item-five">
                                                 <div class="testimonial-quote">
@@ -3851,9 +3851,9 @@ const HomeTwo = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <!-- /Swiper Slide --> */}
+                                        <!-- /Swiper Slide -->
 
-                                        {/* <!-- Swiper Slide --> */}
+                                        <!-- Swiper Slide -->
                                         <div class="swiper-slide">
                                             <div class="testimonial-item-five">
                                                 <div class="testimonial-quote">
@@ -3887,7 +3887,7 @@ const HomeTwo = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* <!-- /Swiper Slide --> */}
+                                        <!-- /Swiper Slide -->
 
 
                                     </div>
@@ -3902,7 +3902,7 @@ const HomeTwo = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* <!--/Testimonial --> */}
 
             {/* <!-- Latest Blog --> */}

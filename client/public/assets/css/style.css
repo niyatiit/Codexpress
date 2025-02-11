@@ -12154,7 +12154,7 @@ input[type="password"]::-ms-clear {
   font-weight: 500;
 }
 .page-breadcrumb .breadcrumb-item + .breadcrumb-item:before {
-  color: #22100d;
+  color: #0068ff;
   font-size: 11px;
   content: "\f054";
   font-weight: 600;
@@ -13699,7 +13699,7 @@ input[type="password"]::-ms-clear {
 }
 .wishlist-tab li a.active,
 .wishlist-tab li a:hover {
-  background: #ff4667;
+  background: #006bff;
   color: #fff;
 }
 .review-wrap {
@@ -15237,7 +15237,7 @@ input[type="password"]::-ms-clear {
   .breadcrumb-item
   + .breadcrumb-item:before {
   content: "";
-  background: #ff4667;
+  background:#0068ff;
   width: 15px;
   height: 5px;
   border-radius: 5px;
@@ -15256,7 +15256,7 @@ input[type="password"]::-ms-clear {
   left: 0;
   width: 100%;
   height: 100px;
-  background: url("../img/bg/profile-bg.jpg");
+  background: #0073ff;
   border-radius: 5px 4px 0 0;
 }
 .dash-info {
@@ -19069,7 +19069,7 @@ input[type="password"]::-ms-clear {
 }
 .account-settings .settings-menu ul li:hover a,
 .account-settings .settings-menu ul li.active a {
-  color: #ff4667;
+  color: #0068ff;
 }
 .account-settings .settings-menu ul li a i {
   margin-right: 8px;
@@ -22446,7 +22446,7 @@ color: #B9B7C0 ;
   color: #b9b7c0;
 }
 .dark .account-settings .settings-menu ul li.active a{
-  color: #f66962;
+  color: #0068ff;
 }
 .dark .developer-profile-five .profile-five-ovelay{
   background: #2B2838;

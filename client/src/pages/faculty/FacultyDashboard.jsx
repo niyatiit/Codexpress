@@ -1,6 +1,6 @@
 import React from 'react'
 import Dashboard from './Dashboard'
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Links } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import logo from '../../assets/logo.png'
@@ -31,6 +31,7 @@ import ViewSchedule from './ViewSchedule';
 import ViewAdminSchedule from './ViewAdminSchedule';
 import UploadResource from './UploadResource';
 import ViewResources from './ViewResources';
+import ProfileSetting from './ProfileSetting';
 
 const FacultyDashboard = () => {
     return (
@@ -64,7 +65,7 @@ const FacultyDashboard = () => {
                                 <h5 className="mb-4 mt-12">Faculty Profile</h5>
                                 <p className="font-weight-bold">John Doe</p>
                                 <p className="mb-2 text-sm text-zinc-400">john.doe@example.com</p>
-                                <a href="/faculty/edit-profile" className="btn btn-main mt-16 rounded-pill">Edit Profile</a>
+                                <Link to="/faculty/edit-profile" className="btn btn-main mt-16 rounded-pill">Edit Profile</Link>
                             </div>
                         </div>
                     </div>
@@ -233,7 +234,7 @@ const FacultyDashboard = () => {
                                     <li className="sidebar-submenu__item">
                                         <Link to="/faculty/view/schedule" className="sidebar-submenu__link">View Schedule</Link> {/* View uploaded schedule */}
                                     </li>
-            
+
                                 </ul>
                             </li>
 
@@ -377,7 +378,7 @@ const FacultyDashboard = () => {
                         <Route path="view/admin/schedule" element={<ViewAdminSchedule />} />
                         <Route path="upload/resource" element={<UploadResource />} />
                         <Route path="view/resources" element={<ViewResources />} />
-                        {/* <Route path="/faculty/settings" element={<Settings />} /> */}
+                        <Route path="edit-profile" element={<ProfileSetting />} />
                         <Route path="/*" element={<NotFoundPage />} />
                     </Routes>
 
