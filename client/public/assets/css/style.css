@@ -20000,23 +20000,21 @@ input[type="password"]::-ms-clear {
   border: 1px solid #1d9cfd;
 }
 .faq-grid {
-  background: #ffffff;
-  border: 1px solid #f0f0f0;
-  padding: 20px;
-  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 8px;
 }
+.faq-body {
+  padding-left: 15px; /* Reduce left padding for better alignment */
+}
+
 .faq-header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  justify-content: space-between;
-  -webkit-justify-content: space-between;
-  -ms-flex-pack: space-between;
   position: relative;
+  padding-right: 30px; /* Adjust spacing for icon */
 }
+.faq-header .faq-collapse:after {
+  right: 15px; /* Adjust based on layout */
+}
+
 .faq-header .faq-collapse {
   color: #000000;
   font-weight: 600;
@@ -20030,17 +20028,16 @@ input[type="password"]::-ms-clear {
   font-size: 20px;
   margin-right: 10px;
   color: #757575;
-}
-.faq-header .faq-collapse.collapsed:after {
-  content: "\f078";
+}.faq-header .faq-collapse:after {
   font-family: "Font Awesome 6 Free";
-  font-weight: 600;
+  font-weight: 900; /* Ensure proper rendering */
   font-size: 16px;
-  color: #000;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
+
 .faq-header .faq-collapse:after {
   content: "\f077";
   font-family: "Font Awesome 6 Free";
