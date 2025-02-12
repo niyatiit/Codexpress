@@ -1,8 +1,8 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 const EnrolledCourses = () => {
 	return (
-		<div className='flex flex-col justify-center items-center'>
+		<div className='flex flex-col justify-center items-center m-0 p-0'>
 			<div class="breadcrumb-bar breadcrumb-bar-info">
 				<div class="container">
 					<div class="row">
@@ -11,7 +11,7 @@ const EnrolledCourses = () => {
 								<h2 class="breadcrumb-title">Enrolled Courses</h2>
 								<nav aria-label="breadcrumb" class="page-breadcrumb">
 									<ol class="breadcrumb">
-										<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+										<li class="breadcrumb-item"><Link to="/student">Home</Link></li>
 										<li class="breadcrumb-item active" aria-current="page">Enrolled Courses</li>
 									</ol>
 								</nav>
@@ -20,13 +20,11 @@ const EnrolledCourses = () => {
 					</div>
 				</div>
 			</div>
-			<div class="col-xl-9 col-lg-9">
+			<div class="col-xl-12 col-lg-9">
 
 				<div class="settings-widget card-info">
 					<div class="settings-menu p-0">
-						<div class="profile-heading">
-							<h3>Enrolled Courses</h3>
-						</div>
+					
 						<div class="checkout-form pb-0">
 							<div class="wishlist-tab">
 								<ul class="nav">

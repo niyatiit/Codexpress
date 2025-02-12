@@ -1,581 +1,582 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import logo from "../../../assets/logo.png";
+import React from 'react'
+
 const Dashboard = () => {
-  return <>
-  <div className="extra_main_div p-0 flex flex-col justify-center">
-        {/* <!-- Header --> */}
-       
-        {/* <!-- /Header --> */}
-
-        {/* <!-- Breadcrumb --> */}
-        <div className="breadcrumb-bar breadcrumb-bar-info m-0 p-0">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12 col-12">
-                <div className="breadcrumb-list">
-                  <h2 className="breadcrumb-title">Dashboard</h2>
-                  <nav aria-label="breadcrumb" className="page-breadcrumb">
-                    <ol className="breadcrumb">
-                      <li className="breadcrumb-item">
-                        <a href="index.html">Home</a>
-                      </li>
-                      <li className="breadcrumb-item active" aria-current="page">
-                        Dashboard
-                      </li>
-                    </ol>
-                  </nav>
+  return (
+    <div class="dashboard-body">
+    <div class="row gy-4">
+        <div class="col-lg-9">
+            {/* <!-- Grettings Box Start --> */}
+            <div class="grettings-box position-relative rounded-16 bg-main-600 overflow-hidden gap-16 flex-wrap z-1">
+                <img src="assets/images/bg/grettings-pattern.png" alt="" class="position-absolute inset-block-start-0 inset-inline-start-0 z-n1 w-100 h-100 opacity-6"/>
+                <div class="row gy-4">
+                    <div class="col-sm-7">
+                        <div class="grettings-box__content py-xl-4">
+                            <h2 class="text-white mb-0">Hello, Mohib! </h2>
+                            <p class="text-15 fw-light mt-4 text-white">Let’s learning something today</p>
+                            <p class="text-lg fw-light mt-24 text-white">Set your study plan and growth with community</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 d-sm-block d-none">
+                        <div class="text-center h-100 d-flex justify-content-center align-items-end ">
+                            <img src="assets/images/thumbs/gretting-img.png" alt=""/>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
+            {/* <!-- Grettings Box End --> */}
+
+            {/* <!-- Hour Spent Card Start --> */}
+             <div class="card mt-24 overflow-hidden">
+                <div class="card-header">
+                    <div class="mb-0 flex-between flex-wrap gap-8">
+                        <h4 class="mb-0">Hour Spent</h4>
+                        <div class="flex-align gap-16 flex-wrap">
+                            <div class="flex-align flex-wrap gap-16">
+                                <div class="flex-align flex-wrap gap-8">
+                                    <span class="w-8 h-8 rounded-circle bg-main-two-600"></span>
+                                    <span class="text-13 text-gray-600">Study</span>
+                                </div>
+                                <div class="flex-align flex-wrap gap-8">
+                                    <span class="w-8 h-8 rounded-circle bg-main-two-200"></span>
+                                    <span class="text-13 text-gray-600">Exam</span>
+                                </div>
+                            </div>
+                            <select class="form-select form-control text-13 px-8 pe-24 py-8 rounded-8 w-auto">
+                                <option value="1">Yearly</option>
+                                <option value="1">Monthly</option>
+                                <option value="1">Weekly</option>
+                                <option value="1">Today</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="stackedColumnChart"></div>
+                </div>
+             </div>
+            {/* <!-- Hour Spent Card End --> */}
+
+            {/* <!-- Table Start --> */}
+             <div class="card mt-24 overflow-hidden">
+                <div class="card-header">
+                    <div class="mb-0 flex-between flex-wrap gap-8">
+                        <h4 class="mb-0">Your Assignments</h4>
+                        <a href="student-courses.html" class="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
+                    </div>
+                </div>
+                <div class="card-body p-0 overflow-x-auto scroll-sm scroll-sm-horizontal">
+                    <table class="table style-two mb-0">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Progress</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-main-600 flex-center flex-shrink-0">
+                                            <img src="assets/images/icons/course-name-icon1.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Design Accesibility</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Advanced</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '32%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">32%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-purple-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon2.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Figma for Beginner</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Intermediate</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '50%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">50%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-warning-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon3.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Framer Design</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Advanced</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '72%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">72%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-main-two-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon4.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Frontend Development</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Intermediate</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '100%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">100%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
+                                            Completed
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-main-600 flex-center flex-shrink-0">
+                                            <img src="assets/images/icons/course-name-icon1.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Design Accesibility</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Advanced</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '32%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">32%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-purple-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon2.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Figma for Beginner</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Intermediate</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '50%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">50%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-warning-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon3.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Framer Design</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Advanced</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '72%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">72%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-main-two-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon4.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Frontend Development</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Intermediate</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '100%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">100%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
+                                            Completed
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="flex-align gap-8">
+                                        <div class="w-40 h-40 rounded-circle bg-purple-600 flex-center">
+                                            <img src="assets/images/icons/course-name-icon2.png" alt=""/>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="mb-0">Figma for Beginner</h6>
+                                            <div class="table-list">
+                                                <span class="text-13 text-gray-600">Intermediate</span>
+                                                <span class="text-13 text-gray-600">12 Hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align gap-8 mt-12">
+                                        <div class="progress w-100px  bg-main-100 rounded-pill h-4" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar bg-main-600 rounded-pill" style={{width: '50%'}}></div>
+                                        </div>
+                                        <span class="text-main-600 flex-shrink-0 text-13 fw-medium">50%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex-align justify-content-center gap-16">
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
+                                            In Progress
+                                        </span>
+                                        <a href="assignment.html" class="text-gray-900 hover-text-main-600 text-md d-flex"><i class="ph ph-caret-right"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+            {/* <!-- Table End --> */}
+
         </div>
-        {/* <!-- /Breadcrumb --> */}
+        <div class="col-lg-3">
+            
+            {/* <!-- Calendar Start --> */}
+            <div class="card">
+                <div class="card-body">
+                    <div class="calendar">
+                        <div class="calendar__header">
+                            <button type="button" class="calendar__arrow left"><i class="ph ph-caret-left"></i></button>
+                            <p class="display h6 mb-0">""</p>
+                            <button type="button" class="calendar__arrow right"><i class="ph ph-caret-right"></i></button>
+                        </div>
+                    
+                        <div class="calendar__week week">
+                            <div class="calendar__week-text">Su</div>
+                            <div class="calendar__week-text">Mo</div>
+                            <div class="calendar__week-text">Tu</div>
+                            <div class="calendar__week-text">We</div>
+                            <div class="calendar__week-text">Th</div>
+                            <div class="calendar__week-text">Fr</div>
+                            <div class="calendar__week-text">Sa</div>
+                        </div>
+                        <div class="days"></div>
+                    </div>
 
-        {/* <!-- Page Content --> */}
-        <div className="mt-50">
-          <div className="container">
-            <div className="row flex justify-center items-center">
-              {/* <!-- sidebar --> */}
-              
-              {/* <!-- /Sidebar --> */}
-
-              {/* <!-- Student Dashboard --> */}
-              <div className="col-xl-9 col-lg-9 flex flex-col justify-center">
-                {/* <!-- Dashboard Grid --> */}
-                <div className="row justify-content-center">
-                  <div className="col-lg-4 col-md-6 d-flex">
-                    <div className="card dash-info flex-fill">
-                      <div className="card-body">
-                        <h5>Enrolled Courses</h5>
-                        <h2>12</h2>
-                      </div>
+                    {/* <!-- Events start --> */}
+                    <div class="">
+                        <div class="mt-24 mb-24">
+                            <div class="flex-align mb-8 gap-16">
+                                <span class="text-sm text-gray-300 flex-shrink-0">Today</span>
+                                <span class="border border-gray-50 border-dashed flex-grow-1"></span>
+                            </div>
+                            <div class="event-item bg-gray-50 rounded-8 p-16">
+                                <div class=" flex-between gap-4">
+                                    <div class="flex-align gap-8">
+                                        <span class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i class="ph ph-squares-four"></i></span>
+                                        <div class="">
+                                            <h6 class="mb-2">Element of design test</h6>
+                                            <span class="">10:00 - 11:00 AM</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown flex-shrink-0">
+                                        <button class="text-gray-400 text-xl d-flex rounded-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ph-fill ph-dots-three-outline"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
+                                            <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                                                <div class="card-body p-12">
+                                                    <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
+                                                        <ul>
+                                                            <li class="mb-0">
+                                                                <button type="button" class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
+                                                                    <span class="text d-flex align-items-center gap-8"> <i class="ph ph-trash"></i> Remove</span>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6 d-flex">
-                    <div className="card dash-info flex-fill">
-                      <div className="card-body">
-                        <h5>Active Courses</h5>
-                        <h2>03</h2>
-                      </div>
+                    <div class="">
+                        <div class="mt-24">
+                            <div class="flex-align mb-8 gap-16">
+                                <span class="text-sm text-gray-300 flex-shrink-0">Sat, Aug 24</span>
+                                <span class="border border-gray-50 border-dashed flex-grow-1"></span>
+                            </div>
+                            <div class="event-item bg-gray-50 rounded-8 p-16">
+                                <div class=" flex-between gap-4">
+                                    <div class="flex-align gap-8">
+                                        <span class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i class="ph ph-magic-wand"></i></span>
+                                        <div class="">
+                                            <h6 class="mb-2">Design Principles test</h6>
+                                            <span class="">10:00 - 11:00 AM</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown flex-shrink-0">
+                                        <button class="text-gray-400 text-xl d-flex rounded-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ph-fill ph-dots-three-outline"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
+                                            <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                                                <div class="card-body p-12">
+                                                    <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
+                                                        <ul>
+                                                            <li class="mb-0">
+                                                                <button type="button" class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
+                                                                    <span class="text d-flex align-items-center gap-8"> <i class="ph ph-trash"></i> Remove</span>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </div>
+                            </div>
+                                    
+                            <div class="event-item bg-gray-50 rounded-8 p-16 mt-16">
+                                <div class=" flex-between gap-4">
+                                    <div class="flex-align gap-8">
+                                        <span class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i class="ph ph-briefcase"></i></span>
+                                        <div class="">
+                                            <h6 class="mb-2">Prepare Job Interview</h6>
+                                            <span class="">09:00 - 10:00 AM</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown flex-shrink-0">
+                                        <button class="text-gray-400 text-xl d-flex rounded-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ph-fill ph-dots-three-outline"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
+                                            <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                                                <div class="card-body p-12">
+                                                    <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
+                                                        <ul>
+                                                            <li class="mb-0">
+                                                                <button type="button" class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
+                                                                    <span class="text d-flex align-items-center gap-8"> <i class="ph ph-trash"></i> Remove</span>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
+                        <a href="event.html" class="btn btn-main w-100 mt-24">All Events</a>
                     </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6 d-flex">
-                    <div className="card dash-info flex-fill">
-                      <div className="card-body">
-                        <h5>Completed Courses</h5>
-                        <h2>13</h2>
-                      </div>
-                    </div>
-                  </div>
+                    {/* <!-- Events End --> */}
+                    
                 </div>
-                {/* <!-- /Dashboard Grid --> */}
-
-                <div className="dashboard-title">
-                  <h4>Recently Enrolled Courses</h4>
-                </div>
-                <div className="row">
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-02.jpg"
-                            />
-                          </a>
-                          <div className="price">
-                            <h3>
-                              $80 <span>$99.00</span>
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user2.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">Cooper</a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Wordpress for Beginners - Master Wordpress Quickly
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>12+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>70hr 30min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>5.0</span> (20)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-03.jpg"
-                            />
-                          </a>
-                          <div className="price combo">
-                            <h3>FREE</h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user5.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">Jenny</a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Sketch from A to Z (2024): Become an app designer
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>10+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>40hr 10min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star"></i>
-                            <i className="fas fa-star"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>3.0</span> (18)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-04.jpg"
-                            />
-                          </a>
-                          <div className="price">
-                            <h3>
-                              $65 <span>$70.00</span>
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user4.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">
-                                    Nicole Brown
-                                  </a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Learn Angular Fundamentals From beginning to
-                              advance lavel
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>15+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>80hr 40min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>4.0</span> (10)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-05.jpg"
-                            />
-                          </a>
-                          <div className="price combo">
-                            <h3>FREE</h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user3.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">
-                                    John Smith
-                                  </a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Build Responsive Real World Websites with Crash
-                              Course
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>12+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>70hr 30min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>4.0</span> (15)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-07.jpg"
-                            />
-                          </a>
-                          <div className="price">
-                            <h3>
-                              $70 <span>$80.00</span>
-                            </h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user6.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">
-                                    Stella Johnson
-                                  </a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Learn JavaScript and Express to become a Expert
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>15+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>70hr 30min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>4.6</span> (15)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-
-                  {/* <!-- Course Grid --> */}
-                  <div className="col-xxl-4 col-md-6 d-flex">
-                    <div className="course-box flex-fill">
-                      <div className="product">
-                        <div className="product-img">
-                          <a href="course-details.html">
-                            <img
-                              className="img-fluid"
-                              alt="Img"
-                              src="assets/img/course/course-08.jpg"
-                            />
-                          </a>
-                          <div className="price combo">
-                            <h3>FREE</h3>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <div className="course-group d-flex">
-                            <div className="course-group-img d-flex">
-                              <a href="instructor-profile.html">
-                                <img
-                                  src="assets/img/user/user1.jpg"
-                                  alt="Img"
-                                  className="img-fluid"
-                                />
-                              </a>
-                              <div className="course-name">
-                                <h4>
-                                  <a href="instructor-profile.html">
-                                    Nicole Brown
-                                  </a>
-                                </h4>
-                                <p>Instructor</p>
-                              </div>
-                            </div>
-                            <div className="course-share d-flex align-items-center justify-content-center">
-                              <a href="#">
-                                <i className="fa-regular fa-heart"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <h3 className="title instructor-text">
-                            <a href="course-details.html">
-                              Introduction to Programming- Python & Java
-                            </a>
-                          </h3>
-                          <div className="course-info d-flex align-items-center">
-                            <div className="rating-img d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-01.svg"
-                                alt="Img"
-                              />
-                              <p>10+ Lesson</p>
-                            </div>
-                            <div className="course-view d-flex align-items-center">
-                              <img
-                                src="assets/img/icon/icon-02.svg"
-                                alt="Img"
-                              />
-                              <p>70hr 30min</p>
-                            </div>
-                          </div>
-                          <div className="rating mb-0">
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <i className="fas fa-star filled"></i>
-                            <span className="d-inline-block average-rating">
-                              <span>5.0</span> (13)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <!-- /Course Grid --> */}
-                </div>
-                <div className="dash-pagination">
-                  <div className="row align-items-center">
-                    <div className="col-6">
-                      <p>Page 1 of 2</p>
-                    </div>
-                    <div className="col-6">
-                      <ul className="pagination">
-                        <li className="active">
-                          <a href="#">1</a>
-                        </li>
-                        <li>
-                          <a href="#">2</a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <i className="bx bx-chevron-right"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* <!-- Student Dashboard --> */}
             </div>
-          </div>
-        </div>
-        {/* <!-- /Page Content --> */}
-      </div></>;
-};
+            {/* <!-- Calendar End --> */}
 
-export default Dashboard;
+            {/* <!-- Donut Chart Start --> */}
+            <div class="card mt-24">
+                <div class="card-header border-bottom border-gray-100 flex-between gap-8 flex-wrap">
+                    <h5 class="mb-0">Most Activity</h5>
+                    <div class="dropdown flex-shrink-0">
+                        <button class="text-gray-400 text-xl d-flex rounded-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ph-fill ph-dots-three-outline"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
+                            <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                                <div class="card-body p-12">
+                                    <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
+                                        <ul>
+                                            <li class="mb-0">
+                                                <a href="students.html" class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start">
+                                                    <span class="text"> <i class="ph ph-user me-4"></i> View</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="flex-center">
+                        <div id="activityDonutChart" class="w-auto d-inline-block"></div>
+                    </div>
+
+                    <div class="flex-between gap-8 flex-wrap mt-24">
+                        <div class="flex-align flex-column">
+                            <span class="w-12 h-12 bg-white border border-3 border-main-600 rounded-circle"></span>
+                            <span class="text-13 my-4 text-main-600">Mentoring</span>
+                            <h6 class="mb-0">65.2%</h6>
+                        </div>
+                        <div class="flex-align flex-column">
+                            <span class="w-12 h-12 bg-white border border-3 border-main-two-600 rounded-circle"></span>
+                            <span class="text-13 my-4 text-main-two-600">Organization</span>
+                            <h6 class="mb-0">25.0%</h6>
+                        </div>
+                        <div class="flex-align flex-column">
+                            <span class="w-12 h-12 bg-white border border-3 border-warning-600 rounded-circle"></span>
+                            <span class="text-13 my-4 text-warning-600">Planning</span>
+                            <h6 class="mb-0">9.8%</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* <!-- Donut Chart End --> */}
+          
+
+        </div>
+    </div>
+</div>
+
+  )
+}
+
+export default Dashboard

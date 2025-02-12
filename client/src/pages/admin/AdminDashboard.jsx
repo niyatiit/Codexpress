@@ -22,6 +22,8 @@ import ManageFeedback from './ManageFeedback';
 import ManageFees from './ManageFees';
 import logo from '../../assets/logo.png'
 import NotFoundPage from '../NotFoundPage';
+import Footer from '../../components/Footer';
+import Dashboard2 from './Dashboard2';
 
 
 const AdminDashboard = () => {
@@ -32,7 +34,7 @@ const AdminDashboard = () => {
             <div class="preloader">
                 <div class="loader"></div>
             </div>
-           
+
             {/* <!--==================== Preloader End ====================--> */}
 
             {/* <!--==================== Sidebar Overlay End ====================--> */}
@@ -47,10 +49,10 @@ const AdminDashboard = () => {
                 {/* <!-- sidebar close btn --> */}
 
                 <Link to="/admin" class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 px-36 pt-20 py-42">
-                        <img src={logo} alt="" />
-                    </Link>
+                    <img src={logo} alt="" />
+                </Link>
 
-                <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
+                <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm pb-20">
                     <div class="p-20 pt-10">
                         <ul class="sidebar-menu">
                             <li class="sidebar-menu__item">
@@ -203,7 +205,7 @@ const AdminDashboard = () => {
                             {/* <li class="sidebar-menu__item">
                         <span class="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">Settings</span>
                     </li> */}
-                            
+
                             <li class="sidebar-menu__item">
                                 <Link to="/admin/manage/attendance" class="sidebar-menu__link">
                                     <span class="icon"><i class="ph ph-pen"></i></span>
@@ -278,7 +280,7 @@ const AdminDashboard = () => {
 
                         </ul>
                     </div>
-                    <div class="p-20 pt-80">
+                    {/* <div class="p-20 pt-80">
                         <div class="bg-main-50 p-20 pt-0 rounded-16 text-center mt-74">
                             <span class="border border-5 bg-white mx-auto border-primary-50 w-114 h-114 rounded-circle flex-center text-success-600 text-2xl translate-n74">
                                 <img src="assets/images/icons/certificate.png" alt="" class="centerised-img" />
@@ -289,115 +291,116 @@ const AdminDashboard = () => {
                                 <a href="pricing-plan.html" class="btn btn-main mt-16 rounded-pill">Get Access</a>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
             </aside>
             {/* <!-- ============================ Sidebar End  ============================ --> */}
 
             <div class="dashboard-main-wrapper">
-            <div className="top-navbar flex-between gap-16 px-4 py-1">
-            {/* Left Section: Toggle Button & Search Bar */}
-            <div className="flex-align gap-16">
-                <button type="button" className="toggle-btn d-xl-none d-flex text-26 text-gray-500">
-                    <i className="ph ph-list"></i>
-                </button>
+                <div className="top-navbar flex-between gap-16 px-4 py-1">
+                    {/* Left Section: Toggle Button & Search Bar */}
+                    <div className="flex-align gap-16">
+                        <button type="button" className="toggle-btn d-xl-none d-flex text-26 text-gray-500">
+                            <i className="ph ph-list"></i>
+                        </button>
 
-                <form action="#" className="w-350 d-sm-block d-none">
-                    <div className="position-relative">
-                        <input 
-                            type="text" 
-                            className="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15" 
-                            placeholder="Search..." 
-                        />
+                        <form action="#" className="w-350 d-sm-block d-none">
+                            <div className="position-relative">
+                                <input
+                                    type="text"
+                                    className="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15"
+                                    placeholder="Search..."
+                                />
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
 
-            {/* Right Section: Notifications, Language, User Profile */}
-            <div className="flex-align gap-16">
-                {/* Notification Dropdown */}
-                <div className="dropdown">
-                    <button className="dropdown-btn text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown">
-                        <span className="position-relative">
-                            <i className="ph ph-bell"></i>
-                            <span className="alarm-notify position-absolute end-0"></span>
-                        </span>
-                    </button>
-                    <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                        <div className="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
-                            <div className="card-body p-0">
-                                <div className="py-8 px-24 bg-main-600 flex-between">
-                                    <h5 className="text-xl fw-semibold text-white mb-0">Notifications</h5>
-                                    <div className="flex-align gap-12">
-                                        <button type="button" className="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600"> New </button>
-                                        <button type="button" className="close-dropdown hover-scale-1 text-xl text-white"><i className="ph ph-x"></i></button>
-                                    </div>
-                                </div>
-                                <div className="p-24 max-h-270 overflow-y-auto scroll-sm">
-                                    {/* Sample Notification */}
-                                    <div className="d-flex align-items-start gap-12 border-bottom border-gray-100 mb-24 pb-24">
-                                        <img src="assets/images/thumbs/notification-img1.png" alt="" className="w-48 h-48 rounded-circle object-fit-cover" />
-                                        <div>
-                                            <a href="#" className="fw-medium text-15 text-gray-300 hover-text-main-600 text-line-2">
-                                                Ashwin Bose is requesting access to Design File - Final Project.
-                                            </a>
-                                            <div className="mt-16 flex-align gap-8">
-                                                <button className="btn btn-main py-8 text-15 fw-normal px-16">Accept</button>
-                                                <button className="btn btn-outline-gray py-8 text-15 fw-normal px-16">Decline</button>
+                    {/* Right Section: Notifications, Language, User Profile */}
+                    <div className="flex-align gap-16">
+                        {/* Notification Dropdown */}
+                        <div className="dropdown">
+                            <button className="dropdown-btn text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown">
+                                <span className="position-relative">
+                                    <i className="ph ph-bell"></i>
+                                    <span className="alarm-notify position-absolute end-0"></span>
+                                </span>
+                            </button>
+                            <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
+                                <div className="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
+                                    <div className="card-body p-0">
+                                        <div className="py-8 px-24 bg-main-600 flex-between">
+                                            <h5 className="text-xl fw-semibold text-white mb-0">Notifications</h5>
+                                            <div className="flex-align gap-12">
+                                                <button type="button" className="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600"> New </button>
+                                                <button type="button" className="close-dropdown hover-scale-1 text-xl text-white"><i className="ph ph-x"></i></button>
                                             </div>
-                                            <span className="text-gray-200 text-13 mt-8">2 mins ago</span>
                                         </div>
+                                        <div className="p-24 max-h-270 overflow-y-auto scroll-sm">
+                                            {/* Sample Notification */}
+                                            <div className="d-flex align-items-start gap-12 border-bottom border-gray-100 mb-24 pb-24">
+                                                <img src="assets/images/thumbs/notification-img1.png" alt="" className="w-48 h-48 rounded-circle object-fit-cover" />
+                                                <div>
+                                                    <a href="#" className="fw-medium text-15 text-gray-300 hover-text-main-600 text-line-2">
+                                                        Ashwin Bose is requesting access to Design File - Final Project.
+                                                    </a>
+                                                    <div className="mt-16 flex-align gap-8">
+                                                        <button className="btn btn-main py-8 text-15 fw-normal px-16">Accept</button>
+                                                        <button className="btn btn-outline-gray py-8 text-15 fw-normal px-16">Decline</button>
+                                                    </div>
+                                                    <span className="text-gray-200 text-13 mt-8">2 mins ago</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="#" className="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline"> View All </a>
                                     </div>
                                 </div>
-                                <a href="#" className="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline"> View All </a>
+                            </div>
+                        </div>
+
+
+                        {/* User Profile Dropdown */}
+                        <div className="dropdown">
+                            <button className="users arrow-down-icon border border-gray-200 rounded-pill py-2 px-30 position-relative" type="button" data-bs-toggle="dropdown">
+                                <span className="position-relative">
+                                    <img src="assets/images/thumbs/user-img.png" alt="User" className="h-32 w-32 rounded-circle" />
+                                    <span className="activation-badge w-8 h-8 position-absolute inset-block-end-0 inset-inline-end-0"></span>
+                                </span>
+                            </button>
+                            <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0 ">
+                                <div className="card border border-gray-100 rounded-12 box-shadow-custom">
+                                    <div className="card-body">
+                                        <div className="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
+                                            <img src="assets/images/thumbs/user-img.png" alt="" className="w-54 h-54 rounded-circle" />
+                                            <div>
+                                                <h4 className="mb-0">Michel John</h4>
+                                                <p className="fw-medium text-13 text-gray-200">examplemail@mail.com</p>
+                                            </div>
+                                        </div>
+                                        <ul className="max-h-270 overflow-y-auto scroll-sm pe-4">
+                                            {[
+                                                { href: "setting.html", icon: "ph-gear", label: "Account Settings" },
+                                                { href: "pricing-plan.html", icon: "ph-chart-bar", label: "Upgrade Plan" },
+                                            ].map((item, index) => (
+                                                <li className="mb-4" key={index}>
+                                                    <a href={item.href} className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium">
+                                                        <span className={`text-2xl text-primary-600 d-flex`}><i className={`ph ${item.icon}`}></i></span>
+                                                        <span className="text">{item.label}</span>
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-                {/* User Profile Dropdown */}
-                <div className="dropdown">
-                    <button className="users arrow-down-icon border border-gray-200 rounded-pill py-2 px-30 position-relative" type="button" data-bs-toggle="dropdown">
-                        <span className="position-relative">
-                            <img src="assets/images/thumbs/user-img.png" alt="User" className="h-32 w-32 rounded-circle" />
-                            <span className="activation-badge w-8 h-8 position-absolute inset-block-end-0 inset-inline-end-0"></span>
-                        </span>
-                    </button>
-                    <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0 ">
-                        <div className="card border border-gray-100 rounded-12 box-shadow-custom">
-                            <div className="card-body">
-                                <div className="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
-                                    <img src="assets/images/thumbs/user-img.png" alt="" className="w-54 h-54 rounded-circle" />
-                                    <div>
-                                        <h4 className="mb-0">Michel John</h4>
-                                        <p className="fw-medium text-13 text-gray-200">examplemail@mail.com</p>
-                                    </div>
-                                </div>
-                                <ul className="max-h-270 overflow-y-auto scroll-sm pe-4">
-                                    {[
-                                        { href: "setting.html", icon: "ph-gear", label: "Account Settings" },
-                                        { href: "pricing-plan.html", icon: "ph-chart-bar", label: "Upgrade Plan" },
-                                    ].map((item, index) => (
-                                        <li className="mb-4" key={index}>
-                                            <a href={item.href} className="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium">
-                                                <span className={`text-2xl text-primary-600 d-flex`}><i className={`ph ${item.icon}`}></i></span>
-                                                <span className="text">{item.label}</span>
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
                 {/* <div class="dashboard-body"> */}
                 <Routes>
+                    {/* <Route path="/" element={<Dashboard2 />} /> */}
                     <Route path="/" element={<Dashboard />} />
                     <Route path="add/course" element={<AddCourse />} />
                     <Route path="add/student" element={<AddStudent />} />
@@ -416,23 +419,13 @@ const AdminDashboard = () => {
                     <Route path="manage/certificates" element={<ManageCertificates />} />
                     <Route path="manage/attendance" element={<Attendance />} />
                     <Route path="issue/certificate" element={<IssueCertificate />} />
-                    <Route path='manage/fees' element={<ManageFees/>}/>
-                    <Route path="*" element={<NotFoundPage/>} />  {/* Handle unknown routes */}
+                    <Route path='manage/fees' element={<ManageFees />} />
+                    <Route path="*" element={<NotFoundPage />} />  {/* Handle unknown routes */}
 
                     {/* Add more routes as needed */}
                 </Routes>
-        
-                <div class="dashboard-footer">
-                    <div class="flex-between flex-wrap gap-16">
-                        <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright Edmate 2024, All Right Reserverd</p>
-                        <div class="flex-align flex-wrap gap-16">
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">License</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">More Themes</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Documentation</a>
-                            <a href="#" class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Support</a>
-                        </div>
-                    </div>
-                </div>
+
+               <Footer/>
             </div>
 
 
