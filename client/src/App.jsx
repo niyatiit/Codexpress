@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import NotFoundPage from "./pages/NotFoundPage";
 import HomeTwo from "./pages/HomeTwo";
 import Courses from "./pages/Courses";
+import Faqs from "./pages/Faqs";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgetPassword/>} />
             <Route path="/register" element={<Register />} />
+            <Route path="/faq" element={<Faqs />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/admin/*" element={<AdminDashboard />} /> {/* Use wildcard for sub-routes */}
             <Route path="/faculty/*" element={<FacultyDashboard />} /> 
