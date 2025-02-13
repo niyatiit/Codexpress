@@ -5,9 +5,13 @@ const cors=require("cors")
 const Courses=require("./models/course.model")
 app.use(express.json())
 app.use(cors())
-const connectDB=require('./config/db')
-connectDB()
+const authRoutes = require('./routes/authRoutes');
 
+
+const connectDB=require('./config/db')
+
+connectDB()
+app.use("/api/auth", authRoutes); // Authentication routes
 app.get('/', (req, res) => {
     res.send("hello from server")
 })

@@ -1,30 +1,48 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-const UserSchema = new mongoose.Schema({
-  full_name: { type: String, required: true }, // Full name of the user
-  email: { type: String, required: true, unique: true }, // Unique email
-  password: { type: String, required: true }, // Encrypted password
-  role: { type: mongoose.Schema.Types.ObjectId, ref: 'role', required: true }, // Reference to Role model
-  phone: { type: String, required: true, unique: true }, // Contact number
-  profile_picture: { type: String, default: "" }, // Optional profile picture URL
-  gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true }, // Gender field
-  dob: { type: Date }, // Date of birth
-  address: { type: String, required: true }, // Address of the user
-  pincode: { type: String, required: true }, // Postal code
-  state: { type: mongoose.Schema.Types.ObjectId, ref: 'state', required: true }, // Reference to State model
-  city: { type: mongoose.Schema.Types.ObjectId, ref: 'city', required: true }, // Reference to City model
-  nationality: { type: String, default: "Indian" }, // Nationality field
-  is_active: { type: Boolean, default: true }, // User status (Active/Inactive)
-  is_verified: { type: Boolean, default: false }, // Email verification status
-  last_login: { type: Date }, // Last login timestamp
-  created_at: { type: Date, default: Date.now }, // Automatically set creation date
-  updated_at: { type: Date, default: Date.now } // Automatically update when modified
-});
+const UserSchema = new mongoose.Schema(
+  {
+    
+    username: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"],
+    },
+    password: { type: String, required: true },
+    role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"],
+    },
+    profile_picture: { type: String, default: "" },
+    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+    dob: { type: Date },
+    address: { type: String, required: true },
+    pincode: { type: String, required: true },
+    state: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "State",
+      required: true,
+    },
+    city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
+    nationality: { type: String, default: "Indian" },
+    is_active: { type: Boolean, default: true },
+    is_verified: { type: Boolean, default: false },
+    last_login: { type: Date },
+  },
+  { timestamps: true }
+);
 
-// Middleware to update `updated_at` before saving changes
-UserSchema.pre('save', function (next) {
-  this.updated_at = new Date();
+// Hash password before saving
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

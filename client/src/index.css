@@ -84,4 +84,28 @@
     color: #999;
     pointer-events: none;
   }
-  
+  .role-button {
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 20px;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 20px;
+border:1px solid black;
+  }
+
+  .role-button.active {
+    border-radius: 20px;
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .role-button input[type='radio'] {
+    display: none;
+  }
