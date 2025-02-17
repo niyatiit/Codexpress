@@ -1,32 +1,81 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../../assets/logo.png';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../../assets/logo.png";
+import axios from "axios";
 
 const Register = () => {
-  // State to manage form data
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    role: '', // 'faculty' or 'student'
+    username: "",
+    email: "",
+    password: "",
+    role: "student",
     rememberMe: false,
   });
 
-  // Handle input changes
-  const handleInputChange = (e) => {
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleInputChange =  (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    // Clear error on input change
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+   
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form Data Submitted:', formData);
-    // You can add your form submission logic here (e.g., API call)
+  const validateForm = () => {
+    let newErrors = {};
+    if (!formData.username.trim()) newErrors.username = "Username is required.";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email.";
+    }
+    if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    console.log("Form Submitted:", formData);
+  
+    try {
+      const res = await axios.post("http://localhost:3000/api/auth/signup", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+  
+      console.log(res.data);
+      alert("Registration Successful!");
+  
+      // Reset form
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        role: "student",
+        rememberMe: false,
+      });
+  
+    } catch (error) {
+      console.error("Error:", error);
+      alert(error.response?.data?.message || "Registration failed!");
+    }
+  };
+  
 
   return (
     <section className="auth d-flex gap-90">
@@ -44,38 +93,27 @@ const Register = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-            {/* Role Selection (Styled as Buttons) */}
+            {/* Role Selection */}
             <div className="mb-20">
               <label className="form-label mb-8 h6">Register As</label>
               <div className="d-flex gap-16">
-                <label
-                  className={`role-button ${
-                    formData.role === 'faculty' ? 'active' : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value="faculty"
-                    checked={formData.role === 'faculty'}
-                    onChange={handleInputChange}
-                  />
-                  Faculty
-                </label>
-                <label
-                  className={`role-button ${
-                    formData.role === 'student' ? 'active' : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value="student"
-                    checked={formData.role === 'student'}
-                    onChange={handleInputChange}
-                  />
-                  Student
-                </label>
+                {["faculty", "student"].map((role) => (
+                  <label
+                    key={role}
+                    className={`role-button ${
+                      formData.role === role ? "active" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value={role}
+                      checked={formData.role === role}
+                      onChange={handleInputChange}
+                    />
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </label>
+                ))}
               </div>
             </div>
 
@@ -98,6 +136,9 @@ const Register = () => {
                   <i className="ph ph-user"></i>
                 </span>
               </div>
+              {errors.username && (
+                <p className="error-text">{errors.username}</p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -119,31 +160,37 @@ const Register = () => {
                   <i className="ph ph-envelope"></i>
                 </span>
               </div>
+              {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
             {/* Password Field */}
             <div className="mb-24">
-              <label htmlFor="current-password" className="form-label mb-8 h6">
+              <label htmlFor="password" className="form-label mb-8 h6">
                 Password
               </label>
               <div className="position-relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   className="form-control py-11 ps-40"
-                  id="current-password"
+                  id="password"
                   name="password"
                   placeholder="Enter Password"
                   value={formData.password}
                   onChange={handleInputChange}
                 />
-                <span className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y ph ph-eye-slash"></span>
+                <span
+                  className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <i className={`ph ph-eye${showPassword ? "" : "-slash"}`}></i>
+                </span>
                 <span className="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
                   <i className="ph ph-lock"></i>
                 </span>
               </div>
-              <span className="text-gray-900 text-15 mt-4">
-                Must be at least 8 characters
-              </span>
+              {errors.password && (
+                <p className="error-text">{errors.password}</p>
+              )}
             </div>
 
             {/* Remember Me Checkbox */}
@@ -157,7 +204,10 @@ const Register = () => {
                   checked={formData.rememberMe}
                   onChange={handleInputChange}
                 />
-                <label className="form-check-label text-15 flex-grow-1" htmlFor="remember">
+                <label
+                  className="form-check-label text-15 flex-grow-1"
+                  htmlFor="remember"
+                >
                   Remember Me
                 </label>
               </div>
@@ -171,45 +221,13 @@ const Register = () => {
             {/* Login Link */}
             <p className="mt-32 text-gray-600 text-center">
               Already have an account?
-              <Link to="/login" className="text-main-600 hover-text-decoration-underline">
+              <Link
+                to="/login"
+                className="text-main-600 hover-text-decoration-underline"
+              >
                 Log In
               </Link>
             </p>
-
-            {/* Divider */}
-            <div className="divider my-32 position-relative text-center">
-              <span className="divider__text text-gray-600 text-13 fw-medium px-26 bg-white">
-                or
-              </span>
-            </div>
-
-            {/* Social Login Buttons */}
-            <ul className="flex-align gap-10 flex-wrap justify-content-center">
-              <li>
-                <a
-                  href="https://www.facebook.com/"
-                  className="w-38 h-38 flex-center rounded-6 text-facebook-600 bg-facebook-50 hover-bg-facebook-600 hover-text-white text-lg"
-                >
-                  <i className="ph-fill ph-facebook-logo"></i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.twitter.com/"
-                  className="w-38 h-38 flex-center rounded-6 text-twitter-600 bg-twitter-50 hover-bg-twitter-600 hover-text-white text-lg"
-                >
-                  <i className="ph-fill ph-twitter-logo"></i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.google.com/"
-                  className="w-38 h-38 flex-center rounded-6 text-google-600 bg-google-50 hover-bg-google-600 hover-text-white text-lg"
-                >
-                  <i className="ph ph-google-logo"></i>
-                </a>
-              </li>
-            </ul>
           </form>
         </div>
       </div>
