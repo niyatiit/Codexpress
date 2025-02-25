@@ -9,6 +9,8 @@
     padding: 20px;
     background-color: hsl(0, 0%, 98%);
     border-radius: 10px;
+    background: #0091ff35;
+
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
   
@@ -108,4 +110,26 @@ border:1px solid black;
 
   .role-button input[type='radio'] {
     display: none;
+  }
+
+
+  .sidebar-submenu {
+    display: none;
+  }
+  .sidebar-menu__item.open .sidebar-submenu {
+    display: block;
+  }
+  /* .sidebar-menu__item.active .sidebar-menu__item{
+    background: #0095ff;
+    
+  } */
+  /* .sidebar-menu__item.active{
+    
+    color: white;
+    background: #0095ff;
+  } */
+  .sidebar-menu__item.active .sidebar-menu__link,
+  .sidebar-submenu__item.active .sidebar-submenu__link {
+    /* background-color: #f0f0f0; Example active background color */
+    color: #0095ff; /* Example active text color */
   }

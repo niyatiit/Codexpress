@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Dashboard from './Dashboard'
 import { Routes, Route, Links } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NotFoundPage from '../../NotFoundPage'
 import Footer from '../../../components/Footer';
 import logo from '../../../assets/logo.png'
@@ -21,8 +21,23 @@ import ViewResources from './ViewResources';
 import Notifications from './Notifications';
 import Settings from './Settings';
 import Schedule from './Schedule';
+import Cookies from "js-cookie";
 
 const StudentDashboard2 = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate()
+  const handleLogout = () => {
+    Cookies.remove("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/student/login");
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <div>
 
@@ -116,8 +131,8 @@ const StudentDashboard2 = () => {
                   </li>
                 </ul>
               </li>
-               {/* schedule */}
-               <li className="sidebar-menu__item">
+              {/* schedule */}
+              <li className="sidebar-menu__item">
                 <Link to="/student/schedule" className="sidebar-menu__link">
                   <span className="icon"><i className="ph ph-calendar-blank"></i></span>
                   <span className="text">schedule</span>
@@ -188,7 +203,7 @@ const StudentDashboard2 = () => {
                 </ul>
               </li>
 
-             
+
               {/* Notifications */}
               <li className="sidebar-menu__item">
                 <Link to="/student/notifications" className="sidebar-menu__link">
@@ -207,10 +222,10 @@ const StudentDashboard2 = () => {
 
               {/* Logout */}
               <li className="sidebar-menu__item">
-                <Link to="/logout" className="sidebar-menu__link">
+                <button onClick={handleLogout} className="sidebar-menu__link">
                   <span className="icon"><i className="ph ph-sign-out"></i></span>
                   <span className="text">Logout</span>
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -240,50 +255,51 @@ const StudentDashboard2 = () => {
                 />
               </div>
             </form>
+            
           </div>
 
           {/* Right Section: Notifications, Language, User Profile */}
           <div className="flex-align gap-16">
-            {/* Notification Dropdown */}
-            <div className="dropdown">
-              <button className="dropdown-btn text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center" type="button" data-bs-toggle="dropdown">
-                <span className="position-relative">
-                  <i className="ph ph-bell"></i>
-                  <span className="alarm-notify position-absolute end-0"></span>
+          
+          <div className="relative border-[1px] rounded-[100px] py-[7px] hover:bg-zinc-200 transition">
+              <button
+                onClick={toggleDropdown}
+                className="flex items-center gap-2 px-2 focus:outline-none"
+              >
+                
+                <span className="text-blue-500 font-medium">
+                  @{user.username || "User"}
                 </span>
+                <img
+                  src={
+                    user.profile_picture ||
+                    "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"
+                  }
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full"
+                />
               </button>
-              <div className="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                <div className="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
-                  <div className="card-body p-0">
-                    <div className="py-8 px-24 bg-main-600 flex-between">
-                      <h5 className="text-xl fw-semibold text-white mb-0">Notifications</h5>
-                      <div className="flex-align gap-12">
-                        <button type="button" className="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600"> New </button>
-                        <button type="button" className="close-dropdown hover-scale-1 text-xl text-white"><i className="ph ph-x"></i></button>
-                      </div>
-                    </div>
-                    <div className="p-24 max-h-270 overflow-y-auto scroll-sm">
-                      {/* Sample Notification */}
-                      <div className="d-flex align-items-start gap-12 border-bottom border-gray-100 mb-24 pb-24">
-                        <img src="assets/images/thumbs/notification-img1.png" alt="" className="w-48 h-48 rounded-circle object-fit-cover" />
-                        <div>
-                          <a href="#" className="fw-medium text-15 text-gray-300 hover-text-main-600 text-line-2">
-                            Ashwin Bose is requesting access to Design File - Final Project.
-                          </a>
-                          <div className="mt-16 flex-align gap-8">
-                            <button className="btn btn-main py-8 text-15 fw-normal px-16">Accept</button>
-                            <button className="btn btn-outline-gray py-8 text-15 fw-normal px-16">Decline</button>
-                          </div>
-                          <span className="text-gray-200 text-13 mt-8">2 mins ago</span>
-                        </div>
-                      </div>
-                    </div>
-                    <a href="#" className="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline"> View All </a>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-3 w-full bg-white rounded-lg shadow-lg border border-gray-200 ">
+                  <div className="py-2">
+                    <Link
+                      to="/student"
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                    >
+                      Profile+
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                    >
+                      Logout
+                    </button>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-
 
           </div>
         </div>
@@ -292,7 +308,7 @@ const StudentDashboard2 = () => {
         <div class="dashboard-body">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="enrolled/courses" element={<EnrolledCourses/>} />
+            <Route path="enrolled/courses" element={<EnrolledCourses />} />
             <Route path="available/courses" element={<AvailableCourses />} />
             <Route path="my-batches" element={<MyBatches />} />
             <Route path="scan/qr" element={<ScanQRCode />} />
@@ -308,7 +324,7 @@ const StudentDashboard2 = () => {
             <Route path="view/resources" element={<ViewResources />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="settings" element={<Settings />} />
-           
+
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
 

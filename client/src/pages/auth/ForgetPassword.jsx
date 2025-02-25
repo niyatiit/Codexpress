@@ -1,78 +1,117 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from '../../assets/logo.png'
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import logo from '../../assets/logo.png';
+
 const ForgetPassword = () => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const url = import.meta.env.VITE_BACKEND_URL;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Simple email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`http://localhost:3000/auth/forgot-password`, { email });
+      if (response.data.success) {
+        toast.success("Password reset link sent to your email!");
+      } else {
+        toast.error(response.data.message || "Something went wrong.");
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message || "Failed to send reset link.");
+      } else if (error.request) {
+        toast.error("No response from the server. Please try again.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section class="auth d-flex">
-      <div class="auth-left bg-main-50 flex-center p-24">
-        <img src="assets/images/thumbs/auth-img3.png" alt="" />
+    <section className="auth d-flex">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <div className="auth-left bg-main-50 flex-center p-24">
+        <img src="/assets/images/thumbs/auth-img3.png" alt="" />
       </div>
-      <div class="auth-right pb-140 px-120 flex-center flex-column">
-        <div class="auth-right__inner mx-auto w-100">
+      <div className="auth-right pb-140 px-120 flex-center flex-column">
+        <div className="auth-right__inner mx-auto w-100">
           <Link to="/" className="sidebar__logo py-40 position-sticky">
             <img src={logo} alt="Logo" className="h-32" />
           </Link>
 
-          <h2 class="mb-8">Forgot Password?</h2>
-          <p class="text-gray-600 text-15 mb-32">
+          <h2 className="mb-8">Forgot Password?</h2>
+          <p className="text-gray-600 text-15 mb-32">
             Lost your password? Please enter your email address. You will
             receive a link to create a new password via email.
           </p>
 
-          <form action="#">
-            <div class="mb-24">
-              <label for="email" class="form-label mb-8 h6">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-24">
+              <label htmlFor="email" className="form-label mb-8 h6">
                 Email{" "}
               </label>
-              <div class="position-relative">
+              <div className="position-relative">
                 <input
                   type="email"
-                  class="form-control py-11 ps-40"
+                  className="form-control py-11 ps-40"
                   id="email"
                   placeholder="Type your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  aria-label="Email address"
                 />
-                <span class="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
-                  <i class="ph ph-envelope"></i>
+                <span className="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
+                  <i className="ph ph-envelope"></i>
                 </span>
               </div>
             </div>
-            <button type="submit" class="btn btn-main rounded-pill w-100">
-              Send Reset Link
+            <button
+              type="submit"
+              className="btn btn-main rounded-pill w-100"
+              disabled={loading}
+              aria-label="Send reset link"
+            >
+              {loading ? (
+                <div className="spinner-border spinner-border-sm" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              ) : (
+                "Send Reset Link"
+              )}
             </button>
 
             <Link
-              to="/login"
-              class="my-32 text-main-600 flex-align gap-8 justify-content-center"
+              to="/student/login"
+              className="my-32 text-main-600 flex-align gap-8 justify-content-center"
             >
-              <i class="ph ph-arrow-left d-flex"></i> Back To Login
+              <i className="ph ph-arrow-left d-flex"></i> Back To Login
             </Link>
-
-            <ul class="flex-align gap-10 flex-wrap justify-content-center">
-              <li>
-                <a
-                  href="https://www.facebook.com/"
-                  class="w-38 h-38 flex-center rounded-6 text-facebook-600 bg-facebook-50 hover-bg-facebook-600 hover-text-white text-lg"
-                >
-                  <i class="ph-fill ph-facebook-logo"></i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.twitter.com/"
-                  class="w-38 h-38 flex-center rounded-6 text-twitter-600 bg-twitter-50 hover-bg-twitter-600 hover-text-white text-lg"
-                >
-                  <i class="ph-fill ph-twitter-logo"></i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.google.com/"
-                  class="w-38 h-38 flex-center rounded-6 text-google-600 bg-google-50 hover-bg-google-600 hover-text-white text-lg"
-                >
-                  <i class="ph ph-google-logo"></i>
-                </a>
-              </li>
-            </ul>
           </form>
         </div>
       </div>

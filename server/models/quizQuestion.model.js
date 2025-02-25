@@ -10,4 +10,4 @@ const QuizQuestionSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now }, // Automatically set the creation date
 });
 
-module.exports = mongoose.model('quizQuestion', QuizQuestionSchema); // Use 'quizQuestion' as the model name
+module.exports = mongoose.model('QuizQuestion', quizQuestionSchema); // Use 'quizQuestion' as the model name

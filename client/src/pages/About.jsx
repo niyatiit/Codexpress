@@ -1,134 +1,78 @@
 import React from "react";
 import Header from "../components/Header";
-import logo from "../assets/logo-white.png";
-import { Link } from "react-router-dom";
+
 const About = () => {
   return (
-    <div className="bg-gray-100 min-h-screen">
-      {/* Hero Section */}
-     <Header/>
+    <div className="min-h-screen bg-white">
+      <Header />
       
-      {/* Features Section */}
-      <section className="max-w-5xl mx-auto py-12 px-6">
-        <h2 className="text-3xl font-semibold text-gray-800 text-center mb-8">Why Choose Codexpress?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 bg-white shadow-lg rounded-lg text-center">
-            <h3 className="text-xl font-bold">Comprehensive Tutorials</h3>
-            <p className="mt-2 text-gray-600">Step-by-step guides to enhance your coding skills.</p>
-          </div>
-          <div className="p-6 bg-white shadow-lg rounded-lg text-center">
-            <h3 className="text-xl font-bold">Project-Based Learning</h3>
-            <p className="mt-2 text-gray-600">Hands-on projects to apply your knowledge.</p>
-          </div>
-          <div className="p-6 bg-white shadow-lg rounded-lg text-center">
-            <h3 className="text-xl font-bold">Community Support</h3>
-            <p className="mt-2 text-gray-600">Join our active community for help and collaboration.</p>
+      <main className="max-w-4xl mx-auto px-4 py-16 mt-80">
+        {/* Hero Section */}
+        <div className="mb-20">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            About CodeXpress
+          </h1>
+          <p className="text-md text-gray-600 leading-relaxed">
+            We provide high-quality coding education to help you master modern technologies and advance your career.
+          </p>
+        </div>
+
+        {/* Mission Section */}
+        <div className="mb-48">
+          <h2 className="text-3xl font-semibold text-gray-900 mt-5 mb-2">
+            Our Mission
+          </h2>
+          <p className="text-md text-gray-600 leading-relaxed ">
+            Making professional coding education accessible to everyone through structured learning paths and hands-on practice.
+          </p>
+        </div>
+
+        {/* Team Section */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-semibold text-gray-900 mb-16">
+            Leadership Team
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                name: "Khushi Pal",
+                role: "Founder & CEO",
+                image: "https://i.pinimg.com/736x/ce/e1/1a/cee11a1ad91841c70fbe067064df6f2e.jpg"
+              },
+              {
+                name: "Niyati Patel",
+                role: "Head of Education",
+                image: "https://i.pinimg.com/736x/38/d5/64/38d564e91b64bc0258896e35c8df359e.jpg"
+              },
+              {
+                name: "Jinal Patel",
+                role: "Tech Director",
+                image: "https://i.pinimg.com/736x/0e/bd/b9/0ebdb9f8cb628dc5224bd2f84a2ff9e2.jpg"
+              }
+            ].map((member, index) => (
+              <div key={index} className="text-center bg-blue-100 py-4 rounded-lg">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-44 h-48 mx-auto rounded-full mb-4"
+                />
+                <h3 className="text-lg font-medium text-gray-900">{member.name}</h3>
+                <p className="text-gray-600">{member.role}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
 
-{/* Footer */}
-<footer className="footer">
-          {/* Footer Top */}
-          <div className="footer-top">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-about">
-                    <div className="footer-logo">
-                      <img src={logo} alt="logo" />
-                    </div>
-                    <div className="footer-about-content">
-                      <p>Codexpress is your go-to platform for coding tutorials, resources, and community support. Join us to enhance your coding skills and connect with like-minded developers.</p>
-                    </div>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-2 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-menu">
-                    <h2 className="footer-title">Quick Links</h2>
-                    <ul>
-                      <li><a href="/">Home</a></li>
-                      <li><a href="/about">About Us</a></li>
-                      <li><a href="/courses">Courses</a></li>
-                      <li><a href="/blog">Blog</a></li>
-                      <li><a href="/contact">Contact</a></li>
-                    </ul>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-2 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-menu">
-                    <h2 className="footer-title">Resources</h2>
-                    <ul>
-                      <li><a href="/faq">FAQ</a></li>
-                      <li><a href="/privacy-policy">Privacy Policy</a></li>
-                      <li><a href="/terms">Terms of Service</a></li>
-                      <li><a href="/support">Support</a></li>
-                      <li><a href="/community">Community</a></li>
-                    </ul>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-4 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-contact">
-                    <h2 className="footer-title">Contact Us</h2>
-                    <div className="footer-contact-info">
-                      <div className="footer-address">
-                        <img src="assets/img/icon/icon-20.svg" alt="Img" className="img-fluid" />
-                        <p>3556 Beech Street, San Francisco,<br />California, CA 94108</p>
-                      </div>
-                      <p>
-                        <img src="assets/img/icon/icon-19.svg" alt="Img" className="img-fluid" />
-                        <a href="mailto:info@codexpress.com">info@codexpress.com</a>
-                      </p>
-                      <p className="mb-0">
-                        <img src="assets/img/icon/icon-21.svg" alt="Img" className="img-fluid" />
-                        +19 123-456-7890
-                      </p>
-                    </div>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* /Footer Top */}
-
-          {/* Footer Bottom */}
-          <div className="footer-bottom">
-            <div className="container">
-              {/* Copyright */}
-              <div className="copyright">
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="privacy-policy">
-                      <ul>
-                        <li><a href="/terms">Terms</a></li>
-                        <li><a href="/privacy-policy">Privacy</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="copyright-text">
-                      <p className="mb-0">&copy; 2024 Codexpress. All rights reserved.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* /Copyright */}
-            </div>
-          </div>
-          {/* /Footer Bottom */}
-        </footer>
-        {/* /Footer */}
+        {/* CTA Section */}
+        <div className="text-center">
+          <button 
+            onClick={() => window.location.href = "/courses"}
+            className="bg-blue-600 text-white px-48 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Explore Courses
+          </button>
+        </div>
+      </main>
     </div>
   );
 };

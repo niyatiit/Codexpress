@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Define the schema for the Role model
-const RoleSchema = new mongoose.Schema({
+const roleSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true }, // Role name (e.g., 'Admin', 'Student', 'Faculty')
-  description: { type: String },                        // Optional description of the role
-  created_at: { type: Date, default: Date.now },        // Automatically set the creation date
+  description: { type: String }, // Optional description of the role
+  created_at: { type: Date, default: Date.now }, // Automatically set the creation date
 });
 
-module.exports = mongoose.model('role', RoleSchema); // Use 'role' as the model name
+// Ensure model name starts with an uppercase letter and matches references
+module.exports = mongoose.model("Role", roleSchema); 

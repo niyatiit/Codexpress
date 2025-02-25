@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Batch model
-const BatchSchema = new mongoose.Schema({
-  name: { type: String, required: true },       // Name of the batch (e.g., "Batch A", "Batch 1")
-  start_date: { type: Date, required: true },   // Start date of the batch
-  end_date: { type: Date, required: true },     // End date of the batch
-  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'course', required: true }, // Reference to the Course model
-  faculty_id: { type: mongoose.Schema.Types.ObjectId, ref: 'faculty', required: true }, // Reference to the Faculty model
-  student_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'student' }], // Array of student references
-  created_at: { type: Date, default: Date.now }, // Automatically set the creation date
-});
+const batchSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true }, // Batch name
+  start_date: { type: Date, required: true }, // Batch start date
+  end_date: { type: Date, required: true }, // Batch end date
+  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true }, // Reference to the course
+  faculty_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Faculty', required: true }], // Assigned faculty
+  total_seats: { type: Number, required: true, min: 1 }, // Total seats in the batch
+  seats_available: { type: Number, default: function () { return this.total_seats; }, min: 0 }, // Available seats
+  batch_type: { type: String, enum: ['Weekend', 'Weekday', 'Crash Course'], default: 'Weekday' }, // Type of batch
+  batch_description: { type: String, trim: true } // Batch description
+}, { timestamps: true });
 
-module.exports = mongoose.model('batch', BatchSchema); // Use 'batch' as the model name
+module.exports = mongoose.model('Batch', batchSchema);

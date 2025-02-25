@@ -1,84 +1,193 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import logo from '../../assets/logo.png'
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import logo from "../../assets/logo.png";
+import axios from "axios";
 
 const Login = () => {
-   
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Check localStorage for "Remember Me" data on component mount
+    useEffect(() => {
+        const rememberedEmail = localStorage.getItem("rememberedEmail");
+        const rememberedPassword = localStorage.getItem("rememberedPassword");
+
+        if (rememberedEmail) {
+            setEmail(rememberedEmail);
+            setRememberMe(true); // Pre-check the "Remember Me" checkbox
+        }
+        if (rememberedPassword) {
+            setPassword(rememberedPassword);
+        }
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        if (!email.trim() || !password.trim()) {
+            setError("Please fill in all fields.");
+            return;
+        }
+    
+        try {
+            const res = await axios.post("http://localhost:3000/auth/login", {
+                email,
+                password,
+            }, { withCredentials: true });
+    
+            console.log("Response Data:", res.data); // Debug API response
+    
+            if (res.data.success) {
+                console.log("Login successful, User Role:", res.data.user.role);
+    
+                // Save user data in localStorage
+                localStorage.setItem("user", JSON.stringify(res.data.user));
+                localStorage.setItem("token", res.data.token);
+    
+                // Handle "Remember Me" functionality
+                if (rememberMe) {
+                    localStorage.setItem("rememberedEmail", email);
+                    localStorage.setItem("rememberedPassword", password);
+                } else {
+                    localStorage.removeItem("rememberedEmail");
+                    localStorage.removeItem("rememberedPassword");
+                }
+    
+                // Redirect to the previous page or home
+                const from = location.state?.from || "/";
+                navigate(from);
+    
+                // Navigate based on user role
+                setTimeout(() => {
+                    const storedUser = JSON.parse(localStorage.getItem("user"));
+                    
+                    if (storedUser?.role === "student") {
+                        console.log("Redirecting to /");
+                        navigate("/", { replace: true });
+                    }
+                    else {
+                        console.log("Redirecting to /");
+                        navigate("/", { replace: true });
+                    }
+                }, 100);
+            }
+        } catch (error) {
+            console.error("Login failed:", error);
+            setError(error.response?.data?.message || "Login failed. Please try again.");
+        }
+    };
+    
 
     return (
         <>
-            <div class="preloader">
-                <div class="loader"></div>
+            <div className="preloader">
+                <div className="loader"></div>
             </div>
-            <div class="side-overlay"></div>
-            <section class="auth d-flex gap-90">
-                <div class="auth-left bg-main-50 flex-center justify-between">
-                    <img src="assets/images/thumbs/auth-img1.png" alt="" />
+            <div className="side-overlay"></div>
+            <section className="auth d-flex gap-90">
+                <div className="auth-left bg-main-50 flex-center justify-between">
+                    <img src="/assets/images/thumbs/auth-img1.png" alt="" />
                 </div>
-                <div class="auth-right py-40 px-24 flex-center flex-column">
-                    <div class="auth-right__inner mx-auto w-100">
+                <div className="auth-right py-40 px-24 flex-center flex-column">
+                    <div className="auth-right__inner mx-auto w-100">
                         <Link to="/" className="sidebar__logo py-40 position-sticky">
-                                   <img src={logo} alt="Logo" className="h-32" />
-                                 </Link>
-                        <h2 class="mb-8">Welcome to Back! &#128075;</h2>
-                        <p class="text-gray-600 text-15 mb-32">Please sign in to your account and start the adventure</p>
+                            <img src={logo} alt="Logo" className="h-32" />
+                        </Link>
+                        <h2 className="mb-8">Welcome Back! &#128075;</h2>
+                        <p className="text-gray-600 text-15 mb-32">
+                            Please sign in to your account and start the adventure
+                        </p>
 
-                        <form action="#">
-                            <div class="mb-24">
-                                <label for="fname" class="form-label mb-8 h6">Email or Username</label>
-                                <div class="position-relative">
-                                    <input type="text" class="form-control py-11 ps-40" id="fname" placeholder="Type your username" />
-                                    <span class="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex"><i class="ph ph-user"></i></span>
+                        {error && <p className="error-text text-red-500 mb-24">{error}</p>}
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-24">
+                                <label htmlFor="email" className="form-label mb-8 h6">Email</label>
+                                <div className="position-relative">
+                                    <input
+                                        type="text"
+                                        className="form-control py-11 ps-40"
+                                        id="email"
+                                        placeholder="Type your email"
+                                        value={email}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value);
+                                            setError("");
+                                        }}
+                                    />
+                                    <span className="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
+                                        <i className="ph ph-user"></i>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mb-24">
-                                <label for="current-password" class="form-label mb-8 h6">Current Password</label>
-                                <div class="position-relative">
-                                    <input type="password" class="form-control py-11 ps-40" id="current-password" placeholder="Enter Current Password" value="password" />
-                                    <span class="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y ph ph-eye-slash" id="#current-password"></span>
-                                    <span class="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex"><i class="ph ph-lock"></i></span>
+
+                            <div className="mb-24">
+                                <label htmlFor="password" className="form-label mb-8 h6">Password</label>
+                                <div className="position-relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="form-control py-11 ps-40"
+                                        id="password"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            setError("");
+                                        }}
+                                    />
+                                    <span
+                                        className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <i className={`ph ph-eye${showPassword ? "" : "-slash"}`}></i>
+                                    </span>
+                                    <span className="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
+                                        <i className="ph ph-lock"></i>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mb-32 flex-between flex-wrap gap-8">
-                                <div class="form-check mb-0 flex-shrink-0">
-                                    <input class="form-check-input flex-shrink-0 rounded-4" type="checkbox" value="" id="remember" />
-                                    <label class="form-check-label text-15 flex-grow-1" for="remember">Remember Me </label>
+
+                            <div className="mb-32 flex flex-between flex-wrap gap-8 w-full">
+                                <div className="form-check mb-0 flex items-center flex-shrink-0">
+                                    <input
+                                        className="form-check-input flex-shrink-0 rounded-4"
+                                        type="checkbox"
+                                        id="remember"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                    />
+                                    <label className="form-check-label text-15 flex-grow-1 pt-2" htmlFor="remember">
+                                        Remember Me
+                                    </label>
                                 </div>
-                                <Link to="/forgot-password" class="text-main-600 hover-text-decoration-underline text-15 fw-medium">Forgot Password?</Link>
+                                <Link
+                                    to="/forgot-password"
+                                    className="text-main-600 hover-text-decoration-underline text-15 fw-medium"
+                                >
+                                    Forgot Password?
+                                </Link>
                             </div>
-                            <button type="submit" class="btn btn-main rounded-pill w-100">Sign In</button>
-                            <p class="mt-32 text-gray-600 text-center">New on our platform?
-                                <Link to="/register" class="text-main-600 hover-text-decoration-underline">Create an account</Link>
+
+                            <button type="submit" className="btn btn-main rounded-pill w-100">
+                                Sign In
+                            </button>
+
+                            <p className="mt-32 text-gray-600 text-center">
+                                New on our platform?
+                                <Link to="/register" className="text-main-600 pl-2 hover-text-decoration-underline">
+                                    Create an account
+                                </Link>
                             </p>
-
-                            <div class="divider my-32 position-relative text-center">
-                                <span class="divider__text text-gray-600 text-13 fw-medium px-26 bg-white">or</span>
-                            </div>
-
-                            <ul class="flex-align gap-10 flex-wrap justify-content-center">
-                                <li>
-                                    <a href="https://www.facebook.com/" class="w-38 h-38 flex-center rounded-6 text-facebook-600 bg-facebook-50 hover-bg-facebook-600 hover-text-white text-lg">
-                                        <i class="ph-fill ph-facebook-logo"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.twitter.com/" class="w-38 h-38 flex-center rounded-6 text-twitter-600 bg-twitter-50 hover-bg-twitter-600 hover-text-white text-lg">
-                                        <i class="ph-fill ph-twitter-logo"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.google.com/" class="w-38 h-38 flex-center rounded-6 text-google-600 bg-google-50 hover-bg-google-600 hover-text-white text-lg">
-                                        <i class="ph ph-google-logo"></i>
-                                    </a>
-                                </li>
-                            </ul>
-
                         </form>
                     </div>
                 </div>
             </section>
         </>
-
     );
 };
 

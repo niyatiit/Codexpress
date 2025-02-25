@@ -5499,17 +5499,17 @@ body.home-three :-ms-input-placeholder {
   margin-bottom: 20px;
 }
 .course-three-item:hover .course-three-text h3 {
-  color: #7b1ffe;
+  color: #0091ff;
 }
-.course-three-item:hover .course-three-text p {
+/* .course-three-item:hover .course-three-text p {
   color: #1cbeef;
-}
-.course-three-item:hover .students-three-counts p {
+} */
+/* .course-three-item:hover .students-three-counts p {
   color: #0dd3a3;
-}
-.course-three-item:hover .course-price-three h3 {
+} */
+/* .course-three-item:hover .course-price-three h3 {
   color: #1cbeef;
-}
+} */
 .heart-three {
   position: absolute;
   top: 1rem;
@@ -5533,7 +5533,7 @@ body.home-three :-ms-input-placeholder {
   transition: 0.7s;
 }
 .course-box-three:hover .course-three-text p {
-  color: #ffffff;
+  /* color: #ffffff; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -5542,7 +5542,9 @@ body.home-three :-ms-input-placeholder {
 .course-three-text p {
   font-weight: 500;
   font-size: 14px;
-  color: #7b1ffe;
+  color: #0091ff;
+  display: inline-block;
+  background: #0091ff35;
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -5559,7 +5561,7 @@ body.home-three :-ms-input-placeholder {
   transition: 0.7s;
 }
 .course-box-three:hover .course-three-text h3 {
-  color: #ffffff;
+  /* color: #ffffff; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -5580,7 +5582,7 @@ body.home-three :-ms-input-placeholder {
   transition: 0.7s;
 }
 .course-box-three:hover .students-three-counts p {
-  color: #0dd3a3;
+  /* color: #0dd3a3; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -5590,7 +5592,7 @@ body.home-three :-ms-input-placeholder {
   margin-bottom: 20px;
 }
 .course-price-three h3 {
-  color: #7b1ffe;
+  /* color: #7b1ffe; */
   font-weight: 600;
   font-size: 20px;
   margin-bottom: 0;
@@ -5600,14 +5602,14 @@ body.home-three :-ms-input-placeholder {
   transition: 0.7s;
 }
 .course-box-three:hover .course-price-three h3 {
-  color: #ffffff;
+  /* color: #ffffff; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
   transition: 0.7s;
 }
 .course-box-three:hover .price-three-time {
-  color: #ffffff;
+  /* color: #ffffff; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -5630,12 +5632,12 @@ body.home-three :-ms-input-placeholder {
 }
 .course-price-three span {
   text-decoration: line-through;
-  font-size: 14px;
+  font-size: 17px;
   color: #dedede;
   line-height: 0;
 }
 .student-counts-info {
-  border-bottom: 1px solid #f4f4f4;
+  /* border-bottom: 1px solid #f4f4f4; */
   margin-bottom: 20px;
 }
 .home-three .owl-theme .owl-dots .owl-dot span {
@@ -5677,7 +5679,7 @@ body.home-three :-ms-input-placeholder {
   position: relative;
   overflow: hidden;
   background: #ffffff;
-  box-shadow: -3px 5px 16px rgb(0 0 0 / 7%);
+  box-shadow: 3px 5px 16px 5px rgb(0 0 0 / 10%);
   border-radius: 10px;
   margin-bottom: 24px;
   transition: all 0.4s ease;
@@ -5686,8 +5688,12 @@ body.home-three :-ms-input-placeholder {
   -ms-transition: all 0.4s ease;
   -webkit-transition: all 0.4s ease;
 }
+/* .course-box-three:hover .mybtn{
+  background-color: white;
+  color: blue;
+} */
 .course-box-three:hover .course-three-content {
-  background-color: #7b1ffe;
+  /* background-color: #0091ff; */
   -webkit-transition: 0.7s;
   -moz-transition: 0.7s;
   -o-transition: 0.7s;
@@ -6645,7 +6651,7 @@ textarea:focus {
   padding: 10px;
 }
 .footer-three {
-  padding: 60px 0 60px;
+  padding: 60px 0 20px;
   background: #071136;
   background-image: url(../img/bg/bg-footer.jpg);
   background-repeat: no-repeat;
@@ -6671,8 +6677,8 @@ textarea:focus {
   margin-left: 20px;
 }
 .footer-menu-three ul li a:hover {
-  color: #fed700;
-  padding-left: 10px;
+  color: #007bff;
+  transition:all 0.5s ease-in-out;
 }
 .footer-three .newsletter-title h6 {
   font-weight: 500;
@@ -6702,10 +6708,10 @@ textarea:focus {
 }
 .footer-three-top-content {
   border-bottom: 1px solid #2e2566 !important;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
 }
 .footer-three-top {
-  margin-bottom: 60px;
+  margin-bottom: 10px;
 }
 .privacy-policy-three ul {
   display: -webkit-inline-box;
@@ -6725,18 +6731,6 @@ textarea:focus {
 }
 .privacy-policy-three ul li:last-child {
   border-right: 0;
-}
-.footer-menu-three ul li a:before {
-  position: absolute;
-  top: 7px;
-  display: block;
-  content: "\f111";
-  float: left;
-  margin-right: 10px;
-  font-size: 8px;
-  color: #fed700;
-  transition: all 0.5s ease-in-out;
-  font-family: "FontAwesome";
 }
 .social-icon-three ul {
   display: -webkit-inline-box;
@@ -27792,13 +27786,12 @@ color: #B9B7C0 ;
     font-size: 12px;
     border: 0;
     background-position: 5px;
-    padding: 10px 10px 10px 50px;
   }
   .footer-three-top-content {
-    padding-bottom: 15px;
+    padding:2px;
   }
   .footer-menu-three {
-    margin-bottom: 24px;
+    margin-bottom: 2px;
   }
   .footer-three-right {
     margin-left: 0;

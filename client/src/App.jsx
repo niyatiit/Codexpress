@@ -1,19 +1,23 @@
 import React from "react";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import FacultyDashboard from "./pages/faculty/FacultyDashboard";
+import StudentDashboard2 from "./pages/student/home/StudentDashboard2";
+import PrivateRoute from "./components/PrivateRoute";
+import HomeTwo from "./pages/HomeTwo";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgetPassword from "./pages/auth/ForgetPassword";
-import StudentDashboard from "./pages/student/home/StudentDashboard";
-import Home from "./pages/Home";
-import FacultyDashboard from "./pages/faculty/FacultyDashboard";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import NotFoundPage from "./pages/NotFoundPage";
-import HomeTwo from "./pages/HomeTwo";
 import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
 import Faqs from "./pages/Faqs";
-import StudentDashboard2 from "./pages/student/home/StudentDashboard2";
+import NotFoundPage from "./pages/NotFoundPage";
+import Payment from "./pages/Payment/Payment";
+import FacultyLogin from "./pages/auth/FacultyLogin";
+import AdminLogin from "./pages/auth/AdminLogin";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 const App = () => {
   return (
@@ -21,20 +25,38 @@ const App = () => {
       <div className="app-container flex">
         <main className="content w-full">
           <Routes>
-            {/* <Route path="/" element={<Home />} /> */}
+            {/* Public Routes */}
             <Route path="/" element={<HomeTwo />} />
-
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgetPassword/>} />
+            <Route path="/student/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgetPassword />} />
+            <Route path="/reset-password" element={<ResetPassword/>} />
             <Route path="/faq" element={<Faqs />} />
             <Route path="/courses" element={<Courses />} />
-            <Route path="/admin/*" element={<AdminDashboard />} /> {/* Use wildcard for sub-routes */}
-            <Route path="/faculty/*" element={<FacultyDashboard />} /> 
-            <Route path="/student/*" element={<StudentDashboard2 />} /> {/* Use wildcard for sub-routes */}
-            <Route path="*" element={<NotFoundPage/>} /> {/* Use wildcard for sub-routes */}
+            <Route path="/courses/:id" element={<CourseDetail />} />
+
+            {/* Role-Specific Login Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/faculty/login" element={<FacultyLogin />} />
+
+            {/* Private Routes for Role-Based Access */}
+            <Route element={<PrivateRoute allowedRoles={["admin"]} fallbackPath="/admin/login" />}>
+              <Route path="/admin/*" element={<AdminDashboard />} />
+            </Route>
+
+            <Route element={<PrivateRoute allowedRoles={["faculty"]} fallbackPath="/faculty/login" />}>
+              <Route path="/faculty/*" element={<FacultyDashboard />} />
+            </Route>
+
+            <Route element={<PrivateRoute allowedRoles={["student"]} fallbackPath="/student/login" />}>
+              <Route path="/student/*" element={<StudentDashboard2 />} />
+              <Route path="/courses/:id/payment" element={<Payment />} />
+            </Route>
+
+            {/* 404 Not Found Page */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </div>

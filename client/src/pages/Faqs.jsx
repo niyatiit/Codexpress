@@ -1,247 +1,136 @@
-import React from 'react';
-import Header from '../components/Header';
+import React, { useState } from "react";
+import Header from "../components/Header";
+
+const FAQItem = ({ question, answer, isOpen, onClick }) => {
+  return (
+    <div className="border-b border-gray-200 last:border-0 px-4 py-2">
+      <button
+        className="w-full py-6 flex justify-between items-center text-md text-left focus:outline-none"
+        onClick={onClick}
+      >
+        <span className="text-lg font-medium text-gray-900 text-md">{question}</span>
+        <svg
+          className={`w-26 h-26 text-gray-500 transform transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+      <div
+        className={`transform transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-96 opacity-100 mb-6" : "max-h-0 opacity-0"
+        } overflow-hidden`}
+      >
+        <p className="text-zinc-600 leading-relaxed text-[15px]">{answer}</p>
+      </div>
+    </div>
+  );
+};
 
 const Faqs = () => {
+  const [openIndex, setOpenIndex] = useState(0);
+
+  const faqs = [
+    {
+      question: "What programming languages do you teach?",
+      answer: "We offer comprehensive courses in Python, JavaScript, Java, and other popular programming languages. Our curriculum is regularly updated to reflect industry demands and best practices."
+    },
+    {
+      question: "Are the courses suitable for beginners?",
+      answer: "Yes, our courses cater to all skill levels. We have specially designed tracks for beginners that start with programming fundamentals and gradually progress to more advanced concepts."
+    },
+    {
+      question: "How long does it take to complete a course?",
+      answer: "Course duration varies depending on the complexity and depth of the subject matter. Most courses can be completed in 8-12 weeks when studying 5-10 hours per week. However, you can learn at your own pace."
+    },
+    {
+      question: "Do you provide certification upon completion?",
+      answer: "Yes, upon successful completion of a course, you'll receive a verified digital certificate that you can share on your professional networks and with potential employers."
+    },
+    {
+      question: "What kind of support is available?",
+      answer: "We provide comprehensive support including 24/7 technical assistance, dedicated mentors, active community forums, and regular live Q&A sessions with instructors."
+    },
+    {
+      question: "Can I access the course content after completion?",
+      answer: "Yes, once enrolled, you have lifetime access to the course materials, including any future updates to the curriculum."
+    },
+    {
+      question: "What is your refund policy?",
+      answer: "We offer a 30-day money-back guarantee. If you're not satisfied with the course, you can request a full refund within the first 30 days of enrollment."
+    }
+  ];
+
+  const categories = {
+    "Getting Started": [0, 1],
+    "Course Information": [2, 3],
+    "Support & Access": [4, 5],
+    "Payment & Refunds": [6]
+  };
+
   return (
-    <>
-      <div className="main-wrapper">
+    <div className="min-h-screen bg-white">
+      <Header />
+      
+      <main className="max-w-6xl mx-auto px-4 py-16 mt-88">
         {/* Header */}
-        <Header />
-        {/* /Header */}
-
-        {/* Breadcrumb */}
-        <div className="breadcrumb-bar">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12 col-12">
-                <div className="breadcrumb-list">
-                  <nav aria-label="breadcrumb" className="page-breadcrumb">
-                    <ol className="breadcrumb">
-                      <li className="breadcrumb-item"><a href="index.html">Home</a></li>
-                      <li className="breadcrumb-item">Pages</li>
-                      <li className="breadcrumb-item">FAQ</li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="mb-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-md text-gray-600 leading-relaxed mb-[50px]">
+            Find answers to common questions about our platform and courses
+          </p>
         </div>
-        {/* /Breadcrumb */}
 
-        {/* Page Banner */}
-        <div className="page-banner">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12 col-12">
-                <h1 className="mb-0">Most frequently asked questions</h1>
+        {/* FAQ Categories */}
+        <div className="mb-12">
+          {Object.entries(categories).map(([category, indices], idx) => (
+            <div key={idx} className="mb-12 last:mb-0">
+              <h2 className="text-2xl font-semibold text-blue-600 mt-28 mb-12">
+                {category}
+              </h2>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-1 text-md">
+                {indices.map((index) => (
+                  <FAQItem
+                    key={index}
+                    question={faqs[index].question}
+                    answer={faqs[index].answer}
+                    isOpen={openIndex === index}
+                    onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
+                  />
+                ))}
               </div>
             </div>
-          </div>
+          ))}
         </div>
-        {/* /Page Banner */}
 
-        {/* Help Details */}
-        <div className="help-sec">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-6">
-                <div className="help-title">
-                  <h1>Most frequently asked questions</h1>
-                  <p>Here are the most frequently asked questions you may check before getting started</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-lg-6">
-                {/* Faq */}
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqone" aria-expanded="false">Is there a 14-days trial?</a>
-                  </h6>
-                  <div id="faqone" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqtwo" aria-expanded="false">How much time I will need to learn this app?</a>
-                  </h6>
-                  <div id="faqtwo" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqthree" aria-expanded="false">Is there a month-to-month payment option?</a>
-                  </h6>
-                  <div id="faqthree" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-                {/* /Faq */}
-              </div>
-
-              <div className="col-lg-6">
-                {/* Faq */}
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqfour" aria-expanded="false">What’s the benefits of the Premium Membership?</a>
-                  </h6>
-                  <div id="faqfour" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqfive" aria-expanded="false">Are there any free tutorials available?</a>
-                  </h6>
-                  <div id="faqfive" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="faq-card">
-                  <h6 className="faq-title">
-                    <a className="collapsed" data-bs-toggle="collapse" href="#faqsix" aria-expanded="false">How can I cancel my subscription plan?</a>
-                  </h6>
-                  <div id="faqsix" className="collapse">
-                    <div className="faq-detail">
-                      <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.</p>
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual languages. The new common language will be more simple and regular than the existing European languages.</p>
-                    </div>
-                  </div>
-                </div>
-                {/* /Faq */}
-              </div>
-            </div>
-          </div>
+        {/* Still Have Questions Section */}
+        <div className="text-center bg-gray-50 rounded-lg p-8 mt-5">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-1">
+            Still Have Questions?
+          </h2>
+          <p className="text-gray-600 mb-6">
+            We're here to help. Contact our support team for assistance.
+          </p>
+          <button
+            onClick={() => window.location.href = "/contact"}
+            className="bg-blue-600 text-white px-8 py-2 rounded-lg text-md font-medium hover:bg-blue-700 transition-colors"
+          >
+            Contact Support
+          </button>
         </div>
-        {/* /Help Details */}
-
-        {/* Footer */}
-        <footer className="footer">
-          {/* Footer Top */}
-          <div className="footer-top">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-about">
-                    <div className="footer-logo">
-                      <img src="assets/img/logo.svg" alt="logo" />
-                    </div>
-                    <div className="footer-about-content">
-                      <p>Codexpress is your go-to platform for coding tutorials, resources, and community support. Join us to enhance your coding skills and connect with like-minded developers.</p>
-                    </div>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-2 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-menu">
-                    <h2 className="footer-title">Quick Links</h2>
-                    <ul>
-                      <li><a href="/">Home</a></li>
-                      <li><a href="/about">About Us</a></li>
-                      <li><a href="/courses">Courses</a></li>
-                      <li><a href="/blog">Blog</a></li>
-                      <li><a href="/contact">Contact</a></li>
-                    </ul>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-2 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-menu">
-                    <h2 className="footer-title">Resources</h2>
-                    <ul>
-                      <li><a href="/faq">FAQ</a></li>
-                      <li><a href="/privacy-policy">Privacy Policy</a></li>
-                      <li><a href="/terms">Terms of Service</a></li>
-                      <li><a href="/support">Support</a></li>
-                      <li><a href="/community">Community</a></li>
-                    </ul>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-
-                <div className="col-lg-4 col-md-6">
-                  {/* Footer Widget */}
-                  <div className="footer-widget footer-contact">
-                    <h2 className="footer-title">Contact Us</h2>
-                    <div className="footer-contact-info">
-                      <div className="footer-address">
-                        <img src="assets/img/icon/icon-20.svg" alt="Img" className="img-fluid" />
-                        <p>3556 Beech Street, San Francisco,<br />California, CA 94108</p>
-                      </div>
-                      <p>
-                        <img src="assets/img/icon/icon-19.svg" alt="Img" className="img-fluid" />
-                        <a href="mailto:info@codexpress.com">info@codexpress.com</a>
-                      </p>
-                      <p className="mb-0">
-                        <img src="assets/img/icon/icon-21.svg" alt="Img" className="img-fluid" />
-                        +19 123-456-7890
-                      </p>
-                    </div>
-                  </div>
-                  {/* /Footer Widget */}
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* /Footer Top */}
-
-          {/* Footer Bottom */}
-          <div className="footer-bottom">
-            <div className="container">
-              {/* Copyright */}
-              <div className="copyright">
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="privacy-policy">
-                      <ul>
-                        <li><a href="/terms">Terms</a></li>
-                        <li><a href="/privacy-policy">Privacy</a></li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="copyright-text">
-                      <p className="mb-0">&copy; 2024 Codexpress. All rights reserved.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* /Copyright */}
-            </div>
-          </div>
-          {/* /Footer Bottom */}
-        </footer>
-        {/* /Footer */}
-      </div>
-    </>
+      </main>
+    </div>
   );
 };
 
