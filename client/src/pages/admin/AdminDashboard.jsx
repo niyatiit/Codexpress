@@ -26,7 +26,7 @@ import Navbar from './Navbar';
 import EditCourse from './EditCourse';
 import EditBatch from './EditBatch';
 import EditFaculty from './EditFaculty';
-
+import EditProfile from './AdminProfile'
 const AdminDashboard = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
@@ -218,7 +218,7 @@ const AdminDashboard = () => {
               </li>
 
               {/* Resources Dropdown */}
-              <li
+              {/* <li
                 className={`sidebar-menu__item has-dropdown ${
                   openDropdown === 'resources' || isDropdownActive(['/admin/upload/resource', '/admin/manage/resources'])
                     ? 'open'
@@ -247,7 +247,7 @@ const AdminDashboard = () => {
                     </Link>
                   </li>
                 </ul>
-              </li>
+              </li> */}
 
               {/* Notifications Dropdown */}
               <li
@@ -435,6 +435,7 @@ const AdminDashboard = () => {
           <Route path="manage/fees" element={<ManageFees />} />
           <Route path="edit-batch/:id" element={<EditBatch />} />
           <Route path="edit-faculty/:id" element={<EditFaculty />} />
+          <Route path="edit-profile" element={<EditProfile />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

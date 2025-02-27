@@ -14,8 +14,8 @@ const FacultyLogin = () => {
 
     // Load remembered credentials on mount
     useEffect(() => {
-        const rememberedEmail = localStorage.getItem("facultyEmail");
-        const rememberedPassword = localStorage.getItem("facultyPassword");
+        const rememberedEmail = localStorage.getItem("rememberedEmail");
+        const rememberedPassword = localStorage.getItem("rememberedPassword");
         if (rememberedEmail) {
             setEmail(rememberedEmail);
             setRememberMe(true);
@@ -42,11 +42,11 @@ const FacultyLogin = () => {
       
             // Handle Remember Me
             if (rememberMe) {
-              localStorage.setItem("facultyEmail", email);
-              localStorage.setItem("facultyPassword", password);
+              localStorage.setItem("rememberedEmail", email);
+              localStorage.setItem("rememberedPassword", password);
             } else {
-              localStorage.removeItem("facultyEmail");
-              localStorage.removeItem("facultyPassword");
+              localStorage.removeItem("rememberedEmail");
+              localStorage.removeItem("rememberedPassword");
             }
       
             // Redirect to /faculty after successful login
@@ -75,7 +75,7 @@ const FacultyLogin = () => {
                         {error && <p className="error-text text-red-500 mb-24">{error}</p>}
 
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-24">
+                            <div className="mb-24 position-relative" >
                                 <label htmlFor="email" className="form-label mb-8 h6">Email</label>
                                 <input
                                     type="text"
@@ -85,7 +85,7 @@ const FacultyLogin = () => {
                                     value={email}
                                     onChange={(e) => { setEmail(e.target.value); setError(""); }}
                                 />
-                                <span className="position-absolute top-50 translate-middle-y ms-16 text-gray-600 d-flex">
+                                <span className="position-absolute bottom-[6px] translate-middle-y ms-16 text-gray-600 d-flex">
                                     <i className="ph ph-envelope"></i>
                                 </span>
                             </div>
@@ -135,6 +135,12 @@ const FacultyLogin = () => {
                             </div>
 
                             <button type="submit" className="btn btn-main rounded-pill w-100">Sign In</button>
+                            <p className="mt-32 text-gray-600 text-center">
+                                New on our platform?
+                                <Link to="/faculty/register" className="text-main-600 pl-2 hover-text-decoration-underline">
+                                    Create an account
+                                </Link>
+                            </p>
                         </form>
                     </div>
                 </div>

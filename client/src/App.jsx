@@ -16,8 +16,13 @@ import Faqs from "./pages/Faqs";
 import NotFoundPage from "./pages/NotFoundPage";
 import Payment from "./pages/Payment/Payment";
 import FacultyLogin from "./pages/auth/FacultyLogin";
+import FacultyRegister from "./pages/auth/FacultyRegister"
 import AdminLogin from "./pages/auth/AdminLogin";
 import ResetPassword from "./pages/auth/ResetPassword";
+import ProfileCompletion from "./pages/ProfileCompletion";
+import CourseDashboard from "./pages/CourseDashboard"
+import PaymentSuccess from "./pages/Payment/PaymentSuccess";
+import CancelPage from "./pages/Payment/CancelPage";
 
 const App = () => {
   return (
@@ -32,14 +37,20 @@ const App = () => {
             <Route path="/student/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgetPassword />} />
-            <Route path="/reset-password" element={<ResetPassword/>} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/faq" element={<Faqs />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
+            <Route path="/profile-completion" element={<ProfileCompletion />} />
+            <Route path="/courses/:id/payment" element={<Payment />} />
+            <Route path="/courses/:id/dashboard" element={<CourseDashboard />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/cancel" element={<CancelPage />} />
 
             {/* Role-Specific Login Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/faculty/login" element={<FacultyLogin />} />
+            <Route path="/faculty/register" element={<FacultyRegister />} />
 
             {/* Private Routes for Role-Based Access */}
             <Route element={<PrivateRoute allowedRoles={["admin"]} fallbackPath="/admin/login" />}>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import { Hourglass } from "react-loader-spinner";
+axios.defaults.withCredentials = true; // Allow cookies to be sent
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -10,8 +11,16 @@ const CourseDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+     // Step 1: Check if the user is logged in
+     if (!token || !user) {
+      // Redirect to the login page with a proper redirect URL
+      navigate(`/student/login?redirect=/courses/${id}`);
+      return;
+    }
     axios
       .get(`http://localhost:3000/courses/${id}`)
       .then((response) => {
@@ -25,45 +34,21 @@ const CourseDetail = () => {
   }, [id]);
 
   const handleEnroll = async () => {
+    // Step 1: Check if the user is logged in
+    if (!token || !user) {
+      // Redirect to the login page with a proper redirect URL
+      navigate(`/student/login?redirect=/profile-completion`);
+      return;
+    }
+
+    // Step 2: Check if the profile is complete
     try {
-      // Check if the student is logged in
-      const user = localStorage.getItem("user");
-      if (!user) {
-        // Redirect to login page if not logged in
-        navigate("/student/login", { state: { from: `/courses/${id}` } });
-        return;
-      }
-
-      // Check if the student is already enrolled
-      const isEnrolled = await axios.get(`http://localhost:3000/courses/${id}/is-enrolled`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (isEnrolled.data.enrolled) {
-        alert("You are already enrolled in this course.");
-        return;
-      }
-
-      // Redirect to payment page if the course is paid
-      if (course.price > 0) {
-        navigate(`/courses/${id}/payment`);
-        return;
-      }
-
-      // Enroll the student in the course
-      const response = await axios.post(
-        `http://localhost:3000/courses/${id}/enroll`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.data.success) {
-        // Redirect to course dashboard
-        navigate(`/courses/${id}/dashboard`);
-      }
-    } catch (error) {
-      console.error("Enrollment failed:", error);
-      alert("Enrollment failed. Please try again.");
+    
+      navigate(`/profile-completion?redirect=/courses/${id}/payment`)
+      console.log("now proceed to payment!")
+    } catch (err) {
+      console.error("Error during enrollment:", err);
+      setError("An error occurred while processing your request.");
     }
   };
 

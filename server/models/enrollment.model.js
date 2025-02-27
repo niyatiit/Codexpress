@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Enrollment model
 const enrollmentSchema = new mongoose.Schema({
-  student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the student (User model)
-  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true }, // Reference to the course the student is enrolling in
-  batch_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch', required: true }, // Reference to the batch the student is enrolled in
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User model
+  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true }, // Reference to the Course model
+  batch_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch', required: true }, // Reference to the Batch model
   enrollment_date: { type: Date, default: Date.now }, // Date when the student enrolled
-  enrollment_status: { type: String, enum: ['active', 'completed', 'dropped', 'suspended'], default: 'active' }, // Current status of the enrollment
+  enrollment_status: { type: String, enum: ['active', 'completed', 'dropped', 'suspended'], default: 'active' }, // Enrollment status
+  payment_status: { type: String, enum: ['paid', 'unpaid', 'partial'], default: 'unpaid' }, // Payment status for enrollment
 });
 
-module.exports = mongoose.model('Enrollment', enrollmentSchema); // Use 'enrollment' as the model name
+module.exports = mongoose.model('Enrollment', enrollmentSchema);

@@ -1,7 +1,8 @@
+const mongoose = require("mongoose")
 const Course = require('../models/course.model')
 const Faculty = require('../models/faculty.model')
 const Batch = require("../models/batch.model"); // Ensure you import the Batch model
-
+const Enrollment = require("../models/enrollment.model");
 // GET /courses/:id/payment
 // exports.getPaymentPage = async (req, res) => {
 //   try {
@@ -61,12 +62,20 @@ exports.getAllCourses = async (req, res) => {
     res.status(500).json({ message: "Error fetching courses", error: error.message });
   }
 };
+const isValidObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id);
+};
 
 
 // ✅ Get a single course by ID
 exports.getCourseById = async (req, res) => {
   try {
     const courseId = req.params.id;
+
+    // Validate the courseId
+    if (!isValidObjectId(courseId)) {
+      return res.status(400).json({ error: "Invalid course ID" });
+    }
 
     const course = await Course.findById(courseId);
 
@@ -319,5 +328,79 @@ exports.getBatchesByCourse = async (req, res) => {
       message: "Server error while fetching batches",
       error: error.message,
     });
+  }
+};
+
+
+// Check if user is enrolled
+// Check if user is enrolled in the course (and optionally in a specific batch)
+exports.checkEnrollment = async (req, res) => {
+  try {
+    // Ensure the user is a student
+    if (req.user.role !== "student") {
+      return res.status(403).json({ message: "Only students can enroll in courses." });
+    }
+
+    // Find enrollment for the logged-in student in the specified course (and batch, if provided)
+    const enrollment = await Enrollment.findOne({
+      user_id: req.user.id, // Use the logged-in student's ID
+      course_id: req.params.id, // Course ID from the route parameter
+      batch_id: req.query.batchId || { $exists: true }, // Optional: Check for a specific batch
+    });
+
+    // If enrollment exists, the student is already enrolled
+    if (enrollment) {
+      return res.status(200).json({ enrolled: true, message: "Student is already enrolled in this course." });
+    }
+
+    // If no enrollment exists, the student can proceed
+    res.status(200).json({ enrolled: false, message: "Student is not enrolled in this course." });
+  } catch (error) {
+    console.error("Error checking enrollment:", error);
+    res.status(500).json({ message: "Error checking enrollment", error });
+  }
+};
+
+exports.enrollInCourse = async (req, res) => {
+  try {
+    const { batchId } = req.body; // Batch ID is required in the request body
+
+    // Check if the user is already enrolled
+    const existingEnrollment = await Enrollment.findOne({
+      user_id: req.user._id,
+      course_id: req.params.id,
+      batch_id: batchId,
+    });
+
+    if (existingEnrollment) {
+      return res.status(400).json({ message: "You are already enrolled in this course and batch." });
+    }
+
+    // Check if the batch has available seats
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ message: "Batch not found" });
+    }
+
+    if (batch.seats_available <= 0) {
+      return res.status(400).json({ message: "No seats available in this batch." });
+    }
+
+    // Create the enrollment
+    const enrollment = new Enrollment({
+      user_id: req.user._id,
+      course_id: req.params.id,
+      batch_id: batchId,
+    });
+
+    await enrollment.save();
+
+    // Update the batch's available seats
+    batch.seats_available -= 1;
+    await batch.save();
+
+    res.status(201).json({ success: true, enrollment });
+  } catch (error) {
+    res.status(500).json({ message: "Error enrolling in course", error });
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Dashboard from './Dashboard';
@@ -31,13 +31,66 @@ import ProfileSetting from './ProfileSetting';
 import Footer from '../../components/Footer';
 import NotFoundPage from '../NotFoundPage';
 import logo from '../../assets/logo.png';
+import axios from 'axios'
+import FacultyProfile from './FacultyProfile';
 
 const FacultyDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const faculty = JSON.parse(localStorage.getItem('user'));
+  const [faculty, setFaculty] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const userId = user?.id;
+
+  const [profile, setProfile] = useState({
+    username: "",
+    email: "",
+    first_name: "",
+    last_name: "",
+    phone: "",
+    profile_picture: "",
+    gender: "",
+  });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/profile/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (response.data.success) {
+          const userData = response.data.user;
+          console.log(userData);
+
+          setProfile({
+            username: userData.username,
+            email: userData.email,
+            first_name: userData.first_name || "",
+            last_name: userData.last_name || "",
+            phone: userData.phone || "",
+            profile_picture: userData.profile_picture,
+            gender: userData.gender || "",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        alert("Failed to fetch user data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [userId, user]);
 
   // Function to toggle dropdowns
   const toggleDropdown = (dropdown) => {
@@ -54,10 +107,32 @@ const FacultyDashboard = () => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
 
+  // Fetch faculty details on component mount
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     if (!user?.id) return; // Ensure user.id is available
+  //     try {
+  //       const response = await axios.get(`http://localhost:3000/users/${user.id}`, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //       });
+  //       if (response.data.success) {
+  //         console.log(response.data.user);
+  //         setFaculty(response.data.user);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user details:", error);
+  //       alert("Failed to fetch user details. Please try again.");
+  //     }
+  //   };
+
+  //   fetchUserDetails();
+  // }, [user?.id]);
+
   // Handle logout
   const handleLogout = () => {
     Cookies.remove('token');
-    localStorage.removeItem('faculty');
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/faculty/login');
   };
 
@@ -83,13 +158,14 @@ const FacultyDashboard = () => {
         {/* Faculty Profile Section */}
         <div className="p-20 pt-20">
           <div className="bg-main-50 p-20 pt-0 rounded-16 text-center mt-74">
-            <span className="border-5 bg-white position-relative overflow-hidden object-cover mx-auto border-blue-500 w-114 h-114 rounded-circle flex-center text-success-600 text-2xl translate-n74">
-              <img src={faculty.profile_picture} alt="Faculty Profile" className="position-absolute top-0 left-0" />
+            <span className="border-5 bg-white position-relative overflow-hidden mx-auto border-blue-500 w-114 h-114 rounded-circle flex-center text-success-600 text-2xl translate-n74">
+              <img src={profile.profile_picture || "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"
+              } alt="Faculty Profile" className="position-absolute object-fit h-100 object-cover" />
             </span>
             <div className="mt-n74">
               <h5 className="mb-4 mt-12">Faculty Profile</h5>
-              <p className="font-weight-bold">{faculty.username}</p>
-              <p className="mb-2 text-sm text-zinc-400">{faculty.email}</p>
+              <p className="font-weight-bold">{profile.username}</p>
+              <p className="mb-2 text-sm text-zinc-400">{profile.email}</p>
               <Link to="/faculty/edit-profile" className="btn btn-main mt-16 rounded-pill">
                 Edit Profile
               </Link>
@@ -113,11 +189,10 @@ const FacultyDashboard = () => {
 
               {/* Courses Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'courses' || isDropdownActive(['/faculty/view/courses', '/faculty/assigned/courses'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'courses' || isDropdownActive(['/faculty/view/courses', '/faculty/assigned/courses'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -145,11 +220,10 @@ const FacultyDashboard = () => {
 
               {/* Batch Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'batch' || isDropdownActive(['/faculty/view/batches', '/faculty/manage/batch/students'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'batch' || isDropdownActive(['/faculty/view/batches', '/faculty/manage/batch/students'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -177,12 +251,11 @@ const FacultyDashboard = () => {
 
               {/* Attendance Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'attendance' ||
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'attendance' ||
                   isDropdownActive(['/faculty/manage/attendance', '/faculty/qr/attendance', '/faculty/view/attendance'])
-                    ? 'open'
-                    : ''
-                }`}
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -215,12 +288,11 @@ const FacultyDashboard = () => {
 
               {/* Assignments Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'assignments' ||
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'assignments' ||
                   isDropdownActive(['/faculty/create/assignment', '/faculty/assignment/submission', '/faculty/view/assignments'])
-                    ? 'open'
-                    : ''
-                }`}
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -253,12 +325,11 @@ const FacultyDashboard = () => {
 
               {/* Quizzes Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'quizzes' ||
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'quizzes' ||
                   isDropdownActive(['/faculty/create/quiz', '/faculty/view/quizzes', '/faculty/quiz/responses', '/faculty/quiz/reports'])
-                    ? 'open'
-                    : ''
-                }`}
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -296,11 +367,10 @@ const FacultyDashboard = () => {
 
               {/* Examinations Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'examinations' || isDropdownActive(['/faculty/view/exams', '/faculty/manage/marks'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'examinations' || isDropdownActive(['/faculty/view/exams', '/faculty/manage/marks'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -328,11 +398,10 @@ const FacultyDashboard = () => {
 
               {/* Results Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'results' || isDropdownActive(['/faculty/upload/results', '/faculty/view/results'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'results' || isDropdownActive(['/faculty/upload/results', '/faculty/view/results'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -360,11 +429,10 @@ const FacultyDashboard = () => {
 
               {/* Notifications Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'notifications' || isDropdownActive(['/faculty/view/notices', '/faculty/send/notice'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'notifications' || isDropdownActive(['/faculty/view/notices', '/faculty/send/notice'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -392,11 +460,10 @@ const FacultyDashboard = () => {
 
               {/* Schedule Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'schedule' || isDropdownActive(['/faculty/upload/schedule', '/faculty/view/schedule'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'schedule' || isDropdownActive(['/faculty/upload/schedule', '/faculty/view/schedule'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -424,11 +491,10 @@ const FacultyDashboard = () => {
 
               {/* Resources Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'resources' || isDropdownActive(['/faculty/upload/resource', '/faculty/view/resources'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'resources' || isDropdownActive(['/faculty/upload/resource', '/faculty/view/resources'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -504,27 +570,32 @@ const FacultyDashboard = () => {
               </div>
             </form>
           </div>
+          <button
+            onClick={handleLogout}
+            className="block bg-blue-100 text-blue-600 rounded-3xl px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+          >
+            Logout
+          </button>
 
           {/* Profile Dropdown */}
-          <div className="relative border-[1px] rounded-[100px] py-[7px] hover:bg-zinc-200 transition">
+          {/* <div className="relative border-[1px] rounded-[100px] py-[7px] hover:bg-zinc-200 transition">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2 px-2 focus:outline-none"
             >
               <img
                 src={
-                  faculty.profile_picture ||
+                  profile.profile_picture ||
                   "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"
                 }
                 alt="Profile"
                 className="w-32 h-32 rounded-full"
               />
               <span className="text-blue-500 font-medium">
-                @{faculty.username || "User"}
+                @{profile?.username}
               </span>
             </button>
 
-            {/* Dropdown Menu */}
             {isDropdownOpen && (
               <div className="absolute right-0 mt-3 w-full bg-white rounded-lg shadow-lg border border-gray-200 ">
                 <div className="py-2">
@@ -543,7 +614,7 @@ const FacultyDashboard = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Routes */}
@@ -575,7 +646,7 @@ const FacultyDashboard = () => {
             <Route path="view/admin/schedule" element={<ViewAdminSchedule />} />
             <Route path="upload/resource" element={<UploadResource />} />
             <Route path="view/resources" element={<ViewResources />} />
-            <Route path="edit-profile" element={<ProfileSetting />} />
+            <Route path="edit-profile" element={<FacultyProfile />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

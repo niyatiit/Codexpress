@@ -1,306 +1,130 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 const ViewBatches = () => {
-  // Sample courses data with batches
-  const courses = [
-    {
-      id: 1,
-      name: "Java",
-      batches: [
-        {
-          id: 1,
-          batchType: "Morning",
-          // Batch name includes the course name and timing details
-          name: "Java – Morning Batch 1",
-          startDate: "2025-01-15",
-          endDate: "2025-04-15",
-        },
-        {
-          id: 2,
-          batchType: "Evening",
-          name: "Java – Evening Batch 1",
-          startDate: "2025-02-01",
-          endDate: "2025-05-01",
-        },
-        {
-          id: 3,
-          batchType: "Morning",
-          name: "Java – Morning Batch 2",
-          startDate: "2025-03-01",
-          endDate: "2025-06-01",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Python",
-      batches: [
-        {
-          id: 4,
-          batchType: "Morning",
-          name: "Python – Morning Batch 1",
-          startDate: "2025-03-01",
-          endDate: "2025-06-01",
-        },
-        {
-          id: 5,
-          batchType: "Evening",
-          name: "Python – Evening Batch 1",
-          startDate: "2025-03-15",
-          endDate: "2025-07-01",
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "JavaScript",
-      batches: [
-        {
-          id: 6,
-          batchType: "Evening",
-          name: "JavaScript – Evening Batch 1",
-          startDate: "2025-04-01",
-          endDate: "2025-08-01",
-        },
-      ],
-    },
-  ];
+  const [courses, setCourses] = useState([]); // List of all courses
+  const [selectedCourse, setSelectedCourse] = useState(""); // Selected course ID
+  const [batches, setBatches] = useState([]); // List of batches for the selected course
 
-  // State to hold the selected course ID
-  const [selectedCourseId, setSelectedCourseId] = useState("2");
+  // Fetch all courses on component mount
+  useEffect(() => {
+    fetchCourses();
+  }, []);
 
-  // Find the selected course based on the dropdown value
-  const selectedCourse = courses.find(
-    (course) => course.id === Number(selectedCourseId)
-  );
+  // Fetch all courses
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/courses");
+      setCourses(response.data.courses); // Set the list of courses
+      console.log("Courses fetched:", response.data.courses); // Debugging
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
 
-  // Group batches by batchType if a course is selected
-  const morningBatches = selectedCourse
-    ? selectedCourse.batches.filter((batch) => batch.batchType === "Morning")
-    : [];
-  const eveningBatches = selectedCourse
-    ? selectedCourse.batches.filter((batch) => batch.batchType === "Evening")
-    : [];
+  // Fetch batches for the selected course
+  const fetchBatches = async (courseId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/courses/${courseId}/batches`);
+      console.log("Batches response:", response.data); // Debugging
+      setBatches(response.data.data || []); // Ensure the state is updated to an empty array if no data
+    } catch (error) {
+      console.error("Error fetching batches:", error);
+      setBatches([]); // Clear batches in case of an error
+    }
+  };
+
+  // Handle course selection
+  const handleCourseChange = (event) => {
+    const courseId = event.target.value;
+    console.log("Selected Course ID:", courseId); // Debugging
+    setSelectedCourse(courseId); // Update the selected course
+    if (courseId) {
+      fetchBatches(courseId); // Fetch batches for the selected course
+    } else {
+      setBatches([]); // Clear batches if no course is selected
+    }
+  };
 
   return (
-    <div className="dashboard-body">
-      {/* Embedded CSS styling */}
-      <style>{`
-        .dashboard-body {
-          padding: 20px;
-          font-family: Arial, sans-serif;
-          color: #333;
-        }
-        /* Breadcrumb Styles */
-        .breadcrumb-with-buttons {
-          margin-bottom: 24px;
-        }
-        .breadcrumb ul {
-          list-style: none;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 0;
-          margin: 0;
-        }
-        .breadcrumb li {
-          display: flex;
-          align-items: center;
-        }
-        .text-gray-200 { color: #ccc; }
-        .text-gray-500 { color: #aaa; }
-        .text-main-600 { color: rgb(18, 109, 255); }
-        .fw-normal { font-weight: normal; }
-        .text-15 { font-size: 15px; }
-        .hover-text-main-600:hover { color: rgb(0, 106, 255); }
-        .flex-between { display: flex; justify-content: space-between; }
-        .flex-align { display: flex; align-items: center; }
-        .flex-wrap { flex-wrap: wrap; }
-        .mb-24 { margin-bottom: 24px; }
-        /* Form and Dropdown */
-        .form-group {
-          margin-bottom: 16px;
-        }
-        .select-course {
-          padding: 8px;
-          font-size: 1rem;
-          border-radius: 4px;
-          border: 1px solid #ccc;
-          margin-left: 8px;
-        }
-        /* Table Styles */
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 24px;
-        }
-        table th, table td {
-          padding: 12px;
-          border: 1px solid #ddd;
-          text-align: left;
-        }
-        table th {
-          background-color: #f8f8f8;
-        }
-        /* Button Styles */
-        .btn {
-          text-decoration: none;
-          padding: 6px 12px;
-          border-radius: 4px;
-          font-size: 0.9rem;
-          transition: background-color 0.3s ease;
-          cursor: pointer;
-          border: none;
-        }
-        .btn-outline-primary {
-          // // background-color: rgb(0, 110, 255);
-          color: black;
-          border: 1px solid rgb(0, 115, 255);
-        }
-        .btn-outline-primary:hover {
-          background-color: rgb(0, 106, 255);
-          color: #fff;
-        }
-        .btn-outline-danger {
-          background-color: transparent;
-          color: #dc3545;
-          border: 1px solid #dc3545;
-        }
-        .btn-outline-danger:hover {
-          background-color: #dc3545;
-          color: #fff;
-        }
-      `}</style>
-
-      {/* Breadcrumb Navigation */}
-      <div className="breadcrumb-with-buttons flex-between flex-wrap mb-24">
-        <div className="breadcrumb">
-          <ul className="flex-align">
+    <div className="dashboard-body p-20">
+      {/* Breadcrumb Section */}
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
             <li>
               <Link
-                to="/admin"
+                to="/faculty"
                 className="text-gray-200 fw-normal text-15 hover-text-main-600"
               >
                 Home
               </Link>
             </li>
             <li>
-              <span className="text-gray-500 fw-normal">
+              <span className="text-gray-500 fw-normal d-flex">
                 <i className="ph ph-caret-right"></i>
               </span>
             </li>
             <li>
-              <span className="text-main-600 fw-normal text-15">
-                View Batches
-              </span>
+              <span className="text-main-600 fw-normal text-15">View Batches</span>
             </li>
           </ul>
         </div>
       </div>
 
       {/* Course Selection Dropdown */}
-      <div className="form-group">
-        <label htmlFor="courseSelect" className="fw-normal text-15">
-          Select Course:
-        </label>
+      <div className="bg-white rounded-lg p-16 shadow-sm">
+        <h5 className="text-xl font-semibold mb-4 text-gray-800">Select Course</h5>
         <select
-          id="courseSelect"
-          className="select-course"
-          value={selectedCourseId}
-          onChange={(e) => setSelectedCourseId(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={selectedCourse}
+          onChange={handleCourseChange}
         >
           <option value="">-- Select a Course --</option>
           {courses.map((course) => (
-            <option key={course.id} value={course.id}>
+            <option key={course._id} value={course._id}>
               {course.name}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Display Batches for Selected Course */}
-      {selectedCourse ? (
-        <div>
-          <h3 className="text-main-600 fw-normal text-15 mb-24">
-            Batches for {selectedCourse.name}
-          </h3>
-
-          {/* Morning Batches Section */}
-          {morningBatches.length > 0 && (
-            <div className="mb-24">
-              <h4>Morning Batches</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Batch Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Actions</th>
+      {/* Batches Table */}
+      {selectedCourse && (
+        <div className="bg-white rounded-lg p-24 mt-6 shadow-sm">
+          <h5 className="text-xl font-semibold mb-4 text-gray-800">Available Batches</h5>
+          {batches.length > 0 ? (
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Name</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Start Date</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">End Date</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Type</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Seats Available</th>
+                </tr>
+              </thead>
+              <tbody>
+                {batches.map((batch) => (
+                  <tr key={batch._id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="p-3 text-sm text-gray-700">{batch.name}</td>
+                    <td className="p-3 text-sm text-gray-700">
+                      {new Date(batch.start_date).toLocaleDateString()}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700">
+                      {new Date(batch.end_date).toLocaleDateString()}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700">{batch.batch_type}</td>
+                    <td className="p-3 text-sm text-gray-700">{batch.seats_available}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {morningBatches.map((batch) => (
-                    <tr key={batch.id}>
-                      <td>{batch.name}</td>
-                      <td>{batch.startDate}</td>
-                      <td>{batch.endDate}</td>
-                      <td>
-                      <button className="btn btn-outline-primary me-2">
-                          Edit
-                        </button>
-                        <button className="btn text-red-500 btn-danger">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-gray-500">No batches available for this course.</p>
           )}
-
-          {/* Evening Batches Section */}
-          {eveningBatches.length > 0 && (
-            <div className="mb-24">
-              <h4>Evening Batches</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Batch Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {eveningBatches.map((batch) => (
-                    <tr key={batch.id}>
-                      <td>{batch.name}</td>
-                      <td>{batch.startDate}</td>
-                      <td>{batch.endDate}</td>
-                      <td>
-                        <button className="btn btn-outline-primary me-2">
-                          Edit
-                        </button>
-                        <button className="btn text-red-500 btn-danger">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {morningBatches.length === 0 &&
-            eveningBatches.length === 0 && (
-              <p>No batches available for this course.</p>
-            )}
         </div>
-      ) : (
-        <p>Please select a course to view its batches.</p>
       )}
     </div>
   );

@@ -4,18 +4,28 @@ const app = express()
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const Courses = require("./models/course.model")
+const States = require("./models/state.model")
+const Cities = require("./models/city.model")
 const port = process.env.PORT || 3000
 app.use(express.json())
 app.use(cookieParser());
 const bcrypt = require("bcrypt")
-const cors = require("cors");
-app.use(cors({ origin: "http://localhost:5173", credentials: true })); // Update with your frontend URL
-
+const cors = require("cors");// Enable CORS for all routes
+const axios=require('axios')
+axios.defaults.withCredentials = true;
+app.use(cors({
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    credentials: true, // Allow cookies
+  }));
+  
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes')
 const courseRoutes = require('./routes/courseRoutes')
 const facultyRoutes = require('./routes/facultyRoutes')
 const batchRoutes = require('./routes/batchRoutes')
+const userRoutes = require('./routes/userRoutes')
+const profileRoutes = require('./routes/profileRoutes')
+const paymentRoutes = require('./routes/paymentRoutes')
 const connectDB = require('./config/db')
 try {
     connectDB()
@@ -28,16 +38,45 @@ app.use("/auth", authRoutes); // Authentication routes
 app.use('/student', studentRoutes)
 app.use("/courses", courseRoutes);
 app.use("/faculty", facultyRoutes);
-app.use("/batches",batchRoutes);
+app.use("/batches", batchRoutes);
+app.use("/users", userRoutes);
+app.use("/profile", profileRoutes);
+app.use("/payment", paymentRoutes);
 
 app.get('/', async (req, res) => {
-    const saltRounds = 12;
-    const plainPassword = "kavita123"; // Replace with the actual password
-    const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
-    
-    console.log(hashedPassword);
+    // const saltRounds = 12;
+    // const plainPassword = "kavita123";  Replace with the actual password
+    // const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
+
+    // console.log(hashedPassword);
     res.send(`hello from server`)
 })
+
+app.get('/states/:id', async (req, res) => {
+    try {
+        const state = await States.findOne({ _id: req.params.id }); // Fetch state by ID
+        if (!state) {
+            return res.status(404).json({ success: false, message: "State not found" });
+        }
+        res.status(200).json({ success: true, data: state }); // Send the state as a response
+    } catch (error) {
+        console.error("Error fetching state:", error);
+        res.status(500).json({ success: false, message: "Failed to fetch state" }); // Handle errors
+    }
+});
+app.get('/cities/:id', async (req, res) => {
+    try {
+        const city = await Cities.findById({ _id: req.params.id });
+        if (!city) {
+            return res.status(404).json({ success: false, message: "City not found" });
+        }
+        res.status(200).json({ success: true, data: city });
+    } catch (error) {
+        console.error("Error fetching city:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
 
 app.get("/logout", (req, res) => {
     // Expire the cookie properly by setting maxAge to 0

@@ -97,7 +97,7 @@ const FacultyRegister = () => {
         }
 
         alert("Registration Successful!");
-        navigate("/faculty/dashboard"); // Redirect to faculty dashboard after successful signup
+        navigate("/"); // Redirect to faculty dashboard after successful signup
 
         // Reset form after submission
         setFormData({
@@ -119,7 +119,7 @@ const FacultyRegister = () => {
   return (
     <section className="auth d-flex gap-90">
       <div className="auth-left bg-main-50 flex-center justify-between">
-        <img src="assets/images/thumbs/auth-img2.png" alt="" />
+        <img src="/assets/images/thumbs/auth-img2.png" alt="" />
       </div>
       <div className="auth-right py-40 px-24 flex-center flex-column">
         <div className="auth-right__inner mx-auto w-100">

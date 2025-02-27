@@ -49,17 +49,7 @@ exports.signup = async (req, res) => {
 
     await newUser.save();
 
-    // Create faculty profile if role is "faculty"
-    if (role.toLowerCase() === "faculty") {
-      const newFaculty = new Faculty({
-        user_id: newUser._id,
-        department: "", // Default department (can be updated later)
-        qualification: "", // Default qualification (can be updated later)
-        experience: 0, // Default experience (can be updated later)
-      });
-      await newFaculty.save();
-    }
-
+    
     // Generate JWT token
     const token = jwt.sign({ id: newUser._id, role: role.toLowerCase() }, JWT_SECRET, {
       expiresIn: "1d",
@@ -83,9 +73,6 @@ exports.signup = async (req, res) => {
         username: newUser.username,
         email: newUser.email,
         role: role.toLowerCase(),
-        first_name: newUser.first_name,
-        last_name: newUser.last_name,
-        phone: newUser.phone,
       },
     });
   } catch (error) {

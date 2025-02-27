@@ -60,3 +60,47 @@ module.exports.roleAuthorization = (requiredRole) => {
     next();
   };
 };
+
+
+module.exports.protect = async (req, res, next) => {
+  let token;
+
+  // Check for token in the Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    try {
+      // Extract token from header
+      token = req.headers.authorization.split(" ")[1];
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Attach user to the request object
+      req.user = await User.findById(decoded.id).select("-password -resetPasswordToken -resetPasswordExpires -deletedAt");
+
+      next();
+    } catch (error) {
+      res.status(401).json({ success: false, message: "Not authorized, token failed" });
+    }
+  }
+
+  if (!token) {
+    res.status(401).json({ success: false, message: "Not authorized, no token" });
+  }
+};
+
+
+module.exports.authenticate = (req, res, next) => {
+  const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    req.user = decoded; // Attach the decoded user payload to req.user
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+};

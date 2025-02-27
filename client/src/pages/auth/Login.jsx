@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams,Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import axios from "axios";
 
@@ -11,6 +11,9 @@ const Login = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const redirect = searchParams.get("redirect") || "/"; // Default redirect
+
 
     // Check localStorage for "Remember Me" data on component mount
     useEffect(() => {
@@ -58,23 +61,10 @@ const Login = () => {
                     localStorage.removeItem("rememberedPassword");
                 }
     
-                // Redirect to the previous page or home
-                const from = location.state?.from || "/";
-                navigate(from);
+                navigate(redirect);
+
     
-                // Navigate based on user role
-                setTimeout(() => {
-                    const storedUser = JSON.parse(localStorage.getItem("user"));
-                    
-                    if (storedUser?.role === "student") {
-                        console.log("Redirecting to /");
-                        navigate("/", { replace: true });
-                    }
-                    else {
-                        console.log("Redirecting to /");
-                        navigate("/", { replace: true });
-                    }
-                }, 100);
+                
             }
         } catch (error) {
             console.error("Login failed:", error);

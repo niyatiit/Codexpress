@@ -1,30 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const AddFaculty = () => {
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
   const [facultyDetails, setFacultyDetails] = useState({
-    name: "",
-    email: "",
     department: "",
-    phoneNumber: "",
-    joiningDate: "",
-    qualification: "",
-    specialization: "",
     experience: "",
-    address: "",
+    designation: "",
+    doj: "",
+    qualifications: [{ degree: "", institution: "", year: "" }],
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFacultyDetails({
-      ...facultyDetails,
-      [name]: value,
-    });
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/users/faculty")
+      .then((response) => {
+        if (response.data.success) {
+          setUsers(response.data.users);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  }, []);
+
+  const handleUserChange = (e) => {
+    setSelectedUser(e.target.value);
+  };
+
+  const handleChange = (e, index = null, field = null) => {
+    if (index !== null) {
+      // Update specific qualification field
+      const updatedQualifications = [...facultyDetails.qualifications];
+      updatedQualifications[index][field] = e.target.value;
+      setFacultyDetails({ ...facultyDetails, qualifications: updatedQualifications });
+    } else {
+      // Update other fields
+      setFacultyDetails({ ...facultyDetails, [e.target.name]: e.target.value });
+    }
+  };
+
+  const addQualification = () => {
+    if (facultyDetails.qualifications.length < 3) {
+      setFacultyDetails({
+        ...facultyDetails,
+        qualifications: [...facultyDetails.qualifications, { degree: "", institution: "", year: "" }],
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your submit logic here
+    if (!selectedUser) {
+      alert("Please select a faculty member.");
+      return;
+    }
+
+    const facultyData = {
+      user_id: selectedUser,
+      ...facultyDetails,
+    };
+
+    axios
+      .post(`http://localhost:3000/faculty/create`, facultyData)
+      .then(() => {
+        alert("Faculty added successfully!");
+        setSelectedUser("");
+        setFacultyDetails({
+          department: "",
+          experience: "",
+          designation: "",
+          doj: "",
+          qualifications: [{ degree: "", institution: "", year: "" }],
+        });
+      })
+      .catch((error) => {
+        console.error("Error adding faculty:", error);
+      });
   };
 
   return (
@@ -49,7 +103,7 @@ const AddFaculty = () => {
           </ul>
         </div>
         <div>
-          <Link to="/manage-faculty" className="btn btn-outline-main rounded-pill py-9">
+          <Link to="/admin/manage/faculty" className="btn btn-outline-main rounded-pill py-9">
             Manage Faculty
           </Link>
         </div>
@@ -62,38 +116,26 @@ const AddFaculty = () => {
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            {/* Name */}
+            {/* Select Faculty */}
             <div className="mb-16">
-              <label htmlFor="name" className="form-label">
-                Full Name <span className="text-danger">*</span>
+              <label htmlFor="user" className="form-label">
+                Select Faculty <span className="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={facultyDetails.name}
-                onChange={handleChange}
+              <select
+                id="user"
+                name="user"
+                value={selectedUser}
+                onChange={handleUserChange}
                 className="form-control"
-                placeholder="Enter faculty's full name"
                 required
-              />
-            </div>
-
-            {/* Email */}
-            <div className="mb-16">
-              <label htmlFor="email" className="form-label">
-                Email Address <span className="text-danger">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={facultyDetails.email}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter faculty's email"
-                required
-              />
+              >
+                <option value="">Select Faculty</option>
+                {users.map((user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.username} ({user.email})
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Department */}
@@ -111,81 +153,17 @@ const AddFaculty = () => {
               >
                 <option value="">Select Department</option>
                 <option value="Computer Science">Computer Science</option>
-                <option value="Business Management">Business Management</option>
-                <option value="Design">Design</option>
-                <option value="Full Stack Development">Full Stack Development</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
               </select>
-            </div>
-
-            {/* Phone Number */}
-            <div className="mb-16">
-              <label htmlFor="phoneNumber" className="form-label">
-                Phone Number <span className="text-danger">*</span>
-              </label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={facultyDetails.phoneNumber}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter faculty's phone number"
-                required
-              />
-            </div>
-
-            {/* Joining Date */}
-            <div className="mb-16">
-              <label htmlFor="joiningDate" className="form-label">
-                Joining Date <span className="text-danger">*</span>
-              </label>
-              <input
-                type="date"
-                id="joiningDate"
-                name="joiningDate"
-                value={facultyDetails.joiningDate}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
-            </div>
-
-            {/* Qualification */}
-            <div className="mb-16">
-              <label htmlFor="qualification" className="form-label">
-                Qualification <span className="text-muted">(Optional)</span>
-              </label>
-              <input
-                type="text"
-                id="qualification"
-                name="qualification"
-                value={facultyDetails.qualification}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter faculty's qualification"
-              />
-            </div>
-
-            {/* Specialization */}
-            <div className="mb-16">
-              <label htmlFor="specialization" className="form-label">
-                Specialization <span className="text-muted">(Optional)</span>
-              </label>
-              <input
-                type="text"
-                id="specialization"
-                name="specialization"
-                value={facultyDetails.specialization}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter faculty's specialization"
-              />
             </div>
 
             {/* Experience */}
             <div className="mb-16">
               <label htmlFor="experience" className="form-label">
-                Experience (in years) <span className="text-muted">(Optional)</span>
+                Experience (in years) <span className="text-danger">*</span>
               </label>
               <input
                 type="number"
@@ -194,33 +172,89 @@ const AddFaculty = () => {
                 value={facultyDetails.experience}
                 onChange={handleChange}
                 className="form-control"
-                placeholder="Enter faculty's experience in years"
                 min="0"
+                required
               />
             </div>
 
-            {/* Address */}
+            {/* Designation */}
             <div className="mb-16">
-              <label htmlFor="address" className="form-label">
-                Address <span className="text-muted">(Optional)</span>
+              <label htmlFor="designation" className="form-label">
+                Designation <span className="text-danger">*</span>
               </label>
-              <textarea
-                id="address"
-                name="address"
-                value={facultyDetails.address}
+              <select
+                id="designation"
+                name="designation"
+                value={facultyDetails.designation}
                 onChange={handleChange}
                 className="form-control"
-                placeholder="Enter faculty's address"
-                rows="3"
-              ></textarea>
+                required
+              >
+                <option value="">Select Designation</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Associate Professor">Associate Professor</option>
+                <option value="Professor">Professor</option>
+              </select>
             </div>
 
-            {/* Buttons */}
-            <div className="flex-between gap-8">
+            {/* Date of Joining */}
+            <div className="mb-16">
+              <label htmlFor="doj" className="form-label">
+                Date of Joining <span className="text-danger">*</span>
+              </label>
+              <input
+                type="date"
+                id="doj"
+                name="doj"
+                value={facultyDetails.doj}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
+
+            {/* Qualifications (Up to 3) */}
+            {facultyDetails.qualifications.map((qual, index) => (
+              <div className="mb-16" key={index}>
+                <label className="form-label">Qualification {index + 1}</label>
+                <div className="d-flex gap-8">
+                  <input
+                    type="text"
+                    placeholder="Degree"
+                    value={qual.degree}
+                    onChange={(e) => handleChange(e, index, "degree")}
+                    className="form-control"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Institution"
+                    value={qual.institution}
+                    onChange={(e) => handleChange(e, index, "institution")}
+                    className="form-control"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Year"
+                    value={qual.year}
+                    onChange={(e) => handleChange(e, index, "year")}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+            ))}
+
+            {facultyDetails.qualifications.length < 3 && (
+              <button type="button" onClick={addQualification} className="btn bg-blue-500 text-white">
+                + Add Qualification
+              </button>
+            )}
+
+            {/* Submit & Cancel Buttons */}
+            <div className="flex justify-end gap-3">
               <button type="submit" className="btn btn-main rounded-pill py-9">
                 Add Faculty
               </button>
-              <Link to="/manage-faculty" className="btn btn-outline-danger rounded-pill py-9">
+              <Link to="/admin/manage/faculty" className="border-2 border-blue-500 text-blue-500 px-20 rounded-pill py-9">
                 Cancel
               </Link>
             </div>

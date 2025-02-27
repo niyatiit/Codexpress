@@ -14,8 +14,8 @@ const AdminLogin = () => {
 
     // Load remembered credentials on mount
     useEffect(() => {
-        const rememberedEmail = localStorage.getItem("adminEmail");
-        const rememberedPassword = localStorage.getItem("adminPassword");
+        const rememberedEmail = localStorage.getItem("rememberedEmail");
+        const rememberedPassword = localStorage.getItem("rememberedPassword");
         if (rememberedEmail) {
             setEmail(rememberedEmail);
             setRememberMe(true);
@@ -41,11 +41,11 @@ const AdminLogin = () => {
 
                 // Handle Remember Me
                 if (rememberMe) {
-                    localStorage.setItem("adminEmail", email);
-                    localStorage.setItem("adminPassword", password);
+                    localStorage.setItem("rememberedEmail", email);
+                    localStorage.setItem("rememberedPassword", password);
                 } else {
-                    localStorage.removeItem("adminEmail");
-                    localStorage.removeItem("adminPassword");
+                    localStorage.removeItem("rememberedEmail");
+                    localStorage.removeItem("rememberedPassword");
                 }
 
                 navigate("/admin", { replace: true });

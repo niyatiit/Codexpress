@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema(
       trim: true,
       minlength: [3, "Username must be at least 3 characters long"],
     },
-    first_name: { type: String, trim: true, default: null },
-    last_name: { type: String, trim: true, default: null },
+    first_name: { type: String, trim: true, default: "" },
+    last_name: { type: String, trim: true, default: "" },
 
     email: {
       type: String,
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     profile_picture: {
       type: String,
       default:
-        "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg",
+        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
       validate: {
         validator: function (v) {
           return /^https?:\/\/.+\..+/.test(v); // Ensures it's a valid URL

@@ -266,15 +266,15 @@ const Register = () => {
             </button>
 
             {/* Login Link */}
-            <p className="mt-32 text-gray-600 text-center">
-              Already have an account?
-              <Link
-                to="/login"
-                className="text-main-600 hover-text-decoration-underline pl-2"
-              >
-                Log In
-              </Link>
-            </p>
+              <p className="mt-32 text-gray-600 text-center">
+                Already have an account?
+                <Link
+                  to="/student/login"
+                  className="text-main-600 hover-text-decoration-underline pl-2"
+                >
+                  Log In
+                </Link>
+              </p>
           </form>
         </div>
       </div>
