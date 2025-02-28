@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link, redirectDocument, useNavigate ,useSearchParams} from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 
 const ProfileCompletion = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id; 
-  
+  const userId = user.id;
+
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect") || "/courses"; // Default redirect
+
   // State to manage form inputs
   const [formData, setFormData] = useState({
     username: "",
@@ -28,7 +29,6 @@ const ProfileCompletion = () => {
   const [errors, setErrors] = useState({});
 
   // Fetch user data on component mount
-  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -42,7 +42,6 @@ const ProfileCompletion = () => {
         );
         if (response.data.success) {
           const userData = response.data.user;
-          console.log(userData)
           setFormData({
             username: userData.username,
             email: userData.email,
@@ -54,7 +53,6 @@ const ProfileCompletion = () => {
             gender: userData.gender || "",
             dob: userData.dob ? new Date(userData.dob).toISOString().split("T")[0] : "", // Convert to yyyy-MM-dd
             pincode: userData.pincode || "",
-           
           });
         }
       } catch (error) {
@@ -81,56 +79,87 @@ const ProfileCompletion = () => {
     }));
   };
 
-  // Handle file upload for profile picture
+  // Validate form inputs
+  const validateForm = () => {
+    const newErrors = {};
 
+    // Required fields validation
+    const requiredFields = [
+      "username",
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "gender",
+      "dob",
+      "address",
+      "pincode",
+    ];
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        newErrors[field] = `${field.replace("_", " ")} is required`;
+      }
+    });
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    // Phone validation (10 digits)
+    const phoneRegex = /^\d{10}$/;
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10 digits";
+    }
+
+    // Date of Birth validation (must be at least 14 years old)
+    if (formData.dob) {
+      const dobDate = new Date(formData.dob);
+      const today = new Date();
+      const age = today.getFullYear() - dobDate.getFullYear();
+      if (age < 14 || (age === 14 && today < new Date(today.setFullYear(dobDate.getFullYear() + 14)))) {
+        newErrors.dob = "You must be at least 14 years old";
+      }
+    }
+
+    // Pincode validation (6 digits)
+    const pincodeRegex = /^\d{6}$/;
+    if (formData.pincode && !pincodeRegex.test(formData.pincode)) {
+      newErrors.pincode = "Pincode must be 6 digits";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
+    // Validate form inputs
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Validate required fields
-      const requiredFields = [
-        "username",
-        "first_name",
-        "last_name",
-        "email",
-        "phone",
-        "gender",
-        "dob",
-        "address",
-        "pincode",
-      ];
-  
-      const newErrors = {};
-      requiredFields.forEach((field) => {
-        if (!formData[field]) {
-          newErrors[field] = `${field.replace("_", " ")} is required`;
-        }
-      });
-  
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        setLoading(false);
-        return;
-      }
-  
       // Send PUT request to update user profile
       const response = await axios.put(
         `http://localhost:3000/profile/update`,
-        { ...formData, userId }, // Ensure userId is correctly accessed
+        { ...formData, userId },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-  
+
       if (response.data.success) {
         alert("Profile updated successfully!");
         navigate(redirect); // Use the `redirect` variable
-      }else {
+      } else {
         console.log("Failed to update profile. Please try again.");
       }
     } catch (error) {
@@ -149,7 +178,7 @@ const ProfileCompletion = () => {
           <div className="breadcrumb mb-24">
             <ul className="flex-align gap-4">
               <li>
-                <Link to="/admin" className="text-gray-200 fw-normal text-15 hover-text-main-600">
+                <Link to="/" className="text-gray-200 fw-normal text-15 hover-text-main-600">
                   Home
                 </Link>
               </li>
@@ -163,8 +192,6 @@ const ProfileCompletion = () => {
               </li>
             </ul>
           </div>
-
-
         </div>
 
         <div className="card">
@@ -288,7 +315,6 @@ const ProfileCompletion = () => {
                   />
                 </div>
 
-
                 <div className="col-sm-6">
                   <label className="h5 mb-8 fw-semibold font-heading">Pincode</label>
                   <input
@@ -302,12 +328,11 @@ const ProfileCompletion = () => {
                   {errors.pincode && <p className="text-danger">{errors.pincode}</p>}
                 </div>
 
-
                 <div className="flex-align justify-content-end gap-8">
                   <Link to={redirect} className="btn btn-outline-main rounded-pill py-9">Cancel</Link>
                   <button type="submit" className="btn btn-main rounded-pill py-9" disabled={loading}>
-  {loading ? "Updating..." : "Update Profile"}
-</button>
+                    {loading ? "Updating..." : "Update Profile"}
+                  </button>
                 </div>
               </div>
             </form>

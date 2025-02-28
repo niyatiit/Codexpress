@@ -10,6 +10,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto")
 const JWT_SECRET = process.env.TOKEN_KEY;
 const FRONTEND_URL = process.env.FRONTEND_URL;
+const mongoose = require("mongoose")
 
 //signup function
 exports.signup = async (req, res) => {
@@ -49,7 +50,7 @@ exports.signup = async (req, res) => {
 
     await newUser.save();
 
-    
+
     // Generate JWT token
     const token = jwt.sign({ id: newUser._id, role: role.toLowerCase() }, JWT_SECRET, {
       expiresIn: "1d",
@@ -168,6 +169,7 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     console.log("Token successfully saved in the database!");
+    console.log("Updated User:", user);
 
     // Send the **raw token** (not the hashed one) via email
     sendResetEmail(user.email, resetToken);
@@ -179,48 +181,41 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+
 // ✅ Reset Password Function
 exports.resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { newPassword } = req.body;
 
-    console.log("Received Token from URL:", token);
-    console.log("Received New Password:", newPassword);
-
     if (!token || !newPassword) {
       return res.status(400).json({ message: "Token and new password are required" });
     }
 
-    // Find user whose token is still valid
-    const user = await User.findOne({
-      resetPasswordExpires: { $gt: Date.now() }
-    });
+    // Find the user by the plaintext token (temporarily)
+    const user = await User.findOne({ resetPasswordToken: { $exists: true } })
+      .select("+resetPasswordToken +resetPasswordExpires"); // Explicitly include hidden fields
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    console.log("User Found in DB:", user);
-    console.log("Stored Hashed Token in DB:", user.resetPasswordToken);
-
-    // Ensure token is stored
-    if (!user.resetPasswordToken) {
-      console.error("No reset token found in DB! Forgot password flow might be broken.");
-      return res.status(400).json({ message: "Reset token not found" });
+    // Compare the plaintext token with the hashed token
+    const isValidToken = await bcrypt.compare(token, user.resetPasswordToken);
+    console.log(isValidToken); // Debugging
+    if (!isValidToken) {
+      return res.status(400).json({ message: "Invalid token" });
     }
 
-    // Compare the raw token from URL with the hashed token in DB
-    const isValidToken = await bcrypt.compare(token, user.resetPasswordToken);
-    if (!isValidToken) {
-      console.error("Token comparison failed. Possibly incorrect token.");
-      return res.status(400).json({ message: "Invalid token" });
+    // Check if the token has expired
+    if (user.resetPasswordExpires < Date.now()) {
+      return res.status(400).json({ message: "Token has expired" });
     }
 
     // Hash and update the new password
     user.password = await bcrypt.hash(newPassword, 12);
-    user.resetPasswordToken = null;
-    user.resetPasswordExpires = null;
+    user.resetPasswordToken = null; // Remove the reset token
+    user.resetPasswordExpires = null; // Clear expiration
     await user.save();
 
     res.status(200).json({ success: true, message: "Password reset successful" });
@@ -229,14 +224,14 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Error resetting password", error: error.message });
   }
 };
-
 const sendResetEmail = async (email, resetToken) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER, // Your Gmail
-        pass: process.env.EMAIL_PASS, // App Password (Not your actual Gmail password)
+        pass: process.env.EMAIL_PASS, // Use the app password here
       },
     });
 
@@ -252,6 +247,7 @@ const sendResetEmail = async (email, resetToken) => {
         <p>This link will expire in 1 hour.</p>
       `,
     };
+    console.log("Mail Options:", mailOptions);
 
     await transporter.sendMail(mailOptions);
     console.log(`Password reset email sent to: ${email}`);

@@ -4,12 +4,10 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/logo.png";
-import { useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get("token");
+  const { token } = useParams();
+
 
   console.log("token - ", token);
 
@@ -20,6 +18,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const url = import.meta.env.VITE_BACKEND_URL;
+  console.log("Token from params:", token);
 
   const validatePassword = (password) => {
     if (password.length < 8) {
@@ -50,7 +49,7 @@ const ResetPassword = () => {
     try {
       const { data } = await axios.post(`http://localhost:3000/auth/reset-password/${token}`, { newPassword });
       toast.success(data.message);
-      setTimeout(() => navigate("/student/login"), 2000);
+      setTimeout(() => navigate(-1), 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Error resetting password");
     } finally {
@@ -145,12 +144,12 @@ const ResetPassword = () => {
               )}
             </button>
 
-            <Link
-              to="/student/login"
+            <button
+              onclick={()=>navigate(-1)}
               className="my-32 text-main-600 flex-align gap-8 justify-content-center"
             >
               <i className="ph ph-arrow-left d-flex"></i> Back To Login
-            </Link>
+            </button>
           </form>
         </div>
       </div>

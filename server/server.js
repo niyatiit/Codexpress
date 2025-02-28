@@ -44,11 +44,12 @@ app.use("/profile", profileRoutes);
 app.use("/payment", paymentRoutes);
 
 app.get('/', async (req, res) => {
-    // const saltRounds = 12;
-    // const plainPassword = "kavita123";  Replace with the actual password
-    // const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
+    const saltRounds = 12;
+    const plainPassword = "khushi123";
+    // $2b$12$rNK5N7CU0b3T87RJu7uQMOdlBRXOR7aMUgU4thZBjS/G3J2S4mduS
+    const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
 
-    // console.log(hashedPassword);
+    console.log(hashedPassword);
     res.send(`hello from server`)
 })
 

@@ -94,14 +94,14 @@ const Payment = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex-grow container mt-[100px] sm:px-6 lg:py-12">
+      <div className="flex-grow container mt-[70px] sm:px-6 lg:py-12">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white p-24 rounded-xl shadow-lg overflow-hidden">
             <div className="p-6 md:p-8">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Complete Your Payment</h1>
 
               {/* Progress Indicator */}
-              <div className="mb-8">
+              <div className="mb-16">
                 <div className="relative flex items-center justify-around">
                   {/* Step 1 */}
                   <div className="flex flex-col items-center z-10">
@@ -123,7 +123,7 @@ const Payment = () => {
               </div>
 
               {/* Course Details Section */}
-              <div className="bg-blue-50 p-4 md:p-6 rounded-lg mb-6">
+              <div className="bg-blue-50 p-4 mb-16 md:p-6 rounded-lg mb-6">
                 <h2 className="text-lg md:text-xl font-semibold text-blue-800 mb-4">Course Details</h2>
                 <div className="aspect-video mb-4 overflow-hidden rounded-lg">
                   <img
@@ -136,8 +136,10 @@ const Payment = () => {
                     }}
                   />
                 </div>
+                <div className="flex flex-col">
+                  
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.name}</h3>
-                <div className="flex flex-wrap items-baseline gap-2 mt-3">
+                <div className="flex flex-wrap items-center gap-2 mt-3">
                   <span className="text-blue-600 font-semibold text-2xl md:text-3xl">
                     ₹{finalPrice.toLocaleString()}
                   </span>
@@ -146,11 +148,13 @@ const Payment = () => {
                       <span className="line-through text-gray-500 text-lg">
                         ₹{course.price.toLocaleString()}
                       </span>
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-semibold">
+                      <span className="bg-yellow-200 text-yellow-600 px-2 py-1 rounded-full text-sm font-semibold">
                         {course.discount}% OFF
                       </span>
                     </>
                   )}
+                </div>
+                
                 </div>
               </div>
 

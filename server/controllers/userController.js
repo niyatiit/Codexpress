@@ -95,7 +95,6 @@ exports.getAllUsers = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    console.log(user)
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Error fetching profile", error });
@@ -106,7 +105,6 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
-    console.log(user)
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Error updating profile", error });

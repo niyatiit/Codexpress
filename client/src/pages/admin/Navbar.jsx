@@ -15,6 +15,7 @@ const Navbar = () => {
   const handleLogout = () => {
       Cookies.remove("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       navigate("/admin/login");
   };
 

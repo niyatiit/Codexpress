@@ -6,7 +6,6 @@ const mongoose=require("mongoose")
 exports.getUserProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
-    console.log("user id in getprofile :",userId)
 
     // Find the user by ID
     const user = await User.findById(userId).select("-password -resetPasswordToken -resetPasswordExpires -deletedAt");

@@ -69,7 +69,7 @@ const FacultyLogin = () => {
                         <Link to="/" className="sidebar__logo py-40 position-sticky">
                             <img src={logo} alt="Logo" className="h-32" />
                         </Link>
-                        <h2 className="mb-8">Faculty Portal 🔐</h2>
+                        <h2 className="mb-6 font-semibold text-lg">Faculty Portal 🔐</h2>
                         <p className="text-gray-600 text-15 mb-32">Sign in with your faculty credentials</p>
 
                         {error && <p className="error-text text-red-500 mb-24">{error}</p>}

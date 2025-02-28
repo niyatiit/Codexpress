@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,7 +9,7 @@ const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const url = import.meta.env.VITE_BACKEND_URL;
-
+  const navigate=useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -106,12 +106,11 @@ const ForgetPassword = () => {
               )}
             </button>
 
-            <Link
-              to="/student/login"
+            <button onClick={()=>navigate(-1)}
               className="my-32 text-main-600 flex-align gap-8 justify-content-center"
             >
               <i className="ph ph-arrow-left d-flex"></i> Back To Login
-            </Link>
+            </button>
           </form>
         </div>
       </div>

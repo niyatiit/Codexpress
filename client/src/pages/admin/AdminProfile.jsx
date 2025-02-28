@@ -43,9 +43,7 @@ const AdminProfile = () => {
 
           setProfile({
             ...userData,
-            profile_picture: userData.profile_picture && userData.profile_picture.trim() !== ""
-              ? userData.profile_picture
-              : "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
+            profile_picture: userData.profile_picture || "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
           });
         }
       } catch (error) {
@@ -57,7 +55,7 @@ const AdminProfile = () => {
     };
 
     fetchUserData();
-  }, [userId,user]);
+  }, []);
 
   useEffect(() => {
     const fetchStateData = async () => {
@@ -135,10 +133,11 @@ const AdminProfile = () => {
         <div className="header mb-16 flex justify-between items-center">
           <div className="flex gap-2">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500">
-              <img src={
-                profile.profile_picture ||
-                "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
-              } alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={profile?.profile_picture}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
             <h5 className="text-xl font-semibold mb-6 text-blue-700">Admin Profile</h5>
           </div>

@@ -60,12 +60,12 @@ const AdminLogin = () => {
             <div className="preloader"><div className="loader"></div></div>
             <div className="side-overlay"></div>
             <section className="auth bg-blue-100 flex justify-center items-center">
-                <div className="auth-right py-40 px-24 rounded-lg shadow-md flex-center flex-column bg-zinc-100 w-[50%]">
+                <div className="auth-right py-48 p-24 rounded-lg shadow-md flex-center flex-column bg-zinc-100 w-[50%]">
                     <div className="auth-right__inner mx-auto w-100">
                         <Link to="/" className="sidebar__logo py-40 position-sticky">
                             <img src={logo} alt="Logo" className="h-32" />
                         </Link>
-                        <h2 className="mb-8">Admin Portal 🔐</h2>
+                        <h2 className="mb-6 font-semibold text-lg">Admin Portal 🔐</h2>
                         <p className="text-gray-600 text-15 mb-32">Sign in with your admin credentials</p>
 
                         {error && <p className="error-text text-red-500 mb-24">{error}</p>}

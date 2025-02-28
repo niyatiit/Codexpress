@@ -332,13 +332,13 @@ const HomeTwo = () => {
 
                                                                         {/* Rating */}
                                                                         <div className="student-counts-info d-flex align-items-center justify-between m-0 mt-3">
-                                                                            <div className="students-three-counts d-flex align-items-center">
+                                                                            {/* <div className="students-three-counts d-flex align-items-center">
                                                                                 <img
                                                                                     src="assets/img/icon-three/student.svg"
                                                                                     alt="Img"
                                                                                 />
                                                                                 <p>{course.total_students_enrolled}</p>
-                                                                            </div>
+                                                                            </div> */}
                                                                             <div className="student-counts-info d-flex align-items-center mt-0">
                                                                                 <p>{course.rating} ⭐ </p>
                                                                             </div>

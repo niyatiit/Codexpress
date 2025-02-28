@@ -19,4 +19,3 @@ router.post("/admin-login", adminLogin);
 router.post("/faculty-login", facultyLogin);
 
 module.exports = router;
-+5
