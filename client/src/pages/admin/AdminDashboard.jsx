@@ -27,6 +27,8 @@ import EditCourse from './EditCourse';
 import EditBatch from './EditBatch';
 import EditFaculty from './EditFaculty';
 import EditProfile from './AdminProfile'
+import ManageEnrollments from './ManageEnrollments';
+import AssignBatch from './AssignBatch';
 const AdminDashboard = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
@@ -86,11 +88,10 @@ const AdminDashboard = () => {
 
               {/* Courses Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'courses' || isDropdownActive(['/admin/add/course', '/admin/assign/course', '/admin/manage/courses'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'courses' || isDropdownActive(['/admin/add/course', '/admin/assign/course', '/admin/manage/courses'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -123,11 +124,10 @@ const AdminDashboard = () => {
 
               {/* Batch Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'batch' || isDropdownActive(['/admin/add/batch', '/admin/manage/batches'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'batch' || isDropdownActive(['/admin/add/batch', '/admin/manage/batches'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -153,13 +153,49 @@ const AdminDashboard = () => {
                 </ul>
               </li>
 
+              {/* Students Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'students' || isDropdownActive(['/admin/add/student', '/admin/manage/students'])
+                  ? 'open'
+                  : ''
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleDropdown('students')}
+                >
+                  <span className="icon">
+                    <i className="ph ph-users-three"></i>
+                  </span>
+                  <span className="text">Students</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive('/admin/add/student') ? 'active' : ''}`}>
+                    <Link to="/admin/add/student" className="sidebar-submenu__link">
+                      Add New Student
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/admin/manage/enrollments') ? 'active' : ''}`}>
+                    <Link to="/admin/manage/enrollments" className="sidebar-submenu__link">
+                      Manage Enrollments
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/admin/manage/students') ? 'active' : ''}`}>
+                    <Link to="/admin/manage/students" className="sidebar-submenu__link">
+                      View All Students
+                    </Link>
+                  </li>
+
+                </ul>
+              </li>
+
               {/* Faculty Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'faculty' || isDropdownActive(['/admin/add/faculty', '/admin/manage/faculty'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'faculty' || isDropdownActive(['/admin/add/faculty', '/admin/manage/faculty'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -185,37 +221,7 @@ const AdminDashboard = () => {
                 </ul>
               </li>
 
-              {/* Students Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'students' || isDropdownActive(['/admin/add/student', '/admin/manage/students'])
-                    ? 'open'
-                    : ''
-                }`}
-              >
-                <a
-                  href="#!"
-                  className="sidebar-menu__link"
-                  onClick={() => toggleDropdown('students')}
-                >
-                  <span className="icon">
-                    <i className="ph ph-users-three"></i>
-                  </span>
-                  <span className="text">Students</span>
-                </a>
-                <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive('/admin/add/student') ? 'active' : ''}`}>
-                    <Link to="/admin/add/student" className="sidebar-submenu__link">
-                      Add New Student
-                    </Link>
-                  </li>
-                  <li className={`sidebar-submenu__item ${isActive('/admin/manage/students') ? 'active' : ''}`}>
-                    <Link to="/admin/manage/students" className="sidebar-submenu__link">
-                      View All Students
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+
 
               {/* Resources Dropdown */}
               {/* <li
@@ -251,11 +257,10 @@ const AdminDashboard = () => {
 
               {/* Notifications Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'notifications' || isDropdownActive(['/admin/add/notification', '/admin/manage/notifications'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'notifications' || isDropdownActive(['/admin/add/notification', '/admin/manage/notifications'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -293,11 +298,10 @@ const AdminDashboard = () => {
 
               {/* Certificates Dropdown */}
               <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'certificates' || isDropdownActive(['/admin/issue/certificate', '/admin/manage/certificates'])
-                    ? 'open'
-                    : ''
-                }`}
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'certificates' || isDropdownActive(['/admin/issue/certificate', '/admin/manage/certificates'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -324,42 +328,41 @@ const AdminDashboard = () => {
               </li>
 
               {/* Feedback */}
-              <li className={`sidebar-menu__item ${isActive('/admin/manage/feedback') ? 'active' : ''}`}>
+              {/* <li className={`sidebar-menu__item ${isActive('/admin/manage/feedback') ? 'active' : ''}`}>
                 <Link to="/admin/manage/feedback" className="sidebar-menu__link">
                   <span className="icon">
                     <i className="ph ph-chat-teardrop-text"></i>
                   </span>
                   <span className="text">Feedback & Review</span>
                 </Link>
-              </li>
+              </li> */}
 
               {/* Fees */}
-              <li className={`sidebar-menu__item ${isActive('/admin/manage/fees') ? 'active' : ''}`}>
+              {/* <li className={`sidebar-menu__item ${isActive('/admin/manage/fees') ? 'active' : ''}`}>
                 <Link to="/admin/manage/fees" className="sidebar-menu__link">
                   <span className="icon">
                     <i className="ph ph-money"></i>
                   </span>
                   <span className="text">Fees</span>
                 </Link>
-              </li>
+              </li> */}
 
               {/* Refund & Cancellation */}
-              <li className={`sidebar-menu__item ${isActive('/admin/manage/refund') ? 'active' : ''}`}>
+              {/* <li className={`sidebar-menu__item ${isActive('/admin/manage/refund') ? 'active' : ''}`}>
                 <Link to="/admin/manage/refund" className="sidebar-menu__link">
                   <span className="icon">
                     <i className="ph ph-hand-coins"></i>
                   </span>
                   <span className="text">Refund & Cancellation</span>
                 </Link>
-              </li>
+              </li> */}
 
               {/* Authentication Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${
-                  openDropdown === 'authentication' || isDropdownActive(['/sign-in', '/sign-up', '/forgot-password', '/reset-password', '/verify-email', '/two-step-verification'])
-                    ? 'open'
-                    : ''
-                }`}
+              {/* <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'authentication' || isDropdownActive(['/sign-in', '/sign-up', '/forgot-password', '/reset-password', '/verify-email', '/two-step-verification'])
+                  ? 'open'
+                  : ''
+                  }`}
               >
                 <a
                   href="#!"
@@ -403,7 +406,7 @@ const AdminDashboard = () => {
                     </Link>
                   </li>
                 </ul>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
@@ -419,7 +422,7 @@ const AdminDashboard = () => {
           <Route path="add/batch" element={<AddBatch />} />
           <Route path="add/faculty" element={<AddFaculty />} />
           <Route path="assign/course" element={<AssignCourse />} />
-          <Route path="edit/course/:id" element={<EditCourse/>} />
+          <Route path="edit/course/:id" element={<EditCourse />} />
           <Route path="manage/courses" element={<ManageCourses />} />
           <Route path="manage/students" element={<ManageStudents />} />
           <Route path="manage/faculty" element={<ManageFaculty />} />
@@ -436,7 +439,8 @@ const AdminDashboard = () => {
           <Route path="edit-batch/:id" element={<EditBatch />} />
           <Route path="edit-faculty/:id" element={<EditFaculty />} />
           <Route path="edit-profile" element={<EditProfile />} />
-
+          <Route path="manage/enrollments" element={<ManageEnrollments />} />
+          <Route path="assign/batch/:userId" element={<AssignBatch />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

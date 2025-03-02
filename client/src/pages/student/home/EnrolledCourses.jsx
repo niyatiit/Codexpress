@@ -1,845 +1,206 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { Hourglass } from "react-loader-spinner"; // Import the loader
+
 const EnrolledCourses = () => {
-	return (
-		<div className='flex flex-col justify-center items-center m-0 p-0'>
-			<div class="breadcrumb-bar breadcrumb-bar-info">
-				<div class="container">
-					<div class="row">
-						<div class="col-md-12 col-12">
-							<div class="breadcrumb-list">
-								<h2 class="breadcrumb-title">Enrolled Courses</h2>
-								<nav aria-label="breadcrumb" class="page-breadcrumb">
-									<ol class="breadcrumb">
-										<li class="breadcrumb-item"><Link to="/student">Home</Link></li>
-										<li class="breadcrumb-item active" aria-current="page">Enrolled Courses</li>
-									</ol>
-								</nav>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-xl-12 col-lg-9">
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedTab, setSelectedTab] = useState("enrolled"); // Default tab
+  const url = import.meta.env.VITE_BACKEND_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
 
-				<div class="settings-widget card-info">
-					<div class="settings-menu p-0">
-					
-						<div class="checkout-form pb-0">
-							<div class="wishlist-tab">
-								<ul class="nav">
-									<li class="nav-item">
-										<a href="javascript:void(0);" class="active" data-bs-toggle="tab"
-											data-bs-target="#enroll-courses">Enrolled Courses (06)</a>
-									</li>
-									<li class="nav-item">
-										<a href="javascript:void(0);" data-bs-toggle="tab"
-											data-bs-target="#active-courses">Active Courses (03)</a>
-									</li>
-									<li class="nav-item">
-										<a href="javascript:void(0);" data-bs-toggle="tab"
-											data-bs-target="#complete-courses">Completed Courses (03)</a>
-									</li>
-								</ul>
-							</div>
+  // Fetch enrolled courses from the backend
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${url}/enrollments/courses/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setEnrolledCourses(response.data.courses);
+        console.log("Fetched courses:", response.data.courses); // Debugging
+      } catch (error) {
+        setError(error.response?.data?.message || error.message);
+        console.error("Error fetching enrolled courses:", error); // Debugging
+      } finally {
+        setLoading(false);
+      }
+    };
 
-							<div class="tab-content">
-								<div class="tab-pane fade show active" id="enroll-courses">
-									<div class="row">
+    fetchEnrolledCourses();
+  }, [url, user.id]);
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-02.jpg" />
-														</a>
-														<div class="price">
-															<h3>$80 <span>$99.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user2.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a
-																		href="instructor-profile.html">Cooper</a>
-																	</h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Wordpress for
-															Beginners - Master Wordpress Quickly</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>12+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<span
-																class="d-inline-block average-rating"><span>5.0</span>
-																(20)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+  // Filter courses based on the selected tab
+  const filteredCourses = enrolledCourses.filter((course) => {
+    if (selectedTab === "enrolled") {
+      return course.status === "enrolled";
+    } else if (selectedTab === "completed") {
+      return course.status === "completed";
+    }
+    return true; // Show all courses if no tab is selected
+  });
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-03.jpg" />
-														</a>
-														<div class="price combo">
-															<h3>FREE</h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user5.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a
-																		href="instructor-profile.html">Jenny</a>
-																	</h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Sketch from A to Z
-															(2024): Become an app designer</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>10+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>40hr 10min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>3.0</span>
-																(18)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Hourglass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="hourglass-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          colors={["#306cce", "#72a1ed"]}
+        />
+      </div>
+    );
+  }
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-04.jpg" />
-														</a>
-														<div class="price">
-															<h3>$65 <span>$70.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user4.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Nicole
-																		Brown</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn Angular
-															Fundamentals From beginning to advance lavel</a>
-														</h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>80hr 40min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.0</span>
-																(10)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+  if (error) {
+    return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
+  }
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-05.jpg" />
-														</a>
-														<div class="price combo">
-															<h3>FREE</h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user3.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">John
-																		Smith</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Build Responsive Real
-															World Websites with Crash Course</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>12+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.0</span>
-																(15)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+  return (
+    <div className="dashboard-body w-full">
+      {/* Breadcrumb Start */}
+      <div className="breadcrumb mb-24">
+        <ul className="flex-align gap-4">
+          <li>
+            <Link
+              to="/student"
+              className="text-gray-200 fw-normal text-15 hover-text-main-600"
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <span className="text-gray-500 fw-normal d-flex">
+              <i className="ph ph-caret-right"></i>
+            </span>
+          </li>
+          <li>
+            <span className="text-main-600 fw-normal text-15">Enrolled Courses</span>
+          </li>
+        </ul>
+      </div>
+      {/* Breadcrumb End */}
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-07.jpg" />
-														</a>
-														<div class="price">
-															<h3>$70 <span>$80.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user6.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Stella
-																		Johnson</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn JavaScript and
-															Express to become a Expert</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.6</span>
-																(15)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+      {/* White Background Section */}
+      <div className="bg-white rounded-lg shadow-sm p-36">
+        {/* Tab Bar for Filtering Courses */}
+        <div className="tab-bar flex gap-36 mb-36">
+          <button
+            className={`tab-btn px-4 py-2 rounded-2xl text-sm font-medium transition-colors ${
+              selectedTab === "enrolled"
+                ? "bg-blue-100 text-blue-500"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+            onClick={() => setSelectedTab("enrolled")}
+          >
+            Enrolled Courses
+          </button>
+          <button
+            className={`tab-btn px-4 py-2 rounded-2xl text-sm font-medium transition-colors ${
+              selectedTab === "completed"
+                ? "bg-yellow-100 text-yellow-500"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+            onClick={() => setSelectedTab("completed")}
+          >
+            Completed Courses
+          </button>
+        </div>
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-08.jpg" />
-														</a>
-														<div class="price combo">
-															<h3>FREE</h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user1.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Nicole
-																		Brown</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Introduction to
-															Programming- Python & Java</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>10+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<span
-																class="d-inline-block average-rating"><span>5.0</span>
-																(13)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+        {/* Courses Grid */}
+        <div className="all-course">
+          <div className="row flex gap-48">
+            {filteredCourses.length>0?filteredCourses.map((course) => (
+              <div
+                className="col-xl-3 col-lg-6 col-md-6 col-12"
+                key={course._id}
+                data-aos="fade-up"
+              >
+                <div
+                  className="course-box-three"
+                  style={{ height: "440px", width: "300px" }}
+                >
+                  <div className="course-three-item h-100">
+                    {/* Course Image */}
+                    <div
+                      className="course-three-img"
+                      style={{ height: "170px", overflow: "hidden" }}
+                    >
+                      <Link to={`/courses/${course._id}`}>
+                        <img
+                          className="img-fluid w-full h-full object-cover"
+                          alt={course.name}
+                          src={course.thumbnail}
+                        />
+                      </Link>
+                    </div>
 
-									</div>
-								</div>
+                    {/* Course Content */}
+                    <div className="course-three-content m-0 p-4 pt-0 h-[calc(100%-200px)] flex flex-col justify-between overflow-y-auto">
+                      <div>
+                        {/* Course Category and Name */}
+                        <div className="course-three-text">
+                          <Link to={`/courses/${course._id}`}>
+                            <p className="px-3 rounded-2xl mb-3 bg-blue-100 text-blue-700 text-sm">
+                              {course.category}
+                            </p>
+                            <h3 className="title instructor-text">{course.name}</h3>
+                          </Link>
+                        </div>
 
-								<div class="tab-pane fade" id="active-courses">
-									<div class="row">
+                        {/* Price and Duration */}
+                        <div className="price-three-group d-flex align-items-center justify-content-between">
+                          <div className="price-three-view d-flex align-items-center">
+                            <div className="course-price-three">
+                              <h3>
+                                ₹{course.price - course.price * (course.discount / 100)}{" "}
+                                {course.discount > 0 ? (
+                                  <span>₹{course.price}</span>
+                                ) : (
+                                  <span></span>
+                                )}
+                              </h3>
+                            </div>
+                          </div>
+                          <div className="price-three-time d-inline-flex align-items-center">
+                            <i className="fa-regular fa-clock me-2"></i>
+                            <span>{course.duration}</span>
+                          </div>
+                        </div>
+                      </div>
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-04.jpg" />
-														</a>
-														<div class="price">
-															<h3>$65 <span>$70.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user4.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Nicole
-																		Brown</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn Angular
-															Fundamentals From beginning to advance lavel</a>
-														</h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>80hr 40min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.0</span>
-																(10)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
+                      {/* Status Button */}
+                      <div className="mt-auto">
+                        <button
+                          className={`border-2 w-full px-4 py-2 rounded-lg text-sm font-medium ${
+                            course.enrollment_status === "enrolled"
+                              ? "border-blue-500 bg-blue-100 text-blue-500"
+                              : course.enrollment_status === "completed"
+                              ? "border-red-500 bg-red-100 text-red-500"
+                              : "border-gray-500 bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {course.status}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )):
+			<p className="text-left pl-5 text-zinc-300">Course Not Found!</p>
+		}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-07.jpg" />
-														</a>
-														<div class="price">
-															<h3>$70 <span>$80.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user6.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Stella
-																		Johnson</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn JavaScript and
-															Express to become a Expert</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.6</span>
-																(15)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
-
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-08.jpg" />
-														</a>
-														<div class="price combo">
-															<h3>FREE</h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user1.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Nicole
-																		Brown</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Introduction to
-															Programming- Python & Java</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>10+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<span
-																class="d-inline-block average-rating"><span>5.0</span>
-																(13)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
-
-									</div>
-								</div>
-
-								<div class="tab-pane fade" id="complete-courses">
-									<div class="row">
-
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-03.jpg" />
-														</a>
-														<div class="price combo">
-															<h3>FREE</h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user5.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a
-																		href="instructor-profile.html">Jenny</a>
-																	</h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Sketch from A to Z
-															(2024): Become an app designer</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>10+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>40hr 10min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>3.0</span>
-																(18)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
-
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-04.jpg" />
-														</a>
-														<div class="price">
-															<h3>$65 <span>$70.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user4.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Nicole
-																		Brown</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn Angular
-															Fundamentals From beginning to advance lavel</a>
-														</h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>80hr 40min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.0</span>
-																(10)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
-
-										{/* <!-- Course Grid --> */}
-										<div class="col-xxl-4 col-md-6 d-flex">
-											<div class="course-box flex-fill">
-												<div class="product">
-													<div class="product-img">
-														<a href="course-details.html">
-															<img class="img-fluid" alt="Img"
-																src="assets/img/course/course-07.jpg" />
-														</a>
-														<div class="price">
-															<h3>$70 <span>$80.00</span></h3>
-														</div>
-													</div>
-													<div class="product-content">
-														<div class="course-group d-flex">
-															<div class="course-group-img d-flex">
-																<a href="instructor-profile.html"><img
-																	src="assets/img/user/user6.jpg"
-																	alt="Img" class="img-fluid" /></a>
-																<div class="course-name">
-																	<h4><a href="instructor-profile.html">Stella
-																		Johnson</a></h4>
-																	<p>Instructor</p>
-																</div>
-															</div>
-															<div
-																class="course-share d-flex align-items-center justify-content-center">
-																<a href="#"><i
-																	class="fa-regular fa-heart"></i></a>
-															</div>
-														</div>
-														<h3 class="title instructor-text"><a
-															href="course-details.html">Learn JavaScript and
-															Express to become a Expert</a></h3>
-														<div class="course-info d-flex align-items-center">
-															<div class="rating-img d-flex align-items-center">
-																<img src="assets/img/icon/icon-01.svg"
-																	alt="Img" />
-																<p>15+ Lesson</p>
-															</div>
-															<div class="course-view d-flex align-items-center">
-																<img src="assets/img/icon/icon-02.svg"
-																	alt="Img" />
-																<p>70hr 30min</p>
-															</div>
-														</div>
-														<div class="rating mb-0">
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star filled"></i>
-															<i class="fas fa-star"></i>
-															<span
-																class="d-inline-block average-rating"><span>4.6</span>
-																(15)</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										{/* <!-- /Course Grid --> */}
-
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="dash-pagination">
-					<div class="row align-items-center">
-						<div class="col-6">
-							<p>Page 1 of 2</p>
-						</div>
-						<div class="col-6">
-							<ul class="pagination">
-								<li class="active">
-									<a href="#">1</a>
-								</li>
-								<li>
-									<a href="#">2</a>
-								</li>
-								<li>
-									<a href="#"><i class="bx bx-chevron-right"></i></a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	)
-}
-
-export default EnrolledCourses
+export default EnrolledCourses;

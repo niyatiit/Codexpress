@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { Hourglass } from "react-loader-spinner";
 
 const FacultyProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id; // Get user ID from local storage
+  const userId = user.id; // Ensure consistency with backend (use `id` or `_id`)
 
   const [profile, setProfile] = useState({
     username: "",
@@ -17,21 +18,19 @@ const FacultyProfile = () => {
     gender: "",
     dob: "",
     pincode: "",
-    state: "",
-    city: "",
-    nationality: "",
   });
 
-  const [stateData, setStateData] = useState(null);
-  const [cityData, setCityData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [errors, setErrors] = useState({});
 
   // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      setLoading(true);
+      if (!userId) return; // Ensure userId is available
+
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `http://localhost:3000/profile/${userId}`,
@@ -54,54 +53,18 @@ const FacultyProfile = () => {
             gender: userData.gender || "",
             dob: userData.dob ? new Date(userData.dob).toISOString().split("T")[0] : "", // Convert to yyyy-MM-dd
             pincode: userData.pincode || "",
-            state: userData.state || "",
-            city: userData.city || "",
-            nationality: userData.nationality || "Indian",
           });
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         alert("Failed to fetch user data. Please try again.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchUserData();
   }, [userId]);
-
-  useEffect(() => {
-    const fetchStateData = async () => {
-      if (!profile.state) return;
-      try {
-        const response = await axios.get(`http://localhost:3000/states/${profile.state}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        if (response.data.success) {
-          setStateData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching state data:", error);
-      }
-    };
-
-    const fetchCityData = async () => {
-      if (!profile.city) return;
-      try {
-        const response = await axios.get(`http://localhost:3000/cities/${profile.city}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        if (response.data.success) {
-          setCityData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching city data:", error);
-      }
-    };
-
-    fetchStateData();
-    fetchCityData();
-  }, [profile.state, profile.city]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,12 +80,25 @@ const FacultyProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsUpdating(true);
+
+    // Basic validation
+    const newErrors = {};
+    if (!profile.first_name) newErrors.first_name = "First name is required";
+    if (!profile.last_name) newErrors.last_name = "Last name is required";
+    if (!profile.email) newErrors.email = "Email is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setIsUpdating(false);
+      return;
+    }
+
     try {
       const response = await axios.put(
         `http://localhost:3000/profile/update`,
         {
-          userId: user._id,
+          userId: userId, // Ensure consistency with backend
           userData: {
             ...profile,
             dob: profile.dob ? new Date(profile.dob).toISOString() : null, // Convert to ISO format for backend
@@ -144,19 +120,46 @@ const FacultyProfile = () => {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Please try again.");
     } finally {
-      setLoading(false);
+      setIsUpdating(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen flex-col">
+        <Hourglass visible={true} height="80" width="80" ariaLabel="hourglass-loading" />
+        <p>Fetching Details...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-body p-20">
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
+            <li>
+              <Link to="/faculty" className="text-gray-800 fw-normal text-15 hover-text-main-600">
+                Home
+              </Link>
+            </li>
+            <li>
+              <span className="text-gray-500 fw-normal d-flex">
+                <i className="ph ph-caret-right"></i>
+              </span>
+            </li>
+            <li>
+              <span className="text-main-600 fw-normal text-15">Profile</span>
+            </li>
+          </ul>
+        </div>
+      </div>
       <div className="bg-white rounded-lg shadow-sm p-24">
         <div className="header mb-16 flex justify-between items-center">
           <div className="flex gap-2">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500">
               <img src={profile.profile_picture} alt="Profile" className="w-full h-full object-cover" />
             </div>
-
             <h5 className="text-xl font-semibold mb-6 text-blue-700">My Profile</h5>
           </div>
           <div className="flex items-center mb-6">
@@ -170,14 +173,17 @@ const FacultyProfile = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
               <input type="text" name="first_name" value={profile.first_name} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
+              {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
               <input type="text" name="last_name" value={profile.last_name} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
+              {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input type="email" name="email" value={profile.email} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
@@ -204,22 +210,10 @@ const FacultyProfile = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
               <input type="text" name="pincode" value={profile.pincode} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-              <input type="text" name="state" value={stateData?.name || profile.state} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-              <input type="text" name="city" value={cityData?.name || profile.city} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
-              <input type="text" name="nationality" value={profile.nationality} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
-            </div>
           </div>
           {isEditing && (
-            <button type="submit" className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg" disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
+            <button type="submit" className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg" disabled={isUpdating}>
+              {isUpdating ? "Saving..." : "Save Changes"}
             </button>
           )}
         </form>

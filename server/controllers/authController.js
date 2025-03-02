@@ -155,23 +155,22 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a reset token
+    // ✅ Generate a secure reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
     console.log("Generated Reset Token:", resetToken); // Debugging
 
-    // Hash the token before storing it in the database
-    const hashedToken = await bcrypt.hash(resetToken, 12);
-    console.log("Hashed Reset Token:", hashedToken); // Debugging
+    // ✅ Hash the token using SHA-256 before storing
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-    // Store hashed token and expiration time in the database
+    // ✅ Store hashed token and expiration time
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
 
-    console.log("Token successfully saved in the database!");
+    console.log("Token successfully saved in DB!");
     console.log("Updated User:", user);
 
-    // Send the **raw token** (not the hashed one) via email
+    // ✅ Send the **raw token** (not the hashed one) via email
     sendResetEmail(user.email, resetToken);
 
     res.json({ success: true, message: "Password reset link sent to your email" });
@@ -180,6 +179,7 @@ exports.forgotPassword = async (req, res) => {
     res.status(500).json({ message: "Error processing request" });
   }
 };
+
 
 
 // ✅ Reset Password Function
@@ -192,31 +192,25 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Token and new password are required" });
     }
 
-    // Find the user by the plaintext token (temporarily)
-    const user = await User.findOne({ resetPasswordToken: { $exists: true } })
-      .select("+resetPasswordToken +resetPasswordExpires"); // Explicitly include hidden fields
+    // ✅ Hash the incoming token before comparison (same method used in `forgotPassword`)
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // ✅ Find user with matching hashed token and check expiry
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    }).select("+resetPasswordToken +resetPasswordExpires");
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Compare the plaintext token with the hashed token
-    const isValidToken = await bcrypt.compare(token, user.resetPasswordToken);
-    console.log(isValidToken); // Debugging
-    if (!isValidToken) {
-      return res.status(400).json({ message: "Invalid token" });
-    }
+    // ✅ Correct way: Assign new password and call `save()`
+    user.password = newPassword; // This triggers the `pre("save")` hook
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
 
-    // Check if the token has expired
-    if (user.resetPasswordExpires < Date.now()) {
-      return res.status(400).json({ message: "Token has expired" });
-    }
-
-    // Hash and update the new password
-    user.password = await bcrypt.hash(newPassword, 12);
-    user.resetPasswordToken = null; // Remove the reset token
-    user.resetPasswordExpires = null; // Clear expiration
-    await user.save();
+    await user.save(); // 🔹 Triggers `pre("save")` hook to hash password
 
     res.status(200).json({ success: true, message: "Password reset successful" });
   } catch (error) {
@@ -224,6 +218,7 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Error resetting password", error: error.message });
   }
 };
+
 const sendResetEmail = async (email, resetToken) => {
   try {
     const transporter = nodemailer.createTransport({

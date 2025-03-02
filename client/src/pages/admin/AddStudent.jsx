@@ -133,14 +133,6 @@ const AddStudent = () => {
           </ul>
         </div>
 
-        <div className="flex-align justify-content-end gap-8">
-          <button className="btn btn-outline-main bg-main-100 border-main-100 text-main-600 rounded-pill py-9">
-            Save as Draft
-          </button>
-          <button className="btn btn-main rounded-pill py-9" disabled>
-            Publish Student Info
-          </button>
-        </div>
       </div>
 
       <div className="card">
@@ -266,15 +258,17 @@ const AddStudent = () => {
               </div>
 
               <div className="col-sm-12">
-                <label className="h5 mb-8 fw-semibold font-heading">Profile Image</label>
-                <input
-                  type="file"
-                  className="form-control py-11"
-                  name="profile_picture"
-                  onChange={handleFileChange}
-                />
-              </div>
-
+                  <label className="h5 mb-8 fw-semibold font-heading">Profile Image URL</label>
+                  <input
+                    type="text"
+                    className="form-control py-11"
+                    name="profile_picture"
+                    placeholder="Enter profile image URL"
+                    value={formData.profile_picture}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               <div className="col-sm-6">
                 <label className="h5 mb-8 fw-semibold font-heading">Pincode</label>
                 <input

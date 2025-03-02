@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
+import { useUser } from "../context/UserContext";
 
 const ProfileCompletion = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user.id;
-
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect") || "/courses"; // Default redirect
+  const { user, loading } = useUser();
 
   // State to manage form inputs
   const [formData, setFormData] = useState({
@@ -25,46 +24,32 @@ const ProfileCompletion = () => {
     pincode: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-
-  // Fetch user data on component mount
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/profile/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        if (response.data.success) {
-          const userData = response.data.user;
-          setFormData({
-            username: userData.username,
-            email: userData.email,
-            first_name: userData.first_name || "",
-            last_name: userData.last_name || "",
-            phone: userData.phone || "",
-            address: userData.address || "",
-            profile_picture: userData.profile_picture || "/assets/img/default-profile.png",
-            gender: userData.gender || "",
-            dob: userData.dob ? new Date(userData.dob).toISOString().split("T")[0] : "", // Convert to yyyy-MM-dd
-            pincode: userData.pincode || "",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        alert("Failed to fetch user data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (user) {
+      // Format the date of birth (dob) to YYYY-MM-DD
+      const formattedDob = user.dob ? new Date(user.dob).toISOString().split("T")[0] : "";
 
-    fetchUserData();
-  }, [userId]);
+      setFormData((prev) => ({
+        ...prev,
+        username: user.username || "",
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        profile_picture: user.profile_picture || "",
+        gender: user.gender || "",
+        dob: formattedDob, // Use the formatted date
+        address: user.address || "",
+        pincode: user.pincode || "",
+      }));
+    }
+  }, [user]);
+
+  const [errors, setErrors] = useState({});
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  if (loading) return <p>Loading profile...</p>;
+  if (!user) return <p>No user data found.</p>;
 
   // Handle input changes
   const handleChange = (e) => {
@@ -133,14 +118,12 @@ const ProfileCompletion = () => {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoadingSubmit(true);
 
-    // Validate form inputs
     if (!validateForm()) {
-      setLoading(false);
+      setLoadingSubmit(false);
       return;
     }
 
@@ -148,7 +131,7 @@ const ProfileCompletion = () => {
       // Send PUT request to update user profile
       const response = await axios.put(
         `http://localhost:3000/profile/update`,
-        { ...formData, userId },
+        { ...formData, userId: user._id }, // Use `user._id` instead of `user.id`
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -164,9 +147,9 @@ const ProfileCompletion = () => {
       }
     } catch (error) {
       console.error("Error updating profile:", error.response ? error.response.data : error);
-      console.log("An error occurred. Please try again.");
+      alert(error.response?.data?.message || "An error occurred. Please try again.");
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false); // Fix: Use `setLoadingSubmit` instead of `setLoading`
     }
   };
 
@@ -270,7 +253,7 @@ const ProfileCompletion = () => {
                     type="date"
                     className="form-control py-11"
                     name="dob"
-                    value={formData.dob}
+                    value={formData.dob || ""} // Ensure the value is set correctly
                     onChange={handleChange}
                   />
                   {errors.dob && <p className="text-danger">{errors.dob}</p>}
@@ -300,6 +283,7 @@ const ProfileCompletion = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
+                    required
                   ></textarea>
                   {errors.address && <p className="text-danger">{errors.address}</p>}
                 </div>
@@ -312,6 +296,7 @@ const ProfileCompletion = () => {
                     placeholder="Enter profile image URL"
                     value={formData.profile_picture || ""}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -319,6 +304,7 @@ const ProfileCompletion = () => {
                   <label className="h5 mb-8 fw-semibold font-heading">Pincode</label>
                   <input
                     type="text"
+                    required
                     className="form-control py-11"
                     placeholder="Enter pincode"
                     name="pincode"
@@ -330,9 +316,7 @@ const ProfileCompletion = () => {
 
                 <div className="flex-align justify-content-end gap-8">
                   <Link to={redirect} className="btn btn-outline-main rounded-pill py-9">Cancel</Link>
-                  <button type="submit" className="btn btn-main rounded-pill py-9" disabled={loading}>
-                    {loading ? "Updating..." : "Update Profile"}
-                  </button>
+                  <button type="submit" className="btn btn-main rounded-pill py-9" disabled={loadingSubmit}>{loadingSubmit ? "Updating..." : "Update Profile"}</button>
                 </div>
               </div>
             </form>

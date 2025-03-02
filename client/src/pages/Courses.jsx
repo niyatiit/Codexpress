@@ -56,7 +56,7 @@ const Courses = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center flex-col items-center h-screen">
         <Hourglass
           visible={true}
           height="80"
@@ -66,6 +66,8 @@ const Courses = () => {
           wrapperClass=""
           colors={['#306cce', '#72a1ed']}
         />
+                <p className="mt-4 text-gray-600 text-lg font-medium">Loading Courses...</p>
+
       </div>
     );
   }
@@ -218,10 +220,10 @@ const Courses = () => {
                                 <div className="price-three-group d-flex align-items-center justify-content-between">
                                   <div className="price-three-view d-flex align-items-center">
                                     <div className="course-price-three">
-                                      <h3>
+                                      <h3 className=''>
                                         ₹{course.price - course.price * (course.discount / 100)}{' '}
                                         {course.discount > 0 && (
-                                          <span className="text-gray-500 line-through">
+                                          <span className="text-red-500 line-through">
                                             ₹{course.price}
                                           </span>
                                         )}

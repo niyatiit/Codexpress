@@ -35,11 +35,8 @@ const AdminProfile = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
-        console.log("Full API Response:", response.data); // Check entire response
         if (response.data.success) {
           const userData = response.data.user;
-          console.log("Fetched User Data:", userData);
-          console.log("Profile Picture URL:", userData.profile_picture); // Debug profile picture
 
           setProfile({
             ...userData,

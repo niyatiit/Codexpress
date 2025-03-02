@@ -8,10 +8,9 @@ const Payment = () => {
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [paymentLoading, setPaymentLoading] = useState(false); // New state for payment loading
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [error, setError] = useState("");
   const user = JSON.parse(localStorage.getItem("user"));
-
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -34,38 +33,34 @@ const Payment = () => {
       return;
     }
 
-    setPaymentLoading(true); // Start payment loading
+    setPaymentLoading(true);
 
     try {
       const token = localStorage.getItem("token");
-      console.log("courseId:", course._id); // Check the value of course._id
       const cancel_url = `http://localhost:5173/payment/cancel?courseId=${course._id}`;
-      console.log("cancel_url:", cancel_url);
 
       const response = await axios.post(
         "http://localhost:3000/payment/create-checkout-session",
         {
-          courseId: course._id, // Use course._id
+          courseId: course._id,
           userId: user.id,
           price: calculateFinalPrice(),
-          success_url: "http://localhost:5173/payment/success",
-          cancel_url: cancel_url, // Include courseId
+          success_url: "http://localhost:5173/payment/success?session_id={CHECKOUT_SESSION_ID}",
+          cancel_url: cancel_url,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Simulate loading for 2 seconds before redirecting
-      setTimeout(() => {
-        window.location.href = response.data.url;
-      }, 2000);
+      // Redirect to Stripe checkout
+      window.location.href = response.data.url;
     } catch (error) {
-      console.error("Error in handlePayment:", error); // Log any errors
-      setError("Payment initiation failed.");
-      setPaymentLoading(false); // Stop payment loading on error
+      console.error("Error in handlePayment:", error);
+      setError("Payment initiation failed. Please try again.");
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
-  // Calculate the final price once to avoid inconsistencies
   const calculateFinalPrice = () => {
     if (!course) return 0;
     return course.finalPrice || course.price - (course.price * course.discount) / 100;
@@ -137,24 +132,22 @@ const Payment = () => {
                   />
                 </div>
                 <div className="flex flex-col">
-                  
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.name}</h3>
-                <div className="flex flex-wrap items-center gap-2 mt-3">
-                  <span className="text-blue-600 font-semibold text-2xl md:text-3xl">
-                    ₹{finalPrice.toLocaleString()}
-                  </span>
-                  {course.discount > 0 && (
-                    <>
-                      <span className="line-through text-gray-500 text-lg">
-                        ₹{course.price.toLocaleString()}
-                      </span>
-                      <span className="bg-yellow-200 text-yellow-600 px-2 py-1 rounded-full text-sm font-semibold">
-                        {course.discount}% OFF
-                      </span>
-                    </>
-                  )}
-                </div>
-                
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.name}</h3>
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <span className="text-blue-600 font-semibold text-2xl md:text-3xl">
+                      ₹{finalPrice.toLocaleString()}
+                    </span>
+                    {course.discount > 0 && (
+                      <>
+                        <span className="line-through text-gray-500 text-lg">
+                          ₹{course.price.toLocaleString()}
+                        </span>
+                        <span className="bg-yellow-200 text-yellow-600 px-2 py-1 rounded-full text-sm font-semibold">
+                          {course.discount}% OFF
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -186,7 +179,7 @@ const Payment = () => {
               {/* Proceed to Payment Button */}
               <button
                 onClick={handlePayment}
-                disabled={paymentLoading} // Disable button during payment loading
+                disabled={paymentLoading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {paymentLoading ? "Processing..." : "Proceed to Payment"}

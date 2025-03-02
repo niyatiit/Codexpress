@@ -14,7 +14,7 @@ const courseSchema = new mongoose.Schema({
   status: { type: String, enum: ['open', 'closed', 'upcoming'], default: 'open' }, // Course status
   rating: { type: Number, min: 0, max: 5, default: 0 }, // Course rating
   reviews: [{ 
-    student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' }, // Reference to the Student model
+    student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to the Student model
     comment: { type: String, trim: true }, // Review comment
     rating: { type: Number, min: 0, max: 5 } // Review rating
   }],

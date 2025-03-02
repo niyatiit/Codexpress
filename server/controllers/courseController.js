@@ -72,12 +72,14 @@ exports.getCourseById = async (req, res) => {
   try {
     const courseId = req.params.id;
 
-    // Validate the courseId
-    if (!isValidObjectId(courseId)) {
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
       return res.status(400).json({ error: "Invalid course ID" });
     }
 
-    const course = await Course.findById(courseId);
+    const course = await Course.findById(courseId)
+      .populate({
+        path: "reviews.student_id",
+      });
 
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
@@ -89,7 +91,6 @@ exports.getCourseById = async (req, res) => {
     res.status(500).json({ message: "Error fetching course", error: error.message });
   }
 };
-
 exports.addNewCourse = async (req, res) => {
   try {
     const {
@@ -208,39 +209,67 @@ exports.deleteCourse = async (req, res) => {
 };
 
 // Assign a course to a faculty
-exports.assignCourseToFaculty = async (req, res) => {
-  const { courseId, facultyId } = req.body;
+exports.assignFacultyToCourse = async (req, res) => {
+  const { facultyId, courseId } = req.body;
 
-  // Validate required fields
-  if (!courseId || !facultyId) {
-    return res.status(400).json({ message: "Course ID and Faculty ID are required" });
+  // Validate request body
+  if (!facultyId || !courseId) {
+    return res.status(400).json({
+      success: false,
+      message: "Both facultyId and courseId are required.",
+    });
   }
 
   try {
-    // Check if the course exists
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
-    }
-
     // Check if the faculty exists
     const faculty = await Faculty.findById(facultyId);
     if (!faculty) {
-      return res.status(404).json({ message: "Faculty not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Faculty not found.",
+      });
+    }
+
+    // Check if the course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found.",
+      });
     }
 
     // Check if the faculty is already assigned to the course
-    if (course.facultyIds.includes(facultyId)) {
-      return res.status(400).json({ message: "Faculty is already assigned to this course" });
+    if (faculty.courses.includes(courseId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Faculty is already assigned to this course.",
+      });
     }
 
-    // Assign faculty to the course
-    course.facultyIds.push(facultyId);
+    // Add the course to the faculty's courses array
+    faculty.courses.push(courseId);
+    await faculty.save();
+
+    // Optionally, you can also add the faculty to the course's faculty array
+    course.faculty = facultyId; // Assuming the Course model has a `faculty` field
     await course.save();
 
-    res.status(200).json(course);
+    // Return success response
+    res.status(200).json({
+      success: true,
+      message: "Faculty assigned to course successfully.",
+      data: {
+        faculty: faculty,
+        course: course,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error assigning course to faculty", error: error.message });
+    console.error("Error assigning faculty to course:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later.",
+    });
   }
 };
 
@@ -290,7 +319,6 @@ exports.addResourceToCourse = async (req, res) => {
 exports.getBatchesByCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    console.log("backend", req.params);
 
     // Validate courseId
     if (!courseId) {

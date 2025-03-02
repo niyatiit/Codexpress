@@ -8,8 +8,7 @@ exports.getUserProfile = async (req, res) => {
     const userId = req.params.userId;
 
     // Find the user by ID
-    const user = await User.findById(userId).select("-password -resetPasswordToken -resetPasswordExpires -deletedAt");
-
+    const user = await User.findById({_id:userId}).select("-password -resetPasswordToken -resetPasswordExpires -deletedAt");
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
@@ -26,14 +25,13 @@ exports.getUserProfile = async (req, res) => {
 // @access  Private
 
 exports.updateUserProfile = async (req, res) => {
-  console.log(req.body)
   try {
     const { userId, ...userData } = req.body;
 
-    console.log("Received request to update user profile:", { userId, userData }); // Log the request
 
     // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
+      console.error("Invalid user ID:", userId); // Log the invalid userId
       return res.status(400).json({ success: false, message: "Invalid user ID" });
     }
 

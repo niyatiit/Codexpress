@@ -1,23 +1,128 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateAssignment = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitted },
+    reset,
+  } = useForm();
+  const [courses, setCourses] = useState([]);
+  const [faculty, setFaculty] = useState(null);
+  const [batches, setBatches] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedBatches, setSelectedBatches] = useState([]);
+  const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const authUser = JSON.parse(localStorage.getItem("user"));
 
-  const onSubmit = (data) => {
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/courses");
+        setCourses(response.data.courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchFaculty = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/users/faculty/${authUser.id}`);
+        if (response.data.success) {
+          setFaculty(response.data.user[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching faculty:", error);
+      }
+    };
+    fetchFaculty();
+  }, [authUser.id]);
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      if (selectedCourse) {
+        try {
+          const response = await axios.get(`http://localhost:3000/batches/course/${selectedCourse}`);
+          setBatches(response.data.data);
+        } catch (error) {
+          console.error("Error fetching batches:", error);
+        }
+      }
+    };
+
+    fetchBatches();
+  }, [selectedCourse]);
+
+  const handleCourseChange = (e) => {
+    setSelectedCourse(e.target.value);
+    setSelectedBatches([]);
+  };
+
+  const handleBatchSelection = (batchId) => {
+    if (selectedBatches.includes(batchId)) {
+      setSelectedBatches(selectedBatches.filter((id) => id !== batchId));
+    } else {
+      setSelectedBatches([...selectedBatches, batchId]);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const onSubmit = async (data) => {
     setIsSubmitting(true);
-    // Placeholder for form submission logic
-    setTimeout(() => {
-      console.log("Assignment Created:", data);
-      reset();
+
+    if (selectedBatches.length === 0) {
+      toast.error("Please select at least one batch.");
       setIsSubmitting(false);
-    }, 2000);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("due_date", data.dueDate);
+    formData.append("course_id", selectedCourse);
+    formData.append("faculty_id", faculty._id);
+    formData.append("batch_ids", JSON.stringify(selectedBatches));
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("http://localhost:3000/assignments", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.data.success) {
+        toast.success("Assignment created successfully!");
+        reset();
+        setSelectedCourse("");
+        setSelectedBatches([]);
+        setFile(null);
+      }
+    } catch (error) {
+      console.error("Error creating assignment:", error);
+      toast.error("Failed to create assignment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="dashboard-body">
+    <div className="dashboard-body p-6">
+      <ToastContainer />
       <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
         <div className="breadcrumb mb-24">
           <ul className="flex-align gap-4">
@@ -37,117 +142,119 @@ const CreateAssignment = () => {
           </ul>
         </div>
       </div>
-
-      <div className="card">
-        <div className="card-header border-bottom border-gray-100 flex-between gap-8">
-          <h5 className="mb-0 text-gray-800">Create a New Assignment</h5>
+      <div className="card rounded-md">
+        <div className="bg-blue-100 card-header">
+          <h5 className="text-md">Create a New Assignment</h5>
         </div>
-
         <div className="card-body">
-          <form onSubmit={handleSubmit(onSubmit)} className="assignment-form flex-column gap-4">
-            <div className="form-group">
-              <label htmlFor="course" className="form-label">Course</label>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Course Selection */}
+            <div className="form-group mt-1">
+              <label>Course</label>
               <select
-                id="course"
-                className={`form-control ${errors.course ? "is-invalid" : ""}`}
-                {...register("course", { required: "Course is required" })}
+                className={`form-control`}
+                value={selectedCourse}
+                onChange={handleCourseChange}
+                required
               >
                 <option value="">Select Course</option>
-                <option value="Java">Java</option>
-                <option value="C++">C++</option>
-                <option value="Web Development">Web Development</option>
-                <option value="React">React</option>
-                <option value="Node.js">Node.js</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course._id}>
+                    {course.name}
+                  </option>
+                ))}
               </select>
-              {errors.course && <small className="text-danger">{errors.course.message}</small>}
+              {isSubmitted && !selectedCourse && (
+                <small className="text-danger">Course selection is required.</small>
+              )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="batch" className="form-label">Batch</label>
-              <select
-                id="batch"
-                className={`form-control ${errors.batch ? "is-invalid" : ""}`}
-                {...register("batch", { required: "Batch is required" })}
-              >
-                <option value="">Select Batch</option>
-                <option value="Batch A">Batch A</option>
-                <option value="Batch B">Batch B</option>
-                <option value="Batch C">Batch C</option>
-              </select>
-              {errors.batch && <small className="text-danger">{errors.batch.message}</small>}
+            {/* Batch Selection */}
+            <div className="form-group mt-3">
+              <label>Select Batches</label>
+              {batches.length === 0 ? (
+                <div className="border-[1px] rounded-md px-3 py-2 text-gray-500">
+                  No batches available for this course.
+                </div>
+              ) : (
+                <div className="border-[1px] rounded-md px-3 py-2">
+                  {batches.map((batch) => (
+                    <div key={batch._id} className="form-check flex pl-7">
+                      <input
+                        type="checkbox"
+                        id={batch._id}
+                        className="form-check-input"
+                        checked={selectedBatches.includes(batch._id)}
+                        onChange={() => handleBatchSelection(batch._id)}
+                      />
+                      <label htmlFor={batch._id} className="form-check-label mt-1">
+                        {batch.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {isSubmitted && selectedBatches.length === 0 && batches.length > 0 && (
+                <small className="text-danger">Please select at least one batch.</small>
+              )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="title" className="form-label">Assignment Title</label>
+            {/* Assignment Title */}
+            <div className="form-group mt-3">
+              <label>Assignment Title</label>
               <input
+              required
                 type="text"
-                id="title"
-                className={`form-control ${errors.title ? "is-invalid" : ""}`}
-                placeholder="Enter assignment title"
+                className={`form-control ${isSubmitted && errors.title ? "is-invalid" : ""}`}
                 {...register("title", { required: "Title is required" })}
+                placeholder="Type something..."
               />
-              {errors.title && <small className="text-danger">{errors.title.message}</small>}
+              {isSubmitted && errors.title && <small className="text-danger">{errors.title.message}</small>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="description" className="form-label">Description</label>
+            {/* Assignment Description */}
+            <div className="form-group mt-3">
+              <label>Description</label>
               <textarea
-                id="description"
-                className={`form-control ${errors.description ? "is-invalid" : ""}`}
-                placeholder="Enter assignment description"
+              required
+                className={`form-control ${isSubmitted && errors.description ? "is-invalid" : ""}`}
                 rows="4"
                 {...register("description", { required: "Description is required" })}
+                placeholder="Type something..."
               ></textarea>
-              {errors.description && <small className="text-danger">{errors.description.message}</small>}
+              {isSubmitted && errors.description && <small className="text-danger">{errors.description.message}</small>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="dueDate" className="form-label">Due Date</label>
+            {/* Due Date */}
+            <div className="form-group mt-3">
+              <label>Due Date</label>
               <input
                 type="date"
-                id="dueDate"
-                className={`form-control ${errors.dueDate ? "is-invalid" : ""}`}
+                required
+                className={`form-control ${isSubmitted && errors.dueDate ? "is-invalid" : ""}`}
                 {...register("dueDate", { required: "Due date is required" })}
               />
-              {errors.dueDate && <small className="text-danger">{errors.dueDate.message}</small>}
+              {isSubmitted && errors.dueDate && <small className="text-danger">{errors.dueDate.message}</small>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="fileUpload" className="form-label">Upload File</label>
+            {/* File Upload */}
+            <div className="form-group mt-3">
+              <label>Upload File</label>
               <input
                 type="file"
-                id="fileUpload"
-                className={`form-control ${errors.fileUpload ? "is-invalid" : ""}`}
-                {...register("fileUpload", { required: "File upload is required" })}
+                className={`form-control ${isSubmitted && !file ? "is-invalid" : ""}`}
+                onChange={handleFileChange}
+                required
               />
-              {errors.fileUpload && <small className="text-danger">{errors.fileUpload.message}</small>}
+              {isSubmitted && !file && <small className="text-danger">File upload is required.</small>}
             </div>
 
-            {/* <div className="form-group">
-              <label htmlFor="totalMarks" className="form-label">Total Marks</label>
-              <input
-                type="number"
-                id="totalMarks"
-                className={`form-control ${errors.totalMarks ? "is-invalid" : ""}`}
-                placeholder="Enter total marks"
-                {...register("totalMarks", { required: "Total marks are required", min: { value: 1, message: "Marks should be greater than 0" } })}
-              />
-              {errors.totalMarks && <small className="text-danger">{errors.totalMarks.message}</small>}
-            </div> */}
-
-            <div className="form-actions flex-end gap-4">
-              <button
-                type="reset"
-                className="btn btn-outline-secondary text-gray-600 border-gray-600 hover:text-white hover:bg-gray-600"
-                onClick={() => reset()}
-              >
-                Reset
-              </button>
-
+            {/* Submit Button */}
+            <div className="form-actions mt-4">
               <button
                 type="submit"
-                className="btn btn-primary text-white bg-main-600 border-main-600 hover:bg-main-700"
-                disabled={isSubmitting}
+                className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600"
+                disabled={isSubmitting || batches.length === 0}
               >
                 {isSubmitting ? "Creating..." : "Create Assignment"}
               </button>

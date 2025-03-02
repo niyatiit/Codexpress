@@ -1,38 +1,50 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Hourglass } from "react-loader-spinner"; // For a better loading spinner
+import { CheckCircle, XCircle } from "react-feather"; // For success and error icons
+import axios from "axios";
 
 const PaymentSuccess = () => {
-  const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get("session_id");
-  const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null); // 'success' or 'failed'
+  const [sessionDetails, setSessionDetails] = useState(null); // Stripe session details
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id"); // Retrieve session_id from query params
 
   useEffect(() => {
-    const fetchPaymentDetails = async () => {
-      if (!sessionId) {
-        setError("Session ID is missing.");
-        setLoading(false);
-        return;
-      }
-
+    const fetchSessionDetails = async () => {
       try {
+        if (!sessionId) {
+          throw new Error("No session ID found.");
+        }
+
+        // Fetch session details from your backend
         const response = await axios.get(
-          `http://localhost:3000/payment/success?session_id=${sessionId}`
+          `http://localhost:3000/payment/success?session_id=${encodeURIComponent(sessionId)}`
         );
-        setPaymentDetails(response.data);
-        setLoading(false);
+        const session = response.data.session;
+
+        // Check if the payment was successful
+        if (session.payment_status === "paid") {
+          setPaymentStatus("success");
+          setSessionDetails(session);
+        navigate("/student")
+        } else {
+          setPaymentStatus("failed");
+          setError("Payment was not successful.");
+        }
       } catch (err) {
-        console.error("Error fetching payment details:", err);
-        setError("Failed to fetch payment details. Please try again later.");
+        console.error("🚨 Error fetching session details:", err);
+        setError(err.message || "Failed to fetch payment details.");
+        setPaymentStatus("failed");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchPaymentDetails();
+    fetchSessionDetails();
   }, [sessionId]);
 
   const handleRedirectToDashboard = () => {
@@ -41,7 +53,7 @@ const PaymentSuccess = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-50">
         <Hourglass
           visible={true}
           height="80"
@@ -51,46 +63,61 @@ const PaymentSuccess = () => {
           wrapperClass=""
           colors={["#306cce", "#72a1ed"]}
         />
-        <p className="mt-4 text-gray-600">Loading payment details...</p>
+        <p className="mt-4 text-gray-600 text-lg font-medium">Processing your payment...</p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || paymentStatus === "failed") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <h1 className="text-3xl font-bold text-red-600 mb-4">Error</h1>
-        <p className="text-gray-700">{error}</p>
-        <button
-          onClick={handleRedirectToDashboard}
-          className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-105"
-        >
-          Go to Dashboard
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-50">
+        <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-md w-full mx-4">
+          <div className="flex justify-center mb-6">
+            <XCircle className="text-red-500 w-16 h-16" />
+          </div>
+          <h1 className="text-3xl font-bold text-red-600 mb-4">Payment Failed</h1>
+          <p className="text-gray-700 text-lg mb-6">
+            {error || "There was an issue processing your payment. Please try again."}
+          </p>
+          <button
+            onClick={handleRedirectToDashboard}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Go to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold text-green-600 mb-4">Payment Successful!</h1>
-      {paymentDetails && (
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-          <p className="text-gray-700">
-            Thank you for your payment. Your transaction ID is:{" "}
-            <span className="font-semibold">{paymentDetails.session.id}</span>.
-          </p>
-          <p className="text-gray-700 mt-2">
-            Amount Paid: ₹{(paymentDetails.session.amount_total / 100).toFixed(2)}
-          </p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-50">
+      <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-md w-full mx-4">
+        <div className="flex justify-center mb-6">
+          <CheckCircle className="text-green-500 w-16 h-16" />
         </div>
-      )}
-      <button
-        onClick={handleRedirectToDashboard}
-        className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-105"
-      >
-        Go to Dashboard
-      </button>
+        <h1 className="text-3xl font-bold text-green-600 mb-4">Payment Successful!</h1>
+        <p className="text-gray-700 text-lg mb-6">
+          Thank you for your payment. Your transaction has been successfully processed.
+        </p>
+        {sessionDetails && (
+          <div className="text-left mb-6">
+            <p className="text-gray-700">
+              <span className="font-semibold">Amount Paid:</span> ₹
+              {(sessionDetails.amount_total / 100).toFixed(2)}
+            </p>
+            <p className="text-gray-700">
+              <span className="font-semibold">Course:</span> {sessionDetails.metadata.courseId}
+            </p>
+          </div>
+        )}
+        <button
+          onClick={handleRedirectToDashboard}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Go to Dashboard
+        </button>
+      </div>
     </div>
   );
 };

@@ -85,11 +85,11 @@ const userSchema = new mongoose.Schema(
 
      resetPasswordToken: {
       type: String,
-      //select: false, // Hide from queries
+      select: false, // Hide from queries
     },
     resetPasswordExpires: {
       type: Date,
-      //select: false, // Hide from queries
+      select: false, // Hide from queries
     },
     deletedAt: { type: Date, default: null }, // Soft delete option
   },

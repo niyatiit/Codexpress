@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require('express')
 const app = express()
+const path = require("path");
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const Courses = require("./models/course.model")
@@ -13,11 +14,17 @@ const bcrypt = require("bcrypt")
 const cors = require("cors");// Enable CORS for all routes
 const axios=require('axios')
 axios.defaults.withCredentials = true;
-app.use(cors({
-    origin: "http://localhost:5173", // Replace with your frontend URL
-    credentials: true, // Allow cookies
-  }));
+// app.use(cors({
+//     origin: "http://localhost:5173", // Replace with your frontend URL
+//     credentials: true, // Allow cookies
+//   }));
   
+app.use(
+    cors({
+      origin: ["http://192.168.79.21:5173","http://localhost:5173"], // Your frontend URL
+      credentials: true, // Allow credentials (cookies, authorization headers)
+    })
+  );
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes')
 const courseRoutes = require('./routes/courseRoutes')
@@ -26,6 +33,12 @@ const batchRoutes = require('./routes/batchRoutes')
 const userRoutes = require('./routes/userRoutes')
 const profileRoutes = require('./routes/profileRoutes')
 const paymentRoutes = require('./routes/paymentRoutes')
+const enrollmentRoutes=require('./routes/enrollmentRoutes')
+const assignmentRoutes=require('./routes/assignmentRoutes')
+const noticeRoutes=require("./routes/noticeRoutes")
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 const connectDB = require('./config/db')
 try {
     connectDB()
@@ -34,6 +47,7 @@ catch (err) {
     console.log("Error Connecting DATABASE!..", err);
 
 }
+
 app.use("/auth", authRoutes); // Authentication routes
 app.use('/student', studentRoutes)
 app.use("/courses", courseRoutes);
@@ -42,14 +56,16 @@ app.use("/batches", batchRoutes);
 app.use("/users", userRoutes);
 app.use("/profile", profileRoutes);
 app.use("/payment", paymentRoutes);
+app.use('/enrollments', enrollmentRoutes);
+app.use('/assignments', assignmentRoutes);
+app.use('/notices', noticeRoutes);
 
 app.get('/', async (req, res) => {
-    const saltRounds = 12;
-    const plainPassword = "khushi123";
-    // $2b$12$rNK5N7CU0b3T87RJu7uQMOdlBRXOR7aMUgU4thZBjS/G3J2S4mduS
-    const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
+    // const saltRounds = 12;
+    // const plainPassword = "$2b$12$bum7zP2kb.BLHirqTLEgZ.XuQfdh3nixXWE4lAjwzJiZIMrA0Dajm";
+    // const hashedPassword = bcrypt.hashSync(plainPassword, saltRounds);
 
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
     res.send(`hello from server`)
 })
 
@@ -79,17 +95,17 @@ app.get('/cities/:id', async (req, res) => {
 });
 
 
-app.get("/logout", (req, res) => {
-    // Expire the cookie properly by setting maxAge to 0
-    res.clearCookie("token", {
-        httpOnly: true,  // Ensure cookie is HTTP-only
-        secure: process.env.NODE_ENV === "production", // Secure only in production
-        sameSite: "Strict", // Adjust as necessary
-        path: "/"
-    });
-});
+// app.get("/logout", (req, res) => {
+//     // Expire the cookie properly by setting maxAge to 0
+//     res.clearCookie("token", {
+//         httpOnly: true,  // Ensure cookie is HTTP-only
+//         secure: process.env.NODE_ENV === "production", // Secure only in production
+//         sameSite: "Strict", // Adjust as necessary
+//         path: "/"
+//     });
+// });
 
 
-app.listen(port, () => {
-    console.log(`Server is running on ${port}`);
-})
+app.listen(3000, "0.0.0.0", () => {
+    console.log("Server running on port 3000");
+  });

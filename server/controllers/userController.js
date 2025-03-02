@@ -54,11 +54,21 @@ exports.getFaculties = async (req, res) => {
     if (!facultyRole) {
       return res.status(404).json({ success: false, message: "Faculty role not found" });
     }
-
     // Step 2: Find users with that Role ID
-    const facultyUsers = await User.find({ role: facultyRole._id }).select("_id username email");
-
+    const facultyUsers = await User.find({ role: facultyRole._id }).select("_id username email first_name last_name");
     res.status(200).json({ success: true, users: facultyUsers });
+  } catch (error) {
+    console.error("Error fetching faculty users:", error);
+    res.status(500).json({ success: false, message: "Error fetching faculty users", error: error.message });
+  }
+};
+
+exports.getAuthenticatedFaculty = async (req, res) => {
+  try {
+  
+    const faculty=await Faculty.find({user_id:req.user.id}).populate("user_id")
+    // console.log("backend : ",faculty)
+    res.status(200).json({ success: true, user: faculty });
   } catch (error) {
     console.error("Error fetching faculty users:", error);
     res.status(500).json({ success: false, message: "Error fetching faculty users", error: error.message });

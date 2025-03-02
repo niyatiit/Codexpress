@@ -1,7 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const ManageStudents = () => {
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+
+  // Fetch enrollments from backend
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/enrollments/users");
+        setEnrollments(response.data.data);
+      } catch (error) {
+        console.error("Error fetching enrollments:", error);
+        setError("Failed to fetch enrollments. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnrollments();
+  }, []);
+
+  // Filter enrollments based on search query
+  const filteredEnrollments = enrollments
+    .map((enrollment) => ({
+      ...enrollment,
+      courses: enrollment.courses.filter((course) =>
+        `${enrollment.user.name} ${enrollment.user.email} ${course.course.name} ${course.payment_status}`
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      ),
+    }))
+    .filter((enrollment) => enrollment.courses.length > 0); // Remove enrollments with no matching courses
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="dashboard-body">
       {/* Breadcrumb Section */}
@@ -24,7 +62,7 @@ const ManageStudents = () => {
           </ul>
         </div>
         <div>
-          <Link to="/add-student" className="btn btn-main rounded-pill py-9">
+          <Link to="/admin/add/student" className="btn btn-main rounded-pill py-9">
             Add Student
           </Link>
         </div>
@@ -36,6 +74,8 @@ const ManageStudents = () => {
           type="text"
           className="form-control"
           placeholder="Search by name, email, course, or status"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query
         />
       </div>
 
@@ -53,62 +93,41 @@ const ManageStudents = () => {
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Course</th>
-                <th>Status</th>
+                <th>Payment Status</th>
                 <th>Enrollment Date</th>
-                <th>Actions</th>
+                {/* <th>Actions</th> */}
               </tr>
             </thead>
             <tbody>
-              {/* Example Student 1 */}
-              <tr>
-                <td>1</td>
-                <td>John Doe</td>
-                <td>john.doe@example.com</td>
-                <td>1234567890</td>
-                <td>Full Stack Development</td>
-                <td>
-                  <span className="badge bg-success">Active</span>
-                </td>
-                <td>01-01-2023</td>
-                <td>
-                  <button className="btn btn-sm btn-primary me-2">Edit</button>
-                  <button className="btn btn-sm btn-danger">Delete</button>
-                </td>
-              </tr>
-
-              {/* Example Student 2 */}
-              <tr>
-                <td>2</td>
-                <td>Jane Smith</td>
-                <td>jane.smith@example.com</td>
-                <td>9876543210</td>
-                <td>Java Programming</td>
-                <td>
-                  <span className="badge bg-warning">Pending</span>
-                </td>
-                <td>01-03-2023</td>
-                <td>
-                  <button className="btn btn-sm btn-primary me-2">Edit</button>
-                  <button className="btn btn-sm btn-danger">Delete</button>
-                </td>
-              </tr>
-
-              {/* Example Student 3 */}
-              <tr>
-                <td>3</td>
-                <td>Michael Brown</td>
-                <td>michael.brown@example.com</td>
-                <td>1122334455</td>
-                <td>Data Science</td>
-                <td>
-                  <span className="badge bg-danger">Inactive</span>
-                </td>
-                <td>01-05-2022</td>
-                <td>
-                  <button className="btn btn-sm btn-primary me-2">Edit</button>
-                  <button className="btn btn-sm btn-danger">Delete</button>
-                </td>
-              </tr>
+              {filteredEnrollments.map((enrollment, index) =>
+                enrollment.courses.map((course, courseIndex) => (
+                  <tr key={`${enrollment._id}-${courseIndex}`}>
+                    <td>{index + 1}</td>
+                    <td>{enrollment.user.name || "user"}</td>
+                    <td>{enrollment.user.email}</td>
+                    <td>{enrollment.user.phone || "N/A"}</td>
+                    <td>{course.course.name}</td>
+                    <td>
+                      <span
+                        className={`badge ${
+                          course.payment_status === "paid"
+                            ? "bg-success"
+                            : course.payment_status === "unpaid"
+                            ? "bg-warning"
+                            : "bg-danger"
+                        }`}
+                      >
+                        {course.payment_status}
+                      </span>
+                    </td>
+                    <td>{new Date(course.enrolled_at).toLocaleDateString()}</td>
+                    {/* <td>
+                      <button className="btn btn-sm btn-primary me-2">Edit</button>
+                      <button className="btn btn-sm btn-danger">Delete</button>
+                    </td> */}
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -116,8 +135,8 @@ const ManageStudents = () => {
 
       {/* Pagination */}
       <div className="pagination mt-16 flex-center">
-        <button className="btn btn-sm btn-outline-secondary me-2">Previous</button>
-        <button className="btn btn-sm btn-outline-secondary">Next</button>
+        <button className="btn btn-secondary me-2">Previous</button>
+        <button className="btn btn-secondary">Next</button>
       </div>
     </div>
   );

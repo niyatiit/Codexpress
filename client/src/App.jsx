@@ -23,6 +23,8 @@ import ProfileCompletion from "./pages/ProfileCompletion";
 import CourseDashboard from "./pages/CourseDashboard"
 import PaymentSuccess from "./pages/Payment/PaymentSuccess";
 import CancelPage from "./pages/Payment/CancelPage";
+import ManageEnrollments from "./pages/admin/ManageEnrollments";
+import AssignBatch from "./pages/admin/AssignBatch";
 
 const App = () => {
   return (
@@ -39,10 +41,11 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgetPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/faq" element={<Faqs />} />
+            <Route path="/profile-completion" element={<ProfileCompletion />} />
+
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
-            <Route path="/profile-completion" element={<ProfileCompletion />} />
-            <Route path="/courses/:id/payment" element={<Payment />} />
+            <Route path="/courses/checkout/:id" element={<Payment />} />
             <Route path="/courses/:id/dashboard" element={<CourseDashboard />} />
             <Route path="/payment/success" element={<PaymentSuccess />} />
             <Route path="/payment/cancel" element={<CancelPage />} />

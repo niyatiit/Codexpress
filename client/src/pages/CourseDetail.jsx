@@ -10,17 +10,24 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [review, setReview] = useState({ comment: "", rating: 0 });
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   useEffect(() => {
-     // Step 1: Check if the user is logged in
-     if (!token || !user) {
+    // Step 1: Check if the user is logged in
+    if (!token || !user) {
       // Redirect to the login page with a proper redirect URL
       navigate(`/student/login?redirect=/courses/${id}`);
       return;
     }
+
+    // Fetch course details
     axios
       .get(`http://localhost:3000/courses/${id}`)
       .then((response) => {
@@ -31,24 +38,62 @@ const CourseDetail = () => {
         setError("Failed to load course details.");
         setLoading(false);
       });
-  }, [id]);
+
+    // Check if the student is enrolled in the course
+    axios
+      .get(`http://localhost:3000/enrollments/check-enrollment`, {
+        params: { userId: user.id, courseId: id },
+      })
+      .then((response) => {
+        setIsEnrolled(response.data.isEnrolled);
+      })
+      .catch((error) => {
+        console.error("Error checking enrollment:", error);
+      });
+  }, [id, token, user, navigate]);
 
   const handleEnroll = async () => {
-    // Step 1: Check if the user is logged in
     if (!token || !user) {
-      // Redirect to the login page with a proper redirect URL
       navigate(`/student/login?redirect=/profile-completion`);
       return;
     }
 
-    // Step 2: Check if the profile is complete
+    if (user.role !== "student") {
+      setError("Only students can enroll in courses.");
+      return;
+    }
+
+    navigate(`/profile-completion?redirect=/courses/checkout/${id}`);
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!review.comment || review.rating === 0) {
+      setError("Please provide a comment and rating.");
+      return;
+    }
+
     try {
-    
-      navigate(`/profile-completion?redirect=/courses/${id}/payment`)
-      console.log("now proceed to payment!")
-    } catch (err) {
-      console.error("Error during enrollment:", err);
-      setError("An error occurred while processing your request.");
+      const response = await axios.post(`http://localhost:3000/courses/${id}/reviews`, {
+        enrollmentId: user.id, // Assuming enrollmentId is the same as user._id
+        courseId: id,
+        comment: review.comment,
+        rating: review.rating,
+      });
+
+      if (response.data.success) {
+        alert("Review added successfully!")
+        setCourse((prevCourse) => ({
+          ...prevCourse,
+          reviews: [...prevCourse.reviews, response.data.review],
+        }));
+        setReview({ comment: "", rating: 0 });
+        setError(null);
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      setError("Failed to submit review. Please try again.");
     }
   };
 
@@ -70,8 +115,11 @@ const CourseDetail = () => {
 
   if (error)
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">{error}</p>
+      <div className="flex items-center justify-center flex-col min-h-screen">
+        <p className="text-red-500 text-xl">{error}</p>
+        <button className="bg-blue-500 text-white px-3 py-2 rounded-md mt-3" onClick={() => navigate(-1)}>
+          Go back
+        </button>
       </div>
     );
 
@@ -149,7 +197,14 @@ const CourseDetail = () => {
 
                   {/* Enroll Button (Sticky) */}
                   <div className="sticky top-4 z-10 my-36 mt-24">
-                    {course.status === "open" ? (
+                    {isEnrolled ? (
+                      <button
+                        disabled
+                        className="bg-zinc-400 text-white px-[100px] py-[13px] rounded-lg text-[18px] font-semibold shadow-lg transition-all duration-200 transform w-full lg:w-auto cursor-not-allowed"
+                      >
+                        Already Enrolled
+                      </button>
+                    ) : course.status === "open" ? (
                       <button
                         onClick={handleEnroll}
                         className="bg-blue-600 hover:bg-blue-700 text-white px-[100px] py-[13px] rounded-lg text-[18px] font-semibold shadow-lg transition-all duration-200 transform hover:scale-105 w-full lg:w-auto"
@@ -193,25 +248,86 @@ const CourseDetail = () => {
                     </ul>
                   </div>
 
-                  {/* Reviews */}
-                  <div className="w-full bg-zinc-100 mt-5 p-5">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-3">Reviews</h2>
-                    {course.reviews.length > 0 ? (
-                      <div className="space-y-4">
-                        {course.reviews.map((review, index) => (
-                          <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                            <div className="flex items-center mb-2">
-                              <span className="text-yellow-500 mr-2">{review.rating} ⭐</span>
-                            </div>
-                            <p className="text-gray-700">{review.comment}</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 italic">No reviews yet.</p>
-                    )}
-                  </div>
+
                 </div>
+              </div>
+              {/* Reviews */}
+              <div className="w-full bg-blue-100 mt-5 p-5">
+                <h2 className="text-xl font-semibold text-gray-900 mb-3">Reviews</h2>
+                {isEnrolled && (
+                  <form onSubmit={handleReviewSubmit} className="mb-6">
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2">Rating</label>
+                      <select
+                        value={review.rating}
+                        onChange={(e) => setReview({ ...review, rating: parseInt(e.target.value) })}
+                        className="w-full p-2 border rounded-lg"
+                        required
+                      >
+                        <option value={0}>Rate This Course</option>
+                        <option value={1}>⭐ (Poor)
+
+                        </option>
+                        <option value={2}>⭐⭐ (Needs Improvement)</option>
+                        <option value={3}>⭐⭐⭐ (Average)
+                        </option>
+                        <option value={4}>⭐⭐⭐⭐ (Good)</option>
+                        <option value={5}>⭐⭐⭐⭐⭐(Excellent)
+                        </option>
+                      </select>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2">Comment</label>
+                      <textarea
+                        value={review.comment}
+                        onChange={(e) => setReview({ ...review, comment: e.target.value })}
+                        className="w-full p-2 border rounded-lg"
+                        rows="4"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    >
+                      Submit Review
+                    </button>
+                  </form>
+                )}
+                {course.reviews.length > 0 ? (
+                  <div className="space-y-4">
+                    {course.reviews.map((review, index) => (
+                      <div key={index} className="bg-white p-4 mt-3 rounded-lg shadow-sm">
+                        <div className="flex items-center mb-2">
+                          <div className="flex gap-2 items-center">
+                            <img
+                              src={review.student_id.profile_picture || "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"}
+                              alt="Profile"
+                              className="w-48 h-48 bg-blue-500 rounded-full"
+                            />
+                            <div className="flex flex-col">
+                              <span className="text-blue-500 font-medium">
+                                {review.student_id.first_name} {review.student_id.last_name} {/* Display the username */}
+                              </span>
+                              <span className="text-zinc-400 text-sm font-medium">
+                                @{review.student_id.username} {/* Display the username */}
+                              </span>
+
+                            </div>
+                          </div>
+                        </div>
+                        <span className="text-yellow-500 mr-2">
+                          {Array.from({ length: review.rating }, (_, i) => (
+                            <span key={i}>⭐</span>
+                          ))}
+                        </span>
+                        <p className="text-gray-700">{review.comment}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">No reviews yet.</p>
+                )}  
               </div>
             </div>
           </div>

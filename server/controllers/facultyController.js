@@ -2,6 +2,37 @@ const Faculty = require("../models/faculty.model");
 const User = require("../models/user.model");
 const Role = require("../models/role.model");
 const mongoose = require("mongoose");
+const Course = require("../models/course.model");
+
+exports.getAssignedCourses = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find faculty by user_id (not _id)
+    const faculty = await Faculty.findOne({ user_id: userId }).populate("courses");
+
+    if (!faculty) {
+      return res.status(404).json({
+        success: false,
+        message: "Faculty not found.",
+      });
+    }
+
+    // Fetch assigned courses
+    const assignedCourses = faculty.courses;
+
+    res.status(200).json({
+      success: true,
+      courses: assignedCourses,
+    });
+  } catch (error) {
+    console.error("Error fetching assigned courses:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later.",
+    });
+  }
+};
 
 exports.getAllFaculty = async (req, res) => {
   try {

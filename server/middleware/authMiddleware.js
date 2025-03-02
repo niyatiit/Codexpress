@@ -104,3 +104,22 @@ module.exports.authenticate = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
+
+module.exports.isStudentEnrolled = async (req, res, next) => {
+  const userId = req.user.id; // Assuming the user ID is available in the request
+
+  try {
+    // Check if the user is enrolled in at least one course
+    const enrollment = await Enrollment.findOne({ user_id: userId });
+
+    if (!enrollment || enrollment.courses.length === 0) {
+      return res.status(403).json({ error: "You are not enrolled in any course." });
+    }
+
+    // If enrolled, proceed to the next middleware or route
+    next();
+  } catch (error) {
+    console.error("🚨 Error checking enrollment:", error);
+    res.status(500).json({ error: "Failed to check enrollment status." });
+  }
+};

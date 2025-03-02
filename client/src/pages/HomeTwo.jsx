@@ -37,7 +37,7 @@ const HomeTwo = () => {
     }, []);
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex justify-center flex-col items-center h-screen">
                 <Hourglass
                     visible={true}
                     height="80"
@@ -47,6 +47,8 @@ const HomeTwo = () => {
                     className=""
                     colors={['#306cce', '#72a1ed']}
                 />
+                        <p className="mt-4 text-gray-600 text-lg font-medium">Loading...</p>
+
             </div>
         );
     }

@@ -69,8 +69,6 @@ const FacultyDashboard = () => {
         );
         if (response.data.success) {
           const userData = response.data.user;
-          console.log(userData);
-
           setProfile({
             username: userData.username,
             email: userData.email,
@@ -83,7 +81,7 @@ const FacultyDashboard = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        alert("Failed to fetch user data. Please try again.");
+        // alert("Failed to fetch user data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -147,7 +145,7 @@ const FacultyDashboard = () => {
       <div className="side-overlay"></div>
 
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className="sidebar pb-36">
         <button
           type="button"
           className="sidebar-close-btn text-gray-500 hover-text-white hover-bg-main-600 text-md w-24 h-24 border border-gray-100 hover-border-main-600 d-xl-none d-flex flex-center rounded-circle position-absolute"
@@ -174,7 +172,7 @@ const FacultyDashboard = () => {
         </div>
 
         {/* Sidebar Menu */}
-        <div className="sidebar-menu-wrapper overflow-y-auto scroll-sm pb-20">
+        <div className="sidebar-menu-wrapper overflow-y-auto scroll-sm pb-[300px]">
           <div className="p-20 pt-10">
             <ul className="sidebar-menu">
               {/* Dashboard */}
@@ -241,50 +239,15 @@ const FacultyDashboard = () => {
                       View All Batches
                     </Link>
                   </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/manage/batch/students') ? 'active' : ''}`}>
+                  {/* <li className={`sidebar-submenu__item ${isActive('/faculty/manage/batch/students') ? 'active' : ''}`}>
                     <Link to="/faculty/manage/batch/students" className="sidebar-submenu__link">
                       Assign Students to Batch
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </li>
 
-              {/* Attendance Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${openDropdown === 'attendance' ||
-                  isDropdownActive(['/faculty/manage/attendance', '/faculty/qr/attendance', '/faculty/view/attendance'])
-                  ? 'open'
-                  : ''
-                  }`}
-              >
-                <a
-                  href="#!"
-                  className="sidebar-menu__link"
-                  onClick={() => toggleDropdown('attendance')}
-                >
-                  <span className="icon">
-                    <i className="ph ph-pen"></i>
-                  </span>
-                  <span className="text">Attendance</span>
-                </a>
-                <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/manage/attendance') ? 'active' : ''}`}>
-                    <Link to="/faculty/manage/attendance" className="sidebar-submenu__link">
-                      Mark Attendance
-                    </Link>
-                  </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/qr/attendance') ? 'active' : ''}`}>
-                    <Link to="/faculty/qr/attendance" className="sidebar-submenu__link">
-                      QR Code Attendance
-                    </Link>
-                  </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/attendance') ? 'active' : ''}`}>
-                    <Link to="/faculty/view/attendance" className="sidebar-submenu__link">
-                      View Attendance
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+
 
               {/* Assignments Dropdown */}
               <li
@@ -323,6 +286,38 @@ const FacultyDashboard = () => {
                 </ul>
               </li>
 
+              {/* Notifications Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'notifications' || isDropdownActive(['/faculty/view/notices', '/faculty/send/notice'])
+                  ? 'open'
+                  : ''
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleDropdown('notifications')}
+                >
+                  <span className="icon">
+                    <i className="ph ph-notification"></i>
+                  </span>
+                  <span className="text">Notifications</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/notices') ? 'active' : ''}`}>
+                    <Link to="/faculty/view/notices" className="sidebar-submenu__link">
+                      View Notices
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/send/notice') ? 'active' : ''}`}>
+                    <Link to="/faculty/send/notice" className="sidebar-submenu__link">
+                      Send Notice
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+
+
               {/* Quizzes Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === 'quizzes' ||
@@ -360,6 +355,43 @@ const FacultyDashboard = () => {
                   <li className={`sidebar-submenu__item ${isActive('/faculty/quiz/reports') ? 'active' : ''}`}>
                     <Link to="/faculty/quiz/reports" className="sidebar-submenu__link">
                       Quiz Reports
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+
+              {/* Attendance Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'attendance' ||
+                  isDropdownActive(['/faculty/manage/attendance', '/faculty/qr/attendance', '/faculty/view/attendance'])
+                  ? 'open'
+                  : ''
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleDropdown('attendance')}
+                >
+                  <span className="icon">
+                    <i className="ph ph-pen"></i>
+                  </span>
+                  <span className="text">Attendance</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/manage/attendance') ? 'active' : ''}`}>
+                    <Link to="/faculty/manage/attendance" className="sidebar-submenu__link">
+                      Mark Attendance
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/qr/attendance') ? 'active' : ''}`}>
+                    <Link to="/faculty/qr/attendance" className="sidebar-submenu__link">
+                      QR Code Attendance
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/attendance') ? 'active' : ''}`}>
+                    <Link to="/faculty/view/attendance" className="sidebar-submenu__link">
+                      View Attendance
                     </Link>
                   </li>
                 </ul>
@@ -427,36 +459,6 @@ const FacultyDashboard = () => {
                 </ul>
               </li>
 
-              {/* Notifications Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${openDropdown === 'notifications' || isDropdownActive(['/faculty/view/notices', '/faculty/send/notice'])
-                  ? 'open'
-                  : ''
-                  }`}
-              >
-                <a
-                  href="#!"
-                  className="sidebar-menu__link"
-                  onClick={() => toggleDropdown('notifications')}
-                >
-                  <span className="icon">
-                    <i className="ph ph-notification"></i>
-                  </span>
-                  <span className="text">Notifications</span>
-                </a>
-                <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/notices') ? 'active' : ''}`}>
-                    <Link to="/faculty/view/notices" className="sidebar-submenu__link">
-                      View Notices
-                    </Link>
-                  </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/send/notice') ? 'active' : ''}`}>
-                    <Link to="/faculty/send/notice" className="sidebar-submenu__link">
-                      Send Notice
-                    </Link>
-                  </li>
-                </ul>
-              </li>
 
               {/* Schedule Dropdown */}
               <li
@@ -521,14 +523,14 @@ const FacultyDashboard = () => {
               </li>
 
               {/* Profile Settings */}
-              <li className={`sidebar-menu__item ${isActive('/faculty/settings') ? 'active' : ''}`}>
+              {/* <li className={`sidebar-menu__item ${isActive('/faculty/settings') ? 'active' : ''}`}>
                 <Link to="/faculty/settings" className="sidebar-menu__link">
                   <span className="icon">
                     <i className="ph ph-gear"></i>
                   </span>
                   <span className="text">Settings</span>
                 </Link>
-              </li>
+              </li> */}
 
               {/* Logout */}
               <li className="sidebar-menu__item">

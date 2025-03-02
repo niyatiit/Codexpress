@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Notice model
 const noticeSchema = new mongoose.Schema({
-  title: { type: String, required: true }, // Title of the notice
-  description: { type: String, required: true }, // Detailed description of the notice
-  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'Faculty', required: true }, // Reference to the faculty who created the notice
-  posted_on: { type: Date, default: Date.now }, // Date when the notice was posted
-  valid_until: { type: Date, required: true }, // The date until which the notice is valid
-  status: { type: String, enum: ['active', 'inactive'], default: 'active' }, // Status of the notice (active or inactive)
+  title: { type: String, required: true, trim: true }, // Trimmed to remove unnecessary spaces
+  description: { type: String, required: true, trim: true },
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'Faculty', required: true },
+  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true }, // Made required for consistency
+  batches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Batch', required: true }], // Ensuring at least one batch is selected
+  posted_on: { type: Date, default: Date.now },
+  status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 });
 
-module.exports = mongoose.model('Notice', noticeSchema); // Use 'notice' as the model name
+module.exports = mongoose.model('Notice', noticeSchema);
