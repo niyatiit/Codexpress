@@ -1,333 +1,179 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Line, Bar } from "react-chartjs-2";
+import { Chart as ChartJS } from "chart.js/auto";
+import { Users, BookOpen, TrendingUp, CreditCard, Clock, Award } from "lucide-react";
 
 const Dashboard = () => {
-    return (
-        <div className="dashboard-body">
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalFaculties: 0,
+    totalCourses: 0,
+    totalPayments: 0,
+  });
 
-            <div className="row gy-4">
-                <div className="col-lg-9">
-                    {/* <!-- Widgets Start --> */}
-                    <div className="row gy-4">
-                        <div className="col-xxl-3 col-sm-6">
-                            <div className="card">
-                                <div className="card-body">
-                                    <h4 className="mb-2">155+</h4>
-                                    <span className="text-gray-600">Completed Courses</span>
-                                    <div className="flex-between gap-8 mt-16">
-                                        <span className="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-main-600 text-white text-2xl"><i className="ph-fill ph-book-open"></i></span>
-                                        <div id="complete-course" className="remove-tooltip-title rounded-tooltip-value"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xxl-3 col-sm-6">
-                            <div className="card">
-                                <div className="card-body">
-                                    <h4 className="mb-2">39+</h4>
-                                    <span className="text-gray-600">Earned Certificate</span>
-                                    <div className="flex-between gap-8 mt-16">
-                                        <span className="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-main-two-600 text-white text-2xl"><i className="ph-fill ph-certificate"></i></span>
-                                        <div id="earned-certificate" className="remove-tooltip-title rounded-tooltip-value"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xxl-3 col-sm-6">
-                            <div className="card">
-                                <div className="card-body">
-                                    <h4 className="mb-2">25+</h4>
-                                    <span className="text-gray-600">Course in Progress</span>
-                                    <div className="flex-between gap-8 mt-16">
-                                        <span className="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-purple-600 text-white text-2xl"> <i className="ph-fill ph-graduation-cap"></i></span>
-                                        <div id="course-progress" className="remove-tooltip-title rounded-tooltip-value"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xxl-3 col-sm-6">
-                            <div className="card">
-                                <div className="card-body">
-                                    <h4 className="mb-2">18k+</h4>
-                                    <span className="text-gray-600">Community Support</span>
-                                    <div className="flex-between gap-8 mt-16">
-                                        <span className="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-warning-600 text-white text-2xl"><i className="ph-fill ph-users-three"></i></span>
-                                        <div id="community-support" className="remove-tooltip-title rounded-tooltip-value"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- Widgets End --> */}
+  const [enrollmentTrends, setEnrollmentTrends] = useState([]);
+  const [recentEnrollments, setRecentEnrollments] = useState([]);
+  const [topCourses, setTopCourses] = useState([]);
 
-                    {/* <!-- Top Course Start --> */}
-                    <div className="card mt-24">
-                        <div className="card-body">
-                            <div className="mb-20 flex-between flex-wrap gap-8">
-                                <h4 className="mb-0">Study Statistics</h4>
-                                <div className="flex-align gap-16 flex-wrap">
-                                    <div className="flex-align flex-wrap gap-16">
-                                        <div className="flex-align flex-wrap gap-8">
-                                            <span className="w-8 h-8 rounded-circle bg-main-600"></span>
-                                            <span className="text-13 text-gray-600">Study</span>
-                                        </div>
-                                        <div className="flex-align flex-wrap gap-8">
-                                            <span className="w-8 h-8 rounded-circle bg-main-two-600"></span>
-                                            <span className="text-13 text-gray-600">Test</span>
-                                        </div>
-                                    </div>
-                                    <select className="form-select form-control text-13 px-8 pe-24 py-8 rounded-8 w-auto">
-                                        <option value="1">Yearly</option>
-                                        <option value="1">Monthly</option>
-                                        <option value="1">Weekly</option>
-                                        <option value="1">Today</option>
-                                    </select>
-                                </div>
-                            </div>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [
+          enrollmentRes,
+          facultyRes,
+          courseRes,
+          paymentRes,
+          recentEnrollmentsRes,
+          topCoursesRes,
+        ] = await Promise.all([
+          axios.get("http://localhost:3000/admin/enrollments"),
+          axios.get("http://localhost:3000/admin/faculties"),
+          axios.get("http://localhost:3000/admin/courses"),
+          axios.get("http://localhost:3000/admin/payments"),
+          axios.get("http://localhost:3000/admin/recent-enrollments"), // Updated route
+          axios.get("http://localhost:3000/admin/top-courses"), // Updated route
+        ]);
+  
+        setStats({
+          totalStudents: enrollmentRes.data.count || 0,
+          totalFaculties: facultyRes.data.count || 0,
+          totalCourses: courseRes.data.count || 0,
+          totalPayments: paymentRes.data.total || 0,
+        });
+  
+        setEnrollmentTrends(enrollmentRes.data.trends || []);
+        setRecentEnrollments(recentEnrollmentsRes.data.enrollments || []);
+        setTopCourses(topCoursesRes.data.courses || []);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  const lineChartData = {
+    labels: enrollmentTrends.map((item) => item.date),
+    datasets: [
+      {
+        label: "Daily Enrollments",
+        data: enrollmentTrends.map((item) => item.count),
+        borderColor: "#3b82f6",
+        backgroundColor: "rgba(59, 130, 246, 0.1)",
+        fill: true,
+      },
+    ],
+  };
 
-                            <div id="doubleLineChart" className="tooltip-style y-value-left"></div>
+  const barChartData = {
+    labels: topCourses.map((course) => course.name),
+    datasets: [
+      {
+        label: "Enrollments",
+        data: topCourses.map((course) => course.enrollments),
+        backgroundColor: "#4bc0c0",
+      },
+    ],
+  };
 
-                        </div>
-                    </div>
-                    {/* <!-- Top Course End --> */}
+  const lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    tension: 0.3,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { display: true, color: "rgba(0,0,0,0.05)" },
+      },
+      x: { grid: { display: false } },
+    },
+  };
 
-                    {/* <!-- Top Course Start --> */}
-                    <div className="card mt-24">
-                        <div className="card-body">
-                            <div className="mb-20 flex-between flex-wrap gap-8">
-                                <h4 className="mb-0">Top Courses Pick for You</h4>
-                                <a href="student-courses.html" className="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
-                            </div>
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { display: true, color: "rgba(0,0,0,0.05)" },
+      },
+      x: { grid: { display: false } },
+    },
+  };
 
-                            <div className="row g-20">
-                                <div className="col-lg-4 col-sm-6">
-                                    <div className="card border border-gray-100">
-                                        <div className="card-body p-8">
-                                            <a href="course-details.html" className="bg-main-100 rounded-8 overflow-hidden text-center mb-8 h-164 flex-center p-8">
-                                                <img src="assets/images/thumbs/course-img1.png" alt="Course Image" />
-                                            </a>
-                                            <div className="p-8">
-                                                <span className="text-13 py-2 px-10 rounded-pill bg-success-50 text-success-600 mb-16">Development</span>
-                                                <h5 className="mb-0"><a href="course-details.html" className="hover-text-main-600">Full Stack Web Development</a></h5>
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">Admin Dashboard</h2>
+        <div className="text-sm text-gray-500">Last updated: Just now</div>
+      </div>
 
-                                                <div className="flex-align gap-8 flex-wrap mt-16">
-                                                    <img src="assets/images/thumbs/user-img1.png" className="w-28 h-28 rounded-circle object-fit-cover" alt="User Image" />
-                                                    <div>
-                                                        <span className="text-gray-600 text-13">Created by <a href="profile.html" className="fw-semibold text-gray-700 hover-text-main-600 hover-text-decoration-underline">Albert James</a> </span>
-                                                    </div>
-                                                </div>
+      {/* Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <StatCard icon={<Users size={24} className="text-blue-600" />} label="Students Enrolled" value={stats.totalStudents} />
+        <StatCard icon={<BookOpen size={24} className="text-green-600" />} label="Total Faculties" value={stats.totalFaculties} />
+        <StatCard icon={<TrendingUp size={24} className="text-purple-600" />} label="Total Courses" value={stats.totalCourses} />
+        <StatCard icon={<CreditCard size={24} className="text-amber-600" />} label="Total Payments" value={`₹${stats.totalPayments}`} />
+      </div>
 
-                                                <div className="flex-align gap-8 mt-12 pt-12 border-top border-gray-100">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-video-camera"></i></span>
-                                                        <span className="text-13 text-gray-600">24 Lesson</span>
-                                                    </div>
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-clock"></i></span>
-                                                        <span className="text-13 text-gray-600">40 Hours</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-between gap-4 flex-wrap mt-24">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-15 fw-bold text-warning-600 d-flex"><i className="ph-fill ph-star"></i></span>
-                                                        <span className="text-13 fw-bold text-gray-600">4.9</span>
-                                                        <span className="text-13 fw-bold text-gray-600">(12k)</span>
-                                                    </div>
-                                                    <a href="course-details.html" className="btn btn-outline-main rounded-pill py-9">View Details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-sm-6">
-                                    <div className="card border border-gray-100">
-                                        <div className="card-body p-8">
-                                            <a href="course-details.html" className="bg-main-100 rounded-8 overflow-hidden text-center mb-8 h-164 flex-center p-8">
-                                                <img src="assets/images/thumbs/course-img5.png" alt="Course Image" />
-                                            </a>
-                                            <div className="p-8">
-                                                <span className="text-13 py-2 px-10 rounded-pill bg-warning-50 text-warning-600 mb-16">Design</span>
-                                                <h5 className="mb-0"><a href="course-details.html" className="hover-text-main-600">Design System</a></h5>
-
-                                                <div className="flex-align gap-8 flex-wrap mt-16">
-                                                    <img src="assets/images/thumbs/user-img5.png" className="w-28 h-28 rounded-circle object-fit-cover" alt="User Image" />
-                                                    <div>
-                                                        <span className="text-gray-600 text-13">Created by <a href="profile.html" className="fw-semibold text-gray-700 hover-text-main-600 hover-text-decoration-underline">Albert James</a> </span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-align gap-8 mt-12 pt-12 border-top border-gray-100">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-video-camera"></i></span>
-                                                        <span className="text-13 text-gray-600">24 Lesson</span>
-                                                    </div>
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-clock"></i></span>
-                                                        <span className="text-13 text-gray-600">40 Hours</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-between gap-4 flex-wrap mt-24">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-15 fw-bold text-warning-600 d-flex"><i className="ph-fill ph-star"></i></span>
-                                                        <span className="text-13 fw-bold text-gray-600">4.9</span>
-                                                        <span className="text-13 fw-bold text-gray-600">(12k)</span>
-                                                    </div>
-                                                    <a href="course-details.html" className="btn btn-outline-main rounded-pill py-9">View Details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-lg-4 col-sm-6">
-                                    <div className="card border border-gray-100">
-                                        <div className="card-body p-8">
-                                            <a href="course-details.html" className="bg-main-100 rounded-8 overflow-hidden text-center mb-8 h-164 flex-center p-8">
-                                                {/* <img src="assets/images/thumbs/course-img6.png" alt="Course Image"> */}
-                                            </a>
-                                            <div className="p-8">
-                                                <span className="text-13 py-2 px-10 rounded-pill bg-danger-50 text-danger-600 mb-16">Frontend</span>
-                                                <h5 className="mb-0"><a href="course-details.html" className="hover-text-main-600">React Native Courese</a></h5>
-
-                                                <div className="flex-align gap-8 flex-wrap mt-16">
-                                                    {/* <img src="assets/images/thumbs/user-img6.png" className="w-28 h-28 rounded-circle object-fit-cover" alt="User Image"> */}
-                                                    <div>
-                                                        <span className="text-gray-600 text-13">Created by <a href="profile.html" className="fw-semibold text-gray-700 hover-text-main-600 hover-text-decoration-underline">Albert James</a> </span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-align gap-8 mt-12 pt-12 border-top border-gray-100">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-video-camera"></i></span>
-                                                        <span className="text-13 text-gray-600">24 Lesson</span>
-                                                    </div>
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-sm text-main-600 d-flex"><i className="ph ph-clock"></i></span>
-                                                        <span className="text-13 text-gray-600">40 Hours</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-between gap-4 flex-wrap mt-24">
-                                                    <div className="flex-align gap-4">
-                                                        <span className="text-15 fw-bold text-warning-600 d-flex"><i className="ph-fill ph-star"></i></span>
-                                                        <span className="text-13 fw-bold text-gray-600">4.9</span>
-                                                        <span className="text-13 fw-bold text-gray-600">(12k)</span>
-                                                    </div>
-                                                    <a href="course-details.html" className="btn btn-outline-main rounded-pill py-9">View Details</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- Top Course End --> */}
-                </div>
-
-                <div className="col-lg-3">
-                    {/* <!-- Calendar Start --> */}
-                    <div className="card">
-                        <div className="card-body">
-                            <div className="calendar">
-                                <div className="calendar__header">
-                                    <button type="button" className="calendar__arrow left"><i className="ph ph-caret-left"></i></button>
-                                    <p className="display h6 mb-0">""</p>
-                                    <button type="button" className="calendar__arrow right"><i className="ph ph-caret-right"></i></button>
-                                </div>
-
-                                <div className="calendar__week week">
-                                    <div className="calendar__week-text">Su</div>
-                                    <div className="calendar__week-text">Mo</div>
-                                    <div className="calendar__week-text">Tu</div>
-                                    <div className="calendar__week-text">We</div>
-                                    <div className="calendar__week-text">Th</div>
-                                    <div className="calendar__week-text">Fr</div>
-                                    <div className="calendar__week-text">Sa</div>
-                                </div>
-                                <div className="days"></div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- Calendar End --> */}
-
-                    {/* <!-- Assignment Start --> */}
-                    <div className="card mt-24">
-                        <div className="card-body">
-                            <div className="mb-20 flex-between flex-wrap gap-8">
-                                <h4 className="mb-0">Assignments</h4>
-                                <a href="assignment.html" className="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
-                            </div>
-                            <div className="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
-                                <div className="flex-align flex-wrap gap-8">
-                                    <span className="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i className="ph-fill ph-graduation-cap"></i></span>
-                                    <div>
-                                        <h6 className="mb-0">Do The Research</h6>
-                                        <span className="text-13 text-gray-400">Due in 9 days</span>
-                                    </div>
-                                </div>
-                                <a href="assignment.html" className="text-gray-900 hover-text-main-600"><i className="ph ph-caret-right"></i></a>
-                            </div>
-                            <div className="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
-                                <div className="flex-align flex-wrap gap-8">
-                                    <span className="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i className="ph ph-code"></i></span>
-                                    <div>
-                                        <h6 className="mb-0">PHP Dvelopment</h6>
-                                        <span className="text-13 text-gray-400">Due in 2 days</span>
-                                    </div>
-                                </div>
-                                <a href="assignment.html" className="text-gray-900 hover-text-main-600"><i className="ph ph-caret-right"></i></a>
-                            </div>
-                            <div className="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1">
-                                <div className="flex-align flex-wrap gap-8">
-                                    <span className="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i className="ph ph-bezier-curve"></i></span>
-                                    <div>
-                                        <h6 className="mb-0">Graphic Design</h6>
-                                        <span className="text-13 text-gray-400">Due in 5 days</span>
-                                    </div>
-                                </div>
-                                <a href="assignment.html" className="text-gray-900 hover-text-main-600"><i className="ph ph-caret-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- Assignment End --> */}
-
-                    {/* <!-- Progress Bar Start --> */}
-                    <div className="card mt-24">
-                        <div className="card-header border-bottom border-gray-100">
-                            <h5 className="mb-0">My Progress</h5>
-                        </div>
-                        <div className="card-body">
-                            <div id="radialMultipleBar"></div>
-
-                            <div className="">
-                                <h6 className="text-lg mb-16 text-center"> <span className="text-gray-400">Total hour:</span> 6h 32 min</h6>
-                                <div className="flex-between gap-8 flex-wrap">
-                                    <div className="flex-align flex-column">
-                                        <h6 className="mb-6">60/60</h6>
-                                        <span className="w-30 h-3 rounded-pill bg-main-600"></span>
-                                        <span className="text-13 mt-6 text-gray-600">Completed</span>
-                                    </div>
-                                    <div className="flex-align flex-column">
-                                        <h6 className="mb-6">60/60</h6>
-                                        <span className="w-30 h-3 rounded-pill bg-main-two-600"></span>
-                                        <span className="text-13 mt-6 text-gray-600">Completed</span>
-                                    </div>
-                                    <div className="flex-align flex-column">
-                                        <h6 className="mb-6">60/60</h6>
-                                        <span className="w-30 h-3 rounded-pill bg-gray-500"></span>
-                                        <span className="text-13 mt-6 text-gray-600">Completed</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- Progress bar end --> */}
-                </div>
-
-            </div>
+      {/* Enrollment Trends Graph */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 className="font-semibold text-gray-700 mb-4">Student Enrollment Trends</h3>
+        <div className="h-64">
+          <Line data={lineChartData} options={lineChartOptions} />
         </div>
-    )
-}
+      </div>
 
-export default Dashboard
+      {/* Recent Enrollments */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 className="font-semibold text-gray-700 mb-4 flex items-center">
+          <Clock size={18} className="text-gray-500 mr-2" />
+          Recent Enrollments
+        </h3>
+        <div className="divide-y divide-gray-100">
+          {recentEnrollments.map((enrollment) => (
+            <div key={enrollment._id} className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-medium text-gray-800">{enrollment.user_id?.username}</p>
+                  <p className="text-sm text-gray-500">{enrollment.courses[0]?.course_id?.name}</p>
+                </div>
+                <div className="text-sm text-gray-500">{new Date(enrollment.createdAt).toLocaleDateString()}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Top Courses */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="font-semibold text-gray-700 mb-4 flex items-center">
+          <Award size={18} className="text-gray-500 mr-2" />
+          Top Courses
+        </h3>
+        <div className="h-64">
+          <Bar data={barChartData} options={barChartOptions} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Reusable Stat Card Component
+const StatCard = ({ icon, label, value }) => (
+  <div className="bg-white rounded-lg shadow p-6 flex items-center">
+    <div className="rounded-full bg-gray-100 p-3 mr-4">{icon}</div>
+    <div>
+      <p className="text-sm text-gray-500 mb-1">{label}</p>
+      <p className="text-2xl font-bold text-gray-800">{value}</p>
+    </div>
+  </div>
+);
+
+export default Dashboard;

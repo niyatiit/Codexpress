@@ -158,7 +158,7 @@ const FacultyProfile = () => {
         <div className="header mb-16 flex justify-between items-center">
           <div className="flex gap-2">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500">
-              <img src={profile.profile_picture} alt="Profile" className="w-full h-full object-cover" />
+              <img src={userData.profile_picture} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <h5 className="text-xl font-semibold mb-6 text-blue-700">My Profile</h5>
           </div>

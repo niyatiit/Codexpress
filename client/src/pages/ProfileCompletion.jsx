@@ -8,8 +8,23 @@ const ProfileCompletion = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect") || "/courses"; // Default redirect
-  const { user, loading } = useUser();
+  // const { user, loading } = useUser();
+  const [user, setUser] = useState(null); // State to store user data
+  const [loading, setLoading] = useState(false); // State to store user data
+  const authUser = JSON.parse(localStorage.getItem("user"))
+  useEffect(() => {
+    const fetchuserdata = async () => {
+      const response = await axios.get(`http://localhost:3000/profile/${authUser.id}`)
+      if (response.data.success) {
+        setLoading(false)
+        console.log(response.data.user)
 
+        setUser(response.data.user)
+      }
+
+    }
+    fetchuserdata()
+  }, [user]);
   // State to manage form inputs
   const [formData, setFormData] = useState({
     username: "",

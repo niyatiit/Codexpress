@@ -3,32 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import Cookies from "js-cookie";
 import axios from "axios";
-// import { useUser } from "../context/UserContext";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isStudentEnrolled, setIsStudentEnrolled] = useState(false);
+  const [isFaculty, setIsFaculty] = useState(false); // State to check if user is faculty
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
-  // const authUser = JSON.parse(localStorage.getItem("user"));
-  // const { user } = useUser();
   const [user, setUser] = useState(null); // State to store user data
-  const authUser = JSON.parse(localStorage.getItem("user"))
+  const authUser = JSON.parse(localStorage.getItem("user"));
+
   // Fetch user data from localStorage on component mount
   useEffect(() => {
-    const fetchuserdata = async () => {
-      const response = await axios.get(`http://localhost:3000/profile/${authUser.id}`)
+    const fetchUserData = async () => {
+      const response = await axios.get(`http://localhost:3000/profile/${authUser.id}`);
       if (response.data.success) {
-        console.log(response.data.user)
-        setUser(response.data.user)
+        setUser(response.data.user);
       }
+    };
+    fetchUserData();
+  }, []);
 
-    }
-    fetchuserdata()
-  }, [user]);
+  // Check if user is enrolled (for students) or is a faculty member
   useEffect(() => {
-    const checkEnrollment = async () => {
+    const checkEnrollmentAndFaculty = async () => {
       const token = localStorage.getItem("token");
       if (authUser?.role === "student" && token) {
         try {
@@ -39,11 +38,24 @@ const Header = () => {
         } catch (error) {
           console.error("🚨 Error checking enrollment:", error);
         }
+      } else if (authUser?.role === "faculty" && token) {
+        try {
+          // Call the backend endpoint to check if the user is a faculty member
+          const response = await axios.get(`http://localhost:3000/users/faculty/${authUser.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          // If faculty data is returned, set isFaculty to true
+          if (response.data.user.length > 0) {
+            setIsFaculty(true);
+          }
+        } catch (error) {
+          console.error("🚨 Error checking faculty status:", error);
+        }
       }
       setLoading(false);
     };
-    checkEnrollment();
-  }, []);
+    checkEnrollmentAndFaculty();
+  }, [authUser?.role, authUser?.id]);
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -66,7 +78,6 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Function to handle image loading errors
   const handleImageError = (event) => {
     event.target.src = "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg";
   };
@@ -107,7 +118,7 @@ const Header = () => {
                     src={user?.profile_picture || "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"}
                     alt="Profile"
                     className="w-32 h-32 bg-blue-500 rounded-full"
-                    onError={handleImageError} // Fallback to default image on error
+                    onError={handleImageError}
                   />
                   <span className="text-blue-500 font-medium">@{user?.username || "User"}</span>
                 </button>
@@ -119,12 +130,16 @@ const Header = () => {
                           Dashboard
                         </Link>
                       )}
-                      {
-                        authUser.role == "admin" && (
-                          <Link to="/admin" className="block w-full px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-blue-100 text-md text-left">
-                            Dashboard</Link>
-                        )
-                      }
+                      {isFaculty && (
+                        <Link to="/faculty" className="block w-full px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-blue-100 text-md text-left">
+                          Dashboard
+                        </Link>
+                      )}
+                      {authUser.role === "admin" && (
+                        <Link to="/admin" className="block w-full px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-blue-100 text-md text-left">
+                          Dashboard
+                        </Link>
+                      )}
                       <Link to="/profile-completion" className="block w-full px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-blue-100 text-md text-left">
                         Profile
                       </Link>

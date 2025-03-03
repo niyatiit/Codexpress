@@ -14,14 +14,8 @@ const AdminProfile = () => {
     profile_picture: "",
     gender: "",
     dob: "",
-    pincode: "",
-    state: "",
-    city: "",
-    nationality: "Indian",
+    pincode: ""
   });
-
-  const [stateData, setStateData] = useState(null);
-  const [cityData, setCityData] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,43 +48,11 @@ const AdminProfile = () => {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    const fetchStateData = async () => {
-      if (!profile.state) return;
-      try {
-        const response = await axios.get(`http://localhost:3000/states/${profile.state}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        if (response.data.success) {
-          setStateData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching state data:", error);
-      }
-    };
-
-    const fetchCityData = async () => {
-      if (!profile.city) return;
-      try {
-        const response = await axios.get(`http://localhost:3000/cities/${profile.city}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        if (response.data.success) {
-          setCityData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching city data:", error);
-      }
-    };
-
-    fetchStateData();
-    fetchCityData();
-  }, [profile.state, profile.city]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
+
   useEffect(() => {
     console.log("Profile Picture URL:", profile?.profile_picture);
   }, [profile.profile_picture]);
@@ -183,16 +145,8 @@ const AdminProfile = () => {
               <input type="text" name="pincode" value={profile.pincode} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-              <input type="text" name="state" value={profile.state} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-              <input type="text" name="city" value={profile.city} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
-              <input type="text" name="nationality" value={profile.nationality} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture URL</label>
+              <input type="text" name="profile_picture" value={profile.profile_picture} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg" disabled={!isEditing} />
             </div>
           </div>
           {isEditing && (

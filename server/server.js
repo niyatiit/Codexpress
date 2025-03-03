@@ -36,6 +36,7 @@ const paymentRoutes = require('./routes/paymentRoutes')
 const enrollmentRoutes=require('./routes/enrollmentRoutes')
 const assignmentRoutes=require('./routes/assignmentRoutes')
 const noticeRoutes=require("./routes/noticeRoutes")
+const adminRoutes=require("./routes/adminRoutes")
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
@@ -59,6 +60,7 @@ app.use("/payment", paymentRoutes);
 app.use('/enrollments', enrollmentRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/notices', noticeRoutes);
+app.use("/admin", adminRoutes);
 
 app.get('/', async (req, res) => {
     // const saltRounds = 12;
