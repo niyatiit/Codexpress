@@ -142,7 +142,6 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
         user_id: userId,
         courses: [],
       });
-      course.total_students_enrolled += 1;
       await course.save();
 
       console.log(`✅ Updated total_students for course ${courseId}. New count: ${course.total_students}`);
@@ -168,7 +167,11 @@ router.post('/create-checkout-session', authenticate, async (req, res) => {
         payment_status: 'unpaid',
       });
     }
-
+    if (course) {
+      course.total_students_enrolled += 1;
+      await course.save();
+      console.log(`✅ Enrollment confirmed! Updated total_students for ${course.name}: ${course.total_students_enrolled}`);
+    }
     // Save the updated enrollment record
     await enrollment.save();
 
