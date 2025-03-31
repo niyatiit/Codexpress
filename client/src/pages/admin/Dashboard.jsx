@@ -72,7 +72,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
         <StatCard icon={<BookOpen size={24} className="text-green-600" />} label="Total Faculties" value={stats.totalFaculties} />
         <StatCard icon={<Users size={24} className="text-blue-600" />} label="Total Courses" value={stats.totalCourses} />
         <StatCard icon={<CreditCard size={24} className="text-amber-600" />} label="Total Payments" value={`₹${stats.totalPayments}`} />
@@ -94,7 +94,7 @@ const Dashboard = () => {
 
 // Reusable Stat Card Component
 const StatCard = ({ icon, label, value }) => (
-  <div className="bg-white rounded-lg shadow p-6 flex items-center">
+  <div className="bg-white rounded-lg shadow px-16 py-28 flex items-center">
     <div className="rounded-full bg-gray-100 p-3 mr-4">{icon}</div>
     <div>
       <p className="text-sm text-gray-500 mb-1">{label}</p>

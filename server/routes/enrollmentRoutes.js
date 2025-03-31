@@ -119,6 +119,24 @@ router.get("/course/:id", async (req, res) => {
     res.status(500).json({ message: "Error fetching enrollment", error: error.message });
   }
 });
+//get all student from specific batch
+router.get("/batch/:batchId", async (req, res) => {
+  try {
+    const { batchId } = req.params;
+
+    // Find enrollments where courses array contains the given batchId
+    const students = await Enrollment.find({ "courses.batch_id": batchId }).populate("user_id");
+
+    if (!students.length) {
+      return res.status(404).json({ message: "No students found in this batch" });
+    }
+
+    res.json({ students });
+  } catch (error) {
+    console.error("Error fetching students by batch:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 
 // Fetch enrollments by status
 router.get("/", async (req, res) => {

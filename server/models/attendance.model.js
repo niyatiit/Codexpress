@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define the schema for the Attendance model
 const attendanceSchema = new mongoose.Schema({
-  student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true }, // Reference to the Student model
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the Student model
   batch_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch', required: true },     // Reference to the Batch model
   course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },   // Reference to the Course model
   date: { type: Date, required: true }, // Date of the class (e.g., "2025-02-01")

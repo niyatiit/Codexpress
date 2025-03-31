@@ -31,7 +31,7 @@ const Dashboard = () => {
         const fetchProgress = async () => {
             try {
                 const response = await axios.get(`http://localhost:3000/student/progress/${userId}`);
-                console.log("Enrollments Response:", response.data.enrollments); // Debugging
+                console.log("Enrollments Re sponse:", response.data.enrollments); // Debugging
                 setEnrollments(response.data.enrollments);
             } catch (error) {
                 console.error("Error fetching progress:", error);

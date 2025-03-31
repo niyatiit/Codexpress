@@ -37,6 +37,7 @@ const enrollmentRoutes=require('./routes/enrollmentRoutes')
 const assignmentRoutes=require('./routes/assignmentRoutes')
 const noticeRoutes=require("./routes/noticeRoutes")
 const adminRoutes=require("./routes/adminRoutes")
+const attendanceRoutes=require("./routes/attendanceRoutes")
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
@@ -61,7 +62,8 @@ app.use('/enrollments', enrollmentRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/notices', noticeRoutes);
 app.use("/admin", adminRoutes);
-
+app.use("/attendance", adminRoutes);
+    
 app.get('/', async (req, res) => {
     // const saltRounds = 12;
     // const plainPassword = "$2b$12$bum7zP2kb.BLHirqTLEgZ.XuQfdh3nixXWE4lAjwzJiZIMrA0Dajm";

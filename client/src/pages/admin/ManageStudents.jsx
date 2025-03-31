@@ -88,7 +88,6 @@ const ManageStudents = () => {
           <table className="table">
             <thead>
               <tr>
-                <th>#</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -102,7 +101,6 @@ const ManageStudents = () => {
               {filteredEnrollments.map((enrollment, index) =>
                 enrollment.courses.map((course, courseIndex) => (
                   <tr key={`${enrollment._id}-${courseIndex}`}>
-                    <td>{index + 1}</td>
                     <td>{enrollment.user.name || "user"}</td>
                     <td>{enrollment.user.email}</td>
                     <td>{enrollment.user.phone || "N/A"}</td>

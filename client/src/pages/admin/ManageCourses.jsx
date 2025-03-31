@@ -100,8 +100,14 @@ const ManageCourses = () => {
               ) : (
                 courses.map((course, index) => (
                   <tr key={course._id}>
+
                     <td>{index + 1}</td>
-                    <td>{course.name}</td>
+                    <td>
+                      <Link to={`/courses/${course._id}`}>
+                      {course.name}
+                      
+                      </Link>
+                      </td>
                     <td>{course.category}</td>
                     <td>{course.duration}</td>
                     <td>₹{course.price}</td>

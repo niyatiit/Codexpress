@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import { Hourglass } from "react-loader-spinner";
+
 axios.defaults.withCredentials = true; // Allow cookies to be sent
 
 const CourseDetail = () => {
@@ -22,37 +23,40 @@ const CourseDetail = () => {
   useEffect(() => {
     // Step 1: Check if the user is logged in
     if (!token || !user) {
-      // Redirect to the login page with a proper redirect URL
       navigate(`/student/login?redirect=/courses/${id}`);
+      console.log("user not logged in!!")
       return;
     }
 
     // Fetch course details
-    axios
-      .get(`http://localhost:3000/courses/${id}`)
-      .then((response) => {
+    const fetchCourseDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/courses/${id}`);
         setCourse(response.data.course);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         setError("Failed to load course details.");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
 
     // Check if the student is enrolled in the course
-    axios
-      .get(`http://localhost:3000/enrollments/check-enrollment`, {
-        params: { userId: user.id, courseId: id },
-      })
-      .then((response) => {
+    const checkEnrollment = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/enrollments/check-enrollment`, {
+          params: { userId: user.id, courseId: id },
+        });
         setIsEnrolled(response.data.isEnrolled);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error checking enrollment:", error);
-      });
+      }
+    };
+
+    fetchCourseDetails();
+    checkEnrollment();
   }, [id, token, user, navigate]);
 
-  const handleEnroll = async () => {
+  const handleEnroll = () => {
     if (!token || !user) {
       navigate(`/student/login?redirect=/profile-completion`);
       return;
@@ -83,7 +87,7 @@ const CourseDetail = () => {
       });
 
       if (response.data.success) {
-        alert("Review added successfully!")
+        alert("Review added successfully!");
         setCourse((prevCourse) => ({
           ...prevCourse,
           reviews: [...prevCourse.reviews, response.data.review],
@@ -113,22 +117,27 @@ const CourseDetail = () => {
     );
   }
 
-  if (error)
+  if (error) {
     return (
       <div className="flex items-center justify-center flex-col min-h-screen">
         <p className="text-red-500 text-xl">{error}</p>
-        <button className="bg-blue-500 text-white px-3 py-2 rounded-md mt-3" onClick={() => navigate(-1)}>
+        <button
+          className="bg-blue-500 text-white px-3 py-2 rounded-md mt-3"
+          onClick={() => navigate(-1)}
+        >
           Go back
         </button>
       </div>
     );
+  }
 
-  if (!course)
+  if (!course) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-gray-600">Course not found.</p>
       </div>
     );
+  }
 
   return (
     <div>
@@ -182,13 +191,13 @@ const CourseDetail = () => {
                       </span>
                     </p>
                   </div>
-                  <p className="text-gray-200 text-md mb-3">{course.description}</p>
+                  <p className="text-gray-600 text-md mb-3">{course.description}</p>
                   <p className="text-gray-700 flex gap-2 items-center">
                     <span className="text-blue-600 font-semibold text-3xl flex items-center">
                       ₹{course.price - (course.price * course.discount) / 100}
                     </span>
                     {course.discount > 0 && (
-                      <span className="line-through text-gray-100 text-3xl">₹{course.price}</span>
+                      <span className="line-through text-gray-400 text-3xl">₹{course.price}</span>
                     )}
                     <span className="ml-2 font-bold bg-yellow-400 text-white px-2 py-1 rounded-full text-sm">
                       {course.discount}% OFF
@@ -247,10 +256,9 @@ const CourseDetail = () => {
                       ))}
                     </ul>
                   </div>
-
-
                 </div>
               </div>
+
               {/* Reviews */}
               <div className="w-full bg-blue-100 mt-5 p-5">
                 <h2 className="text-xl font-semibold text-gray-900 mb-3">Reviews</h2>
@@ -265,15 +273,11 @@ const CourseDetail = () => {
                         required
                       >
                         <option value={0}>Rate This Course</option>
-                        <option value={1}>⭐ (Poor)
-
-                        </option>
+                        <option value={1}>⭐ (Poor)</option>
                         <option value={2}>⭐⭐ (Needs Improvement)</option>
-                        <option value={3}>⭐⭐⭐ (Average)
-                        </option>
+                        <option value={3}>⭐⭐⭐ (Average)</option>
                         <option value={4}>⭐⭐⭐⭐ (Good)</option>
-                        <option value={5}>⭐⭐⭐⭐⭐(Excellent)
-                        </option>
+                        <option value={5}>⭐⭐⭐⭐⭐ (Excellent)</option>
                       </select>
                     </div>
                     <div className="mb-4">
@@ -303,16 +307,15 @@ const CourseDetail = () => {
                             <img
                               src={review.student_id.profile_picture || "https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"}
                               alt="Profile"
-                              className="w-48 h-48 bg-blue-500 rounded-full"
+                              className="w-36 h-36 bg-blue-500 rounded-full"
                             />
                             <div className="flex flex-col">
                               <span className="text-blue-500 font-medium">
-                                {review.student_id.first_name} {review.student_id.last_name} {/* Display the username */}
+                                {review.student_id.first_name} {review.student_id.last_name}
                               </span>
                               <span className="text-zinc-400 text-sm font-medium">
-                                @{review.student_id.username} {/* Display the username */}
+                                @{review.student_id.username}
                               </span>
-
                             </div>
                           </div>
                         </div>
@@ -327,7 +330,7 @@ const CourseDetail = () => {
                   </div>
                 ) : (
                   <p className="text-gray-500 italic">No reviews yet.</p>
-                )}  
+                )}
               </div>
             </div>
           </div>

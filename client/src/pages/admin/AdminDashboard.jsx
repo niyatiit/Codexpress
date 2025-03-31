@@ -29,6 +29,13 @@ import EditFaculty from './EditFaculty';
 import EditProfile from './AdminProfile'
 import ManageEnrollments from './ManageEnrollments';
 import AssignBatch from './AssignBatch';
+import ReportPage from './ReportPage';
+import AdminReports from './AdminReports';
+import InvoicePage from './InvoicePage';
+import DownloadAll from './DownloadAll';
+import ManageReports from './ManageReports';
+import AttendanceReport from './AttendanceReport';
+import AddCertificate from './AddCertification';
 const AdminDashboard = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
@@ -296,6 +303,7 @@ const AdminDashboard = () => {
                 </Link>
               </li>
 
+
               {/* Certificates Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === 'certificates' || isDropdownActive(['/admin/issue/certificate', '/admin/manage/certificates'])
@@ -322,6 +330,37 @@ const AdminDashboard = () => {
                   <li className={`sidebar-submenu__item ${isActive('/admin/manage/certificates') ? 'active' : ''}`}>
                     <Link to="/admin/manage/certificates" className="sidebar-submenu__link">
                       Manage Certificates
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+
+              {/* Reports Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'reports' || isDropdownActive(['/admin/reports/enrollments', '/admin/reports/attendance'])
+                  ? 'open'
+                  : ''
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleDropdown('reports')}
+                >
+                  <span className="icon">
+                    <i className="ph ph-file-text"></i>
+                  </span>
+                  <span className="text">Reports</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive('/admin/reports/enrollments') ? 'active' : ''}`}>
+                    <Link to="/admin/reports/enrollments" className="sidebar-submenu__link">
+                      Enrollment Report
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/admin/reports/attendance') ? 'active' : ''}`}>
+                    <Link to="/admin/reports/attendance" className="sidebar-submenu__link">
+                      Attendance Report
                     </Link>
                   </li>
                 </ul>
@@ -440,6 +479,12 @@ const AdminDashboard = () => {
           <Route path="edit-faculty/:id" element={<EditFaculty />} />
           <Route path="edit-profile" element={<EditProfile />} />
           <Route path="manage/enrollments" element={<ManageEnrollments />} />
+          <Route path="reports/enrollments" element={<ManageReports />} />
+          <Route path="reports/attendance" element={<AttendanceReport />} />
+          <Route path="reports/invoice/:invoiceId" element={<InvoicePage />} />
+          <Route path="reports/download-all" element={<DownloadAll />} />
+          <Route path="add/certificate" element={<AddCertificate />} />
+          {/* <Route path="manage/reports" element={<ReportPage />} /> */}
           <Route path="assign/batch/:userId" element={<AssignBatch />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
