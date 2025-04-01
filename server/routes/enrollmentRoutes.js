@@ -23,8 +23,9 @@ router.get('/user/:user_id', async (req, res) => {
     }
 
     // Fetch enrollments for the user
-    const enrollments = await Enrollment.find({ user_id: userId });
-
+    const enrollments = await Enrollment.find({ user_id: userId })
+    .populate("courses.course_id", "name") // Populate course_id with only the "name" field
+    .populate("courses.batch_id", "name"); 
     // Return the enrollments
     res.status(200).json({ enrollments });
   } catch (error) {
