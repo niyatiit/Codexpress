@@ -84,7 +84,27 @@ exports.updateFaculty = async (req, res) => {
   }
 };
 
+exports.getFacultyCourses= async(req,res)=>{
+  const { id } = req.params;
+  console.log("id is ", id);
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid faculty ID" });
+  }
+
+  try {
+    const faculty = await Faculty.findById(id).populate("courses");
+    // const faculty = await Faculty.findById(id);
+console.log("Faculty Found:", faculty);
+
+    if (!faculty) {
+      return res.status(404).json({ success: false, message: "Faculty course not found" });
+    }
+    res.json({ success: true, data: faculty.courses });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error", error });
+  }
+}
 
 // Update user and faculty profile
 exports.updateProfile = async (req, res) => {

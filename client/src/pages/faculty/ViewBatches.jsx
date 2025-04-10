@@ -6,6 +6,7 @@ const ViewBatches = () => {
   const [courses, setCourses] = useState([]); // List of all courses
   const [selectedCourse, setSelectedCourse] = useState(""); // Selected course ID
   const [batches, setBatches] = useState([]); // List of batches for the selected course
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
   // Fetch all courses on component mount
   useEffect(() => {
@@ -15,7 +16,7 @@ const ViewBatches = () => {
   // Fetch all courses
   const fetchCourses = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/courses");
+      const response = await axios.get(`http://localhost:3000/faculty/${userId}/assigned-courses`);
       setCourses(response.data.courses); // Set the list of courses
       console.log("Courses fetched:", response.data.courses); // Debugging
     } catch (error) {

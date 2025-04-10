@@ -20,11 +20,12 @@ const CreateAssignment = () => {
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const authUser = JSON.parse(localStorage.getItem("user"));
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/courses");
+        const response = await axios.get(`http://localhost:3000/faculty/${userId}/assigned-courses`);
         setCourses(response.data.courses);
       } catch (error) {
         console.error("Error fetching courses:", error);
