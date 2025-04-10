@@ -13,7 +13,7 @@ const courseSchema = new mongoose.Schema({
   thumbnail: { type: String }, // URL or path to the course thumbnail
   status: { type: String, enum: ['open', 'closed', 'upcoming'], default: 'open' }, // Course status
   rating: { type: Number, min: 0, max: 5, default: 0 }, // Course rating
-  reviews: [{ 
+  reviews: [{
     student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to the Student model
     comment: { type: String, trim: true }, // Review comment
     rating: { type: Number, min: 0, max: 5 } // Review rating
@@ -21,7 +21,13 @@ const courseSchema = new mongoose.Schema({
   total_students_enrolled: { type: Number, default: 0, min: 0 }, // Total students enrolled
   tags: [{ type: String, trim: true }], // Course tags
   syllabus: [{ type: String, trim: true }], // Course syllabus
-  batch_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }] // Reference to all batches for this course
+  batch_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }], // Reference to all batches for this course
+  resources: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Resource'
+    }
+  ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Course', courseSchema);

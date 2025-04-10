@@ -248,6 +248,36 @@ const FacultyDashboard = () => {
               </li>
 
 
+              {/* Resources Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === 'resources' || isDropdownActive(['/faculty/upload/resource', '/faculty/view/resources'])
+                  ? 'open'
+                  : ''
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleDropdown('resources')}
+                >
+                  <span className="icon">
+                    <i className="ph ph-folder"></i>
+                  </span>
+                  <span className="text">Resources</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/upload/resource') ? 'active' : ''}`}>
+                    <Link to="/faculty/upload/resource" className="sidebar-submenu__link">
+                      Upload Resource
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/resources') ? 'active' : ''}`}>
+                    <Link to="/faculty/view/resources" className="sidebar-submenu__link">
+                      View Resources
+                    </Link>
+                  </li>
+                </ul>
+              </li>
 
               {/* Assignments Dropdown */}
               <li
@@ -491,36 +521,6 @@ const FacultyDashboard = () => {
                 </ul>
               </li>
 
-              {/* Resources Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${openDropdown === 'resources' || isDropdownActive(['/faculty/upload/resource', '/faculty/view/resources'])
-                  ? 'open'
-                  : ''
-                  }`}
-              >
-                <a
-                  href="#!"
-                  className="sidebar-menu__link"
-                  onClick={() => toggleDropdown('resources')}
-                >
-                  <span className="icon">
-                    <i className="ph ph-folder"></i>
-                  </span>
-                  <span className="text">Resources</span>
-                </a>
-                <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/upload/resource') ? 'active' : ''}`}>
-                    <Link to="/faculty/upload/resource" className="sidebar-submenu__link">
-                      Upload Resource
-                    </Link>
-                  </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/view/resources') ? 'active' : ''}`}>
-                    <Link to="/faculty/view/resources" className="sidebar-submenu__link">
-                      View Resources
-                    </Link>
-                  </li>
-                </ul>
-              </li>
 
               {/* Profile Settings */}
               {/* <li className={`sidebar-menu__item ${isActive('/faculty/settings') ? 'active' : ''}`}>
