@@ -2,20 +2,15 @@ const express = require('express');
 const router = express.Router();
 const attendanceController = require('../controllers/attendanceController');
 const { validateAttendance, validateAttendanceQuery } = require('../middleware/validation');
-
+const auth=require("../middleware/authMiddleware")
 // Mark attendance for a batch
-router.post('/', validateAttendance, attendanceController.markAttendance);
+router.post('/', auth.userVerification, attendanceController.markDailyAttendance);
 
 // Get attendance records (with optional filters)
-router.get('/', validateAttendanceQuery, attendanceController.getAttendance);
+router.get('/', validateAttendanceQuery, attendanceController.getDailyAttendance);
 
-// Get attendance for a specific user
-router.get('/user/:userId', attendanceController.getUserAttendance);
-
-// Get attendance for a specific batch
-router.get('/batch/:batchId', attendanceController.getBatchAttendance);
 
 // Update attendance record
-router.put('/:id', validateAttendance, attendanceController.updateAttendance);
+router.put('/:id', validateAttendance, attendanceController.updateStudentAttendance);
 
 module.exports = router;

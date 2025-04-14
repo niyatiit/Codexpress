@@ -18,8 +18,6 @@ const AddStudent = () => {
     dob: "",
     address: "",
     pincode: "",
-    state: "",
-    city: "",
     nationality: "Indian",
     role: "student", // Default role for students
   });
@@ -100,7 +98,7 @@ const AddStudent = () => {
 
       if (response.data.success) {
         alert("Student added successfully!");
-        navigate("/students"); // Redirect to students list
+        // navigate("/student/login"); // Redirect to students list
       } else {
         alert("Failed to add student. Please try again.");
       }

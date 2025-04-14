@@ -8,6 +8,8 @@ const Courses = require("./models/course.model")
 const States = require("./models/state.model")
 const Cities = require("./models/city.model")
 const port = process.env.PORT || 3000
+const host = process.env.HOST || 'localhost';
+
 app.use(express.json())
 app.use(cookieParser());
 const bcrypt = require("bcrypt")
@@ -18,13 +20,23 @@ axios.defaults.withCredentials = true;
 //     origin: "http://localhost:5173", // Replace with your frontend URL
 //     credentials: true, // Allow cookies
 //   }));
+const corsOptions = {
+    origin: [
+      'http://localhost:5173',  // Frontend URL for local dev
+      'http://192.168.137.21:5173'  // Mobile's IP address for testing
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true,  // Allow cookies or credentials
+  };
   
-app.use(
-    cors({
-      origin: ["http://192.168.79.21:5173","http://localhost:5173"], // Your frontend URL
-      credentials: true, // Allow credentials (cookies, authorization headers)
-    })
-  );
+  // Enable CORS for all routes and handle pre-flight requests
+  app.use(cors(corsOptions));
+  
+  // This will ensure that pre-flight requests are handled
+  app.options('*', cors(corsOptions));  // Handle pre-flight requests
+  
+
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes')
 const courseRoutes = require('./routes/courseRoutes')
@@ -39,7 +51,9 @@ const noticeRoutes=require("./routes/noticeRoutes")
 const adminRoutes=require("./routes/adminRoutes")
 const attendanceRoutes=require("./routes/attendanceRoutes") 
 const resourceRoutes=require("./routes/resourceRoutes")
+const notificationRoutes=require("./routes/notificationRoutes")
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use('/assignment-submissions', express.static(path.join(__dirname, 'uploads/assignment-submissions')));
 
 
 const connectDB = require('./config/db')
@@ -61,9 +75,10 @@ app.use("/profile", profileRoutes);
 app.use("/payment", paymentRoutes);
 app.use('/enrollments', enrollmentRoutes);
 app.use('/assignments', assignmentRoutes);
-app.use('/notices', noticeRoutes);
+// app.use('/notices', noticeRoutes);
+app.use('/notifications',notificationRoutes)
 app.use("/admin", adminRoutes);
-app.use("/attendance", adminRoutes);
+app.use("/attendance", attendanceRoutes);
 app.use("/resources",resourceRoutes)
     
 app.get('/', async (req, res) => {
@@ -112,6 +127,6 @@ app.get('/cities/:id', async (req, res) => {
 // });
 
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+app.listen(3000, host, () => {
+    console.log(`Server running on ${host}`);
   });

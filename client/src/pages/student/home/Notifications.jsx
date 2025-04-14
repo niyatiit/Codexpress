@@ -1,110 +1,174 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Notifications = () => {
-  // Sample notification data
-  const notifications = [
-    {
-      id: 1,
-      title: "New Assignment Uploaded",
-      message: "A new assignment for Web Development has been uploaded. Deadline: 2024-05-10.",
-      date: "2024-04-25",
-      time: "10:15 AM",
-      isRead: false,
-    },
-    {
-      id: 2,
-      title: "Class Rescheduled",
-      message: "The class on React Development scheduled for 2024-04-28 has been rescheduled to 2024-04-30.",
-      date: "2024-04-24",
-      time: "03:45 PM",
-      isRead: true,
-    },
-    {
-      id: 3,
-      title: "Quiz Results Published",
-      message: "The results for the JavaScript Basics quiz are now available. Check your grades in the dashboard.",
-      date: "2024-04-23",
-      time: "09:00 AM",
-      isRead: false,
-    },
-    {
-      id: 4,
-      title: "New Resource Available",
-      message: "A new resource for CSS Frameworks has been uploaded. Download it from the resources section.",
-      date: "2024-04-22",
-      time: "11:30 AM",
-      isRead: true,
-    },
-  ];
+  const [notices, setNotices] = useState([]);
+  const [filteredNotices, setFilteredNotices] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Fetch notices
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:3000/notifications", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const studentNotices = (response.data.data || []).filter(
+          (notice) => notice.recipientType === "allss"
+        );
+        setNotices(studentNotices);
+      } catch (error) {
+        console.error("Error fetching notices:", error);
+        toast.error("Failed to load notices");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
+  // Filter by search
+  useEffect(() => {
+    let result = notices;
+    if (searchTerm) {
+      result = result.filter((notice) =>
+        notice.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notice.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    setFilteredNotices(result);
+  }, [notices, searchTerm]);
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString(),
+      time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+  };
 
   return (
-    <div className="dashboard-body p-8 bg-gray-50 min-h-screen">
+    <div className="dashboard-body">
+      <ToastContainer />
+
       {/* Breadcrumb */}
-      <div className="breadcrumb-with-buttons mb-8 flex justify-between items-center">
-        <div className="breadcrumb">
-          <ul className="flex items-center space-x-2 text-sm">
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
             <li>
-              <Link to="/student-dashboard" className="text-gray-600 hover:text-blue-600">
+              <Link to="/student" className="text-gray-200 fw-normal text-15 hover-text-main-600">
                 Home
               </Link>
             </li>
-            <li className="text-gray-400">/</li>
-            <li className="text-blue-600">Notifications</li>
+            <li>
+              <span className="text-gray-500 fw-normal d-flex">
+                <i className="ph ph-caret-right"></i>
+              </span>
+            </li>
+            <li>
+              <span className="text-main-600 fw-normal text-15">Student Notices</span>
+            </li>
           </ul>
         </div>
       </div>
 
-      {/* Notifications Header */}
-      <div className="card my-18 p-3">
-        <div className="card-header border-b border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900">Notifications</h2>
-          <p className="text-sm text-gray-500 mt-1">Stay updated with the latest announcements and activities.</p>
+      {/* Search */}
+      <div className="card mb-24">
+        <div className="card-header border-bottom border-gray-100 flex-between">
+          <h5 className="mb-0">Search Student Notices</h5>
+        </div>
+        <div className="card-body">
+          <div className="mb-16">
+            <label htmlFor="search" className="form-label fw-medium">
+              Search by title or description
+            </label>
+            <input
+              type="text"
+              id="search"
+              className="form-control"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Notifications List */}
-      <div className="card p-12">
-        <div className="card-body p-16">
-          {/* Filter Options */}
-          <div className="flex justify-between items-center mb-36">
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-                All
-              </button>
-              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-                Unread
+      {/* Notices List */}
+      <div className="card">
+        <div className="card-header border-bottom border-gray-100 flex-between">
+          <h5 className="mb-0">
+            Student Notices{" "}
+            <span className="text-gray-500 text-14 fw-normal ms-8">
+              ({filteredNotices.length} found)
+            </span>
+          </h5>
+        </div>
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="spinner-border text-main-600" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : filteredNotices.length > 0 ? (
+            <div className="grid gap-16">
+              {filteredNotices.map((notice) => {
+                const { date, time } = formatDateTime(notice.createdAt);
+                return (
+                  <div key={notice._id} className="notice-card bg-blue-50 border-blue-200 border-[1px] rounded-md p-16 hover:shadow-sm transition-all">
+                    <div>
+                      <div className="flex justify-between items-center gap-8">
+                        <h4 className="text-lg font-semibold text-blue-900 pb-2 rounded-lg w-full">{notice.title}</h4>
+                        <span className="badge bg-blue-100 text-blue-800 rounded-pill">
+                          Student
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-16">{notice.description}</p>
+                    </div>
+
+                    <div className="flex-align gap-16 text-13 text-gray-500">
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-calendar"></i>
+                        <span>{date}</span>
+                      </div>
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-clock"></i>
+                        <span>{time}</span>
+                      </div>
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-user"></i>
+                        <span>Admin</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-24">
+              <div className="mb-16">
+                <i className="ph ph-warning-circle text-48 text-gray-400"></i>
+              </div>
+              <h5 className="text-16 fw-medium text-gray-700 mb-8">No notices found</h5>
+              <p className="text-gray-500 mb-16">Try changing your search keyword</p>
+              <button 
+                className="btn btn-outline-gray rounded-pill"
+                onClick={() => setSearchTerm("")}
+              >
+                <i className="ph ph-arrow-counter-clockwise me-4"></i>
+                Reset search
               </button>
             </div>
-            <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">
-              Mark All as Read
-            </button>
-          </div>
-
-          {/* Notifications */}
-          <div className="space-y-4">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-4 rounded-lg ${
-                  notification.isRead ? "bg-white" : "bg-blue-50"
-                } border border-gray-200 hover:shadow-md transition-shadow duration-200`}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{notification.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {notification.date} | {notification.time}
-                    </p>
-                  </div>
-                  {!notification.isRead && (
-                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          )}
         </div>
       </div>
     </div>

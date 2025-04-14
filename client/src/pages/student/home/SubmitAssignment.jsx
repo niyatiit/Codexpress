@@ -1,43 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-
-// Sample assignments data from the backend (this will come from your API in a real scenario)
-const assignmentsData = [
-  { id: 1, title: "Java Assignment 1", dueDate: "2025-02-20", course: "Java" },
-  { id: 2, title: "React Assignment 2", dueDate: "2025-02-10", course: "React" },
-  { id: 3, title: "Node.js Assignment 1", dueDate: "2025-02-25", course: "Node.js" },
-];
+import axios from "axios";
 
 const SubmitAssignment = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignments, setAssignments] = useState([]);
-  const [filteredAssignments, setFilteredAssignments] = useState([]);
 
-  // Filter assignments where due date is still in the future
+  // Fetch assignments from backend
   useEffect(() => {
-    const today = new Date();
-    const filtered = assignmentsData.filter((assignment) => {
-      const dueDate = new Date(assignment.dueDate);
-      return dueDate > today;
-    });
-    setFilteredAssignments(filtered);
-  }, [assignments]);
+    const fetchAssignments = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("http://localhost:3000/assignments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  const onSubmit = (data) => {
+        const today = new Date();
+        const upcomingAssignments = response.data.assignments.filter((assignment) => {
+          return new Date(assignment.due_date) > today;
+        });
+
+        setAssignments(upcomingAssignments);
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      }
+    };
+
+    fetchAssignments();
+  }, []);
+
+  const onSubmit = async (data) => {
     setIsSubmitting(true);
-    // Placeholder for form submission logic
-    setTimeout(() => {
-      console.log("Assignment Submitted:", data);
+
+    try {
+      const formData = new FormData();
+      formData.append("assignment_id", data.assignment);
+      formData.append("file", data.fileUpload[0]);
+
+      const token = localStorage.getItem("authToken");
+      await axios.post("http://localhost:3000/assignments/submit", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      alert("Assignment submitted successfully!");
       reset();
-      setIsSubmitting(false);
-    }, 2000);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      alert("Failed to submit assignment.");
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
     <div className="dashboard-body">
-      {/* Breadcrumb Navigation */}
       <div className="breadcrumb-bar breadcrumb-bar-info">
         <div className="container">
           <div className="row">
@@ -47,13 +70,9 @@ const SubmitAssignment = () => {
                 <nav aria-label="breadcrumb" className="page-breadcrumb">
                   <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                      <Link to="/student" className="text-blue-600 hover:text-blue-800">
-                        Home
-                      </Link>
+                      <Link to="/student" className="text-blue-600 hover:text-blue-800">Home</Link>
                     </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      Submit Assignment
-                    </li>
+                    <li className="breadcrumb-item active" aria-current="page">Submit Assignment</li>
                   </ol>
                 </nav>
               </div>
@@ -69,56 +88,22 @@ const SubmitAssignment = () => {
 
         <div className="card-body">
           <form onSubmit={handleSubmit(onSubmit)} className="assignment-form flex-column gap-4">
-            {/* Assignment Title */}
+            {/* Assignment Dropdown */}
             <div className="form-group">
               <label htmlFor="assignment" className="form-label">Assignment Title</label>
               <select
                 id="assignment"
                 className={`form-control ${errors.assignment ? "is-invalid" : ""}`}
-                {...register("assignment", { required: "Assignment title is required" })}
+                {...register("assignment", { required: "Please select an assignment" })}
               >
                 <option value="">Select Assignment</option>
-                {filteredAssignments.map((assignment) => (
-                  <option key={assignment.id} value={assignment.id}>
-                    {assignment.title} (Due: {assignment.dueDate})
+                {assignments.map((a) => (
+                  <option key={a._id} value={a._id}>
+                    {a.title} (Due: {new Date(a.due_date).toLocaleDateString()})
                   </option>
                 ))}
               </select>
               {errors.assignment && <small className="text-danger">{errors.assignment.message}</small>}
-            </div>
-
-            {/* Course */}
-            <div className="form-group">
-              <label htmlFor="course" className="form-label">Course</label>
-              <select
-                id="course"
-                className={`form-control ${errors.course ? "is-invalid" : ""}`}
-                {...register("course", { required: "Course is required" })}
-              >
-                <option value="">Select Course</option>
-                <option value="Java">Java</option>
-                <option value="C++">C++</option>
-                <option value="Web Development">Web Development</option>
-                <option value="React">React</option>
-                <option value="Node.js">Node.js</option>
-              </select>
-              {errors.course && <small className="text-danger">{errors.course.message}</small>}
-            </div>
-
-            {/* Batch */}
-            <div className="form-group">
-              <label htmlFor="batch" className="form-label">Batch</label>
-              <select
-                id="batch"
-                className={`form-control ${errors.batch ? "is-invalid" : ""}`}
-                {...register("batch", { required: "Batch is required" })}
-              >
-                <option value="">Select Batch</option>
-                <option value="Batch A">Batch A</option>
-                <option value="Batch B">Batch B</option>
-                <option value="Batch C">Batch C</option>
-              </select>
-              {errors.batch && <small className="text-danger">{errors.batch.message}</small>}
             </div>
 
             {/* File Upload */}
@@ -128,12 +113,12 @@ const SubmitAssignment = () => {
                 type="file"
                 id="fileUpload"
                 className={`form-control ${errors.fileUpload ? "is-invalid" : ""}`}
-                {...register("fileUpload", { required: "File upload is required" })}
+                {...register("fileUpload", { required: "Please upload a file" })}
               />
               {errors.fileUpload && <small className="text-danger">{errors.fileUpload.message}</small>}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Buttons */}
             <div className="form-actions flex-end gap-4">
               <button
                 type="reset"
@@ -142,7 +127,6 @@ const SubmitAssignment = () => {
               >
                 Reset
               </button>
-
               <button
                 type="submit"
                 className="btn btn-primary text-white bg-main-600 border-main-600 hover:bg-main-700"

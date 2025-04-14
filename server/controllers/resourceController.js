@@ -8,7 +8,7 @@ exports.uploadResource = async (req, res) => {
         const { title, description, course } = req.body;
         const file = req.file;
         const uploadedBy = req.user.id; // From auth middleware
-        
+
         if (!file) {
             return res.status(400).json({
                 success: false,
@@ -69,7 +69,7 @@ exports.getResourcesByCourse = async (req, res) => {
         const { courseId } = req.params;
 
         const resources = await Resource.find({ course: courseId })
-            .populate('uploadedBy', 'name email')
+            .populate('uploadedBy', 'first_name last_name email')
             .sort({ createdAt: -1 });
 
         res.json({

@@ -165,9 +165,9 @@ const CreateAssignment = () => {
                   </option>
                 ))}
               </select>
-              {isSubmitted && !selectedCourse && (
+              {/* {isSubmitted && !selectedCourse && (
                 <small className="text-danger">Course selection is required.</small>
-              )}
+              )} */}
             </div>
 
             {/* Batch Selection */}
@@ -195,9 +195,9 @@ const CreateAssignment = () => {
                   ))}
                 </div>
               )}
-              {isSubmitted && selectedBatches.length === 0 && batches.length > 0 && (
+              {/* {isSubmitted && selectedBatches.length === 0 && batches.length > 0 && (
                 <small className="text-danger">Please select at least one batch.</small>
-              )}
+              )} */}
             </div>
 
             {/* Assignment Title */}
@@ -206,11 +206,11 @@ const CreateAssignment = () => {
               <input
               required
                 type="text"
-                className={`form-control ${isSubmitted && errors.title ? "is-invalid" : ""}`}
+                className={`form-control `}
                 {...register("title", { required: "Title is required" })}
                 placeholder="Type something..."
               />
-              {isSubmitted && errors.title && <small className="text-danger">{errors.title.message}</small>}
+              {/* {isSubmitted && errors.title && <small className="text-danger">{errors.title.message}</small>} */}
             </div>
 
             {/* Assignment Description */}
@@ -218,12 +218,12 @@ const CreateAssignment = () => {
               <label>Description</label>
               <textarea
               required
-                className={`form-control ${isSubmitted && errors.description ? "is-invalid" : ""}`}
+                className={`form-control`}
                 rows="4"
                 {...register("description", { required: "Description is required" })}
                 placeholder="Type something..."
               ></textarea>
-              {isSubmitted && errors.description && <small className="text-danger">{errors.description.message}</small>}
+              {/* {isSubmitted && errors.description && <small className="text-danger">{errors.description.message}</small>} */}
             </div>
 
             {/* Due Date */}
@@ -235,7 +235,7 @@ const CreateAssignment = () => {
                 className={`form-control ${isSubmitted && errors.dueDate ? "is-invalid" : ""}`}
                 {...register("dueDate", { required: "Due date is required" })}
               />
-              {isSubmitted && errors.dueDate && <small className="text-danger">{errors.dueDate.message}</small>}
+              {/* {isSubmitted && errors.dueDate && <small className="text-danger">{errors.dueDate.message}</small>} */}
             </div>
 
             {/* File Upload */}
@@ -243,11 +243,11 @@ const CreateAssignment = () => {
               <label>Upload File</label>
               <input
                 type="file"
-                className={`form-control ${isSubmitted && !file ? "is-invalid" : ""}`}
+                className={`form-control`}
                 onChange={handleFileChange}
                 required
               />
-              {isSubmitted && !file && <small className="text-danger">File upload is required.</small>}
+              {/* {isSubmitted && !file && <small className="text-danger">File upload is required.</small>} */}
             </div>
 
             {/* Submit Button */}

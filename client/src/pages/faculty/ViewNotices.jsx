@@ -1,94 +1,205 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewNotices = () => {
-  // Sample data for notices
-  const notices = [
-    {
-      id: 1,
-      title: "Exam Schedule Update",
-      description: "The midterm exams are rescheduled to next week. Please check the updated timetable.",
-      date: "2025-02-10",
-    },
-    {
-      id: 2,
-      title: "Holiday Announcement",
-      description: "The institute will remain closed on February 14th for Valentine's Day.",
-      date: "2025-02-09",
-    },
-    {
-      id: 3,
-      title: "New Course Launch",
-      description: "A new course on Advanced React.js will start from March 1st. Enroll now!",
-      date: "2025-02-05",
-    },
-  ];
-
+  const [notices, setNotices] = useState([]);
+  const [filteredNotices, setFilteredNotices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [noticeType, setNoticeType] = useState("all");
+  const [loading, setLoading] = useState(true);
 
-  // Filtered notices based on search input
-  const filteredNotices = notices.filter((notice) =>
-    notice.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fetch notices from API
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:3000/notifications", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setNotices(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching notices:", error);
+        toast.error("Failed to load notices");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
+  // Filter notices
+  useEffect(() => {
+    let result = notices;
+    
+    if (noticeType === "faculty") {
+      result = result.filter(notice => notice.recipientType === "faculty");
+    } else if (noticeType === "general") {
+      result = result.filter(notice => notice.recipientType === "all");
+    }
+    
+    if (searchTerm) {
+      result = result.filter(notice =>
+        notice.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notice.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setFilteredNotices(result);
+  }, [notices, searchTerm, noticeType]);
+
+  // Format date and time
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString(),
+      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+  };
 
   return (
-    <div className="view-notices-page p-6 space-y-8">
+    <div className="dashboard-body">
+      <ToastContainer />
       
-      <div className="mb-8">
-        <ul className="flex-align gap-4 mb-4">
-          <li>
-            <Link
-              to="/faculty"
-              className="text-gray-800 fw-normal text-15 hover-text-main-600"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <span className="text-gray-500 fw-normal d-flex">
-              <i className="ph ph-caret-right"></i>
-            </span>
-          </li>
-          <li>
-            <span className="text-main-600 fw-normal text-15">
-              View Notices
-            </span>
-          </li>
-        </ul>
+      {/* Breadcrumb Navigation */}
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
+            <li>
+              <Link to="/faculty" className="text-gray-200 fw-normal text-15 hover-text-main-600">
+                Home
+              </Link>
+            </li>
+            <li>
+              <span className="text-gray-500 fw-normal d-flex">
+                <i className="ph ph-caret-right"></i>
+              </span>
+            </li>
+            <li>
+              <span className="text-main-600 fw-normal text-15">View Notices</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="card p-4 bg-white shadow-md rounded-lg">
-        <input
-          type="text"
-          placeholder="Search notices..."
-          className="form-control border-gray-300 rounded-md p-2 w-full"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* Filter and Search Section */}
+      <div className="card mb-24">
+        <div className="card-header border-bottom border-gray-100 flex-between">
+          <h5 className="mb-0">Filter Notices</h5>
+        </div>
+        <div className="card-body">
+          <div className="flex gap-16 mb-16">
+            <button
+              className={`btn ${noticeType === "all" ? "btn-main" : "btn-outline-gray"} rounded-pill`}
+              onClick={() => setNoticeType("all")}
+            >
+              All Notices
+            </button>
+            <button
+              className={`btn ${noticeType === "faculty" ? "btn-main" : "btn-outline-gray"} rounded-pill`}
+              onClick={() => setNoticeType("faculty")}
+            >
+              Faculty Only
+            </button>
+          </div>
+          
+          <div className="mb-16">
+            <label htmlFor="search" className="form-label fw-medium">
+              Search Notices
+            </label>
+            <input
+              type="text"
+              id="search"
+              className="form-control"
+              placeholder="Search by title or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Notices Section */}
-      <div className="space-y-4">
-        {filteredNotices.length > 0 ? (
-          filteredNotices.map((notice) => (
-            <div
-              key={notice.id}
-              className="card p-4 bg-white shadow-md rounded-lg border-l-4 border-blue-500"
-            >
-              <h2 className="text-lg font-semibold text-gray-800">{notice.title}</h2>
-              <p className="text-gray-600 mb-2">{notice.description}</p>
-              <p className="text-sm text-gray-500">Date: {notice.date}</p>
+      <div className="card">
+        <div className="card-header border-bottom border-gray-100 flex-between">
+          <h5 className="mb-0">
+            {noticeType === "all" ? "All Notices" : "Faculty Notices"} 
+            <span className="text-gray-500 text-14 fw-normal ms-8">
+              ({filteredNotices.length} found)
+            </span>
+          </h5>
+        </div>
+        
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="spinner-border text-main-600" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
             </div>
-          ))
-        ) : (
-          <div className="text-gray-600 text-center mt-8">
-            <p>No notices found matching your search.</p>
-          </div>
-        )}
+          ) : filteredNotices.length > 0 ? (
+            <div className="grid gap-16">
+              {filteredNotices.map((notice) => {
+                const { date, time } = formatDateTime(notice.createdAt);
+                return (
+                  <div key={notice._id} className="notice-card bg-blue-50 border-blue-200 border-[1px] rounded-md p-16 hover:shadow-sm transition-all">
+                   <div>
+                    <div className="flex justify-between flex-row items-center gap-8">
+                      <h4 className="text-16 text-lg font-semibold text-blue-900 pb-2 rounded-lg w-full">{notice.title}</h4>
+                      <span className={`badge ${notice.recipientType === "faculty" ? "bg-purple-100 text-purple-800" : "bg-green-100 text-green-800"} rounded-pill`}>
+                        {notice.recipientType === "faculty" ? "Faculty" : "General"}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 mb-16">{notice.description}</p>
+                   </div>
+                    
+                    
+                    <div className="flex-align gap-16 text-13 text-gray-500">
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-calendar"></i>
+                        <span>{date}</span>
+                      </div>
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-clock"></i>
+                        <span>{time}</span>
+                      </div>
+                      <div className="flex-align gap-1">
+                        <i className="ph ph-user"></i>
+                        <span>Admin</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-24">
+              <div className="mb-16">
+                <i className="ph ph-warning-circle text-48 text-gray-400"></i>
+              </div>
+              <h5 className="text-16 fw-medium text-gray-700 mb-8">No notices found</h5>
+              <p className="text-gray-500 mb-16">Try changing your search or filter criteria</p>
+              <button 
+                className="btn btn-outline-gray rounded-pill"
+                onClick={() => {
+                  setSearchTerm("");
+                  setNoticeType("all");
+                }}
+              >
+                <i className="ph ph-arrow-counter-clockwise me-4"></i>
+                Reset filters
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default ViewNotices;
+export default ViewNotices; 

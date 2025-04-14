@@ -1,148 +1,311 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewResources = () => {
-  // Sample resource data
-  const resources = [
-    {
-      id: 1,
-      name: "Web Development Notes",
-      type: "PDF",
-      size: "2.5MB",
-      uploadedBy: "Dr. John Doe",
-      date: "2024-01-15",
-      icon: "/assets/images/icons/file-icon1.png",
-    },
-    {
-      id: 2,
-      name: "React Tutorial",
-      type: "Video",
-      size: "150MB",
-      uploadedBy: "Prof. Jane Smith",
-      date: "2024-02-10",
-      icon: "/assets/images/icons/file-icon2.png",
-    },
-    {
-      id: 3,
-      name: "JavaScript Basics",
-      type: "PDF",
-      size: "1.8MB",
-      uploadedBy: "Dr. Mike Brown",
-      date: "2024-03-05",
-      icon: "/assets/images/icons/file-icon3.png",
-    },
-    {
-      id: 4,
-      name: "CSS Frameworks",
-      type: "Document",
-      size: "3.2MB",
-      uploadedBy: "Dr. John Doe",
-      date: "2024-04-20",
-      icon: "/assets/images/icons/file-icon4.png",
-    },
-  ];
+  const [resources, setResources] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch student's enrolled courses
+        const enrollmentsRes = await axios.get(
+          `http://localhost:3000/enrollments/user/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        // Extract enrolled courses with enrollment status 'enrolled'
+        const courses = enrollmentsRes.data.enrollments
+          .flatMap(enrollment => 
+            enrollment.courses
+              .filter(course => course.enrollment_status === 'enrolled')
+              .map(course => ({
+                _id: course.course_id._id,
+                name: course.course_id.name,
+                batch_id: course.batch_id?._id
+              }))
+          );
+
+        setEnrolledCourses(courses);
+        
+        // If courses exist, select the first one by default
+        if (courses.length > 0) {
+          setSelectedCourse(courses[0]._id);
+          await fetchResourcesByCourse(courses[0]._id);
+        } else {
+          setResources([]);
+        }
+
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+        toast.error("Failed to load your enrolled courses");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStudentData();
+  }, [userId]);
+
+  const fetchResourcesByCourse = async (courseId) => {
+    if (!courseId) {
+      setResources([]);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `http://localhost:3000/resources/course/${courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setResources(response.data.data || []);
+    } catch (error) {
+      toast.error("Failed to fetch resources for selected course");
+      console.error("Error fetching resources:", error);
+      setResources([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCourseChange = async (e) => {
+    const courseId = e.target.value;
+    setSelectedCourse(courseId);
+    await fetchResourcesByCourse(courseId);
+  };
+
+  const filteredResources = resources.filter((resource) => {
+    return searchTerm 
+      ? resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resource.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+  });
+
+  const renderEmptyState = () => {
+    if (isLoading) return null;
+    
+    if (enrolledCourses.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <i className="ph ph-book-open text-5xl text-gray-400 mb-4"></i>
+          <h4 className="text-lg font-medium text-gray-600">No Enrolled Courses</h4>
+          <p className="text-gray-500 mt-2">
+            You are not enrolled in any courses yet
+          </p>
+          <Link
+            to="/student/courses"
+            className="btn bg-blue-400 mt-3 hover:bg-blue-500"
+          >
+            Browse Available Courses
+          </Link>
+        </div>
+      );
+    }
+
+    if (!selectedCourse) {
+      return (
+        <div className="text-center py-8">
+          <i className="ph ph-folder-open text-5xl text-gray-400 mb-4"></i>
+          <h4 className="text-lg font-medium text-gray-600">No Course Selected</h4>
+          <p className="text-gray-500 mt-2">
+            Please select a course from the dropdown to view resources
+          </p>
+        </div>
+      );
+    }
+
+    if (filteredResources.length === 0 && searchTerm) {
+      return (
+        <div className="text-center py-8">
+          <i className="ph ph-magnifying-glass text-5xl text-gray-400 mb-4"></i>
+          <h4 className="text-lg font-medium text-gray-600">No Resources Found</h4>
+          <p className="text-gray-500 mt-2">
+            No resources match your search criteria for "{searchTerm}"
+          </p>
+          <button 
+            className="btn btn-link text-primary mt-3"
+            onClick={() => setSearchTerm("")}
+          >
+            Clear search
+          </button>
+        </div>
+      );
+    }
+
+    if (filteredResources.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <i className="ph ph-file-text text-5xl text-gray-400 mb-4"></i>
+          <h4 className="text-lg font-medium text-gray-600">No Resources Available</h4>
+          <p className="text-gray-500 mt-2">
+            This course doesn't have any resources yet
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <div className="dashboard-body p-8 bg-gray-50 min-h-screen">
-      {/* Breadcrumb */}
-      <div className="breadcrumb-with-buttons mb-8 flex justify-between items-center">
-        <div className="breadcrumb">
-          <ul className="flex items-center space-x-2 text-sm">
+    <div className="dashboard-body">
+      {/* Breadcrumb Section */}
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
             <li>
-              <Link to="/student-dashboard" className="text-gray-600 hover:text-blue-600">
+              <Link
+                to="/student"
+                className="text-gray-200 fw-normal text-15 hover-text-main-600"
+              >
                 Home
               </Link>
             </li>
-            <li className="text-gray-400">/</li>
-            <li className="text-blue-600">View Resources</li>
+            <li>
+              <span className="text-gray-500 fw-normal d-flex">
+                <i className="ph ph-caret-right"></i>
+              </span>
+            </li>
+            <li>
+              <span className="text-main-600 fw-normal text-15">Course Resources</span>
+            </li>
           </ul>
         </div>
       </div>
 
-      {/* Search and Filter Section */}
-      <div className="card mb-8">
-        <div className="card-header border-b border-gray-200 p-6">
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            {/* Search Bar */}
-            <form className="w-full sm:w-auto">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search resources..."
-                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"
-                />
-                <span className="absolute left-3 top-2.5 text-gray-400">
-                  <i className="ph ph-magnifying-glass text-xl"></i>
-                </span>
-              </div>
-            </form>
-
-            {/* Filter and Sort Options */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600">Sort by:</span>
-                <select className="px-4 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200">
-                  <option value="date">Date</option>
-                  <option value="name">Name</option>
-                  <option value="type">Type</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600">View:</span>
-                <button className="p-2 text-gray-600 hover:text-blue-600">
-                  <i className="ph ph-squares-four text-xl"></i>
-                </button>
-                <button className="p-2 text-gray-600 hover:text-blue-600">
-                  <i className="ph ph-list text-xl"></i>
-                </button>
-              </div>
+      <div className="card mb-24">
+        <div className="card-body">
+          <div className="flex-align gap-16 flex-wrap">
+            <div className="form-group flex-grow-1">
+              <label className="form-label text-md">
+                Select Course
+              </label>
+              <select 
+                className="form-control"
+                value={selectedCourse}
+                onChange={handleCourseChange}
+                disabled={enrolledCourses.length === 0}
+              >
+                {enrolledCourses.length === 0 ? (
+                  <option value="">No enrolled courses</option>
+                ) : (
+                  <>
+                    <option value="">Select a course</option>
+                    {enrolledCourses.map((course) => (
+                      <option key={course._id} value={course._id}>
+                        {course.name}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+            </div>
+            <div className="form-group flex-grow-1">
+              <label className="form-label text-md">
+                Search Resources
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by title or description"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                disabled={!selectedCourse || resources.length === 0}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Resources Grid View */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {resources.map((resource) => (
-          <div key={resource.id} className="card hover:shadow-lg transition-shadow duration-200">
-            <div className="card-body p-6">
-              <div className="flex flex-col items-center text-center">
-                <img src={resource.icon} alt={resource.type} className="w-16 h-16 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900">{resource.name}</h3>
-                <p className="text-sm text-gray-500">{resource.type}</p>
-                <p className="text-sm text-gray-500">{resource.size}</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Uploaded by <span className="font-medium">{resource.uploadedBy}</span>
-                </p>
-                <p className="text-sm text-gray-500">{resource.date}</p>
-                <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-                  Download
-                </button>
+      <div className="card">
+        <div className="card-header border-bottom border-gray-100 flex-between">
+          <h5 className="mb-0">
+            {selectedCourse 
+              ? `Resources for ${enrolledCourses.find(c => c._id === selectedCourse)?.name || "Selected Course"}`
+              : "Course Resources"}
+          </h5>
+          {selectedCourse && resources.length > 0 && (
+            <span className="badge bg-primary">
+              {filteredResources.length} resource{filteredResources.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+        
+        <div className="card-body">
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
               </div>
+              <p className="mt-2 text-gray-600">Loading resources...</p>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center mt-8">
-        <nav className="flex gap-2">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            Previous
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            1
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            2
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            3
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-            Next
-          </button>
-        </nav>
+          ) : (
+            <>
+              {renderEmptyState() || (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredResources.map((resource) => (
+                    <div key={resource._id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-start mb-3">
+                        <div className="bg-blue-100 p-3 rounded-lg mr-3">
+                          <i className="ph ph-file-text text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-800">{resource.title}</h3>
+                          <p className="text-sm text-gray-500">
+                            {new Date(resource.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {resource.description && (
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {resource.description}
+                        </p>
+                      )}
+                      
+                      <div className="flex justify-between items-center">
+                        <a
+                          href={`http://localhost:3000${resource.fileUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn bg-blue-500 hover:bg-blue-600 text-white"
+                          download
+                        >
+                          <i className="ph ph-download mr-2"></i> Download
+                        </a>
+                        <span className="text-sm text-gray-500">
+                          {resource.fileType}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

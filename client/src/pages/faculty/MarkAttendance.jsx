@@ -10,11 +10,13 @@ const MarkAttendance = () => {
   const [selectedBatchId, setSelectedBatchId] = useState("");
   const [selectedBatchName, setSelectedBatchName] = useState("");
   const [students, setStudents] = useState([]);
+  const [attendanceStatus, setAttendanceStatus] = useState({});
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+
   const [attendanceDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   });
-  const [attendanceStatus, setAttendanceStatus] = useState({});
   const [loading, setLoading] = useState({
     courses: false,
     batches: false,
@@ -38,7 +40,7 @@ const MarkAttendance = () => {
     const fetchCourses = async () => {
       try {
         setLoading(prev => ({ ...prev, courses: true }));
-        const response = await axios.get('http://localhost:3000/courses');
+        const response = await axios.get(`http://localhost:3000/faculty/${userId}/assigned-courses`);
         setCourses(response.data.courses || []);
       } catch (error) {
         setMessage({ text: "Failed to load courses", type: "error" });
@@ -140,58 +142,65 @@ const MarkAttendance = () => {
   };
 
   const handleSubmitAttendance = async () => {
+    // console.log(attendanceStatus);
+
     // Validate batch selection
     if (!selectedBatchId) {
       setMessage({ text: "Please select a batch before submitting attendance", type: "error" });
       return;
     }
-  
+
     // Validate students exist
     if (students.length === 0) {
       setMessage({ text: "No students found in the selected batch", type: "warning" });
       return;
     }
-  
+
     // Check if at least one attendance status is changed from default
     const hasChanges = Object.keys(attendanceStatus).some(
       (studentId) => attendanceStatus[studentId] !== "Absent"
     );
-  
+
     if (!hasChanges) {
       setMessage({ text: "Please mark attendance for at least one student", type: "warning" });
       return;
     }
-  
+
     try {
       setLoading((prev) => ({ ...prev, submitting: true }));
-  
+
       // Prepare attendance data
       const attendanceData = {
         date: attendanceDate,
         batch_id: selectedBatchId,
         course_id: selectedCourseId,
         attendance: students.map((student) => ({
-          student_id: student.user_id._id,
-          status: attendanceStatus[student.user_id._id] || "Absent", // Default to Absent if not set
+          user_id: student.user_id._id, // ✅ was student_id before
+          status: attendanceStatus[student.user_id._id] || "Absent",
         })),
+
       };
-  
+      console.log(attendanceData)
       // Submit attendance to the server
+      const token = localStorage.getItem("token"); // or wherever you're storing the JWT
+
       const response = await axios.post(
         "http://localhost:3000/attendance",
         attendanceData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Add the token here
           },
           validateStatus: (status) => status >= 200 && status < 500,
         }
       );
-  
+
+
       // Handle response
       if (response.status === 201) {
         setMessage({ text: "Attendance submitted successfully!", type: "success" });
-  
+
         // Reset form state after successful submission
         setTimeout(() => {
           setSelectedBatchId("");
@@ -204,23 +213,23 @@ const MarkAttendance = () => {
         const errorMessage =
           response.data.message || "Invalid data submitted for attendance";
         setMessage({ text: errorMessage, type: "error" });
-  
+
         // Handle specific field errors if available
         if (response.data.errors) {
           console.error("Field errors:", response.data.errors);
         }
       } else if (response.status === 409) {
         // Handle conflict (attendance already marked)
-        setMessage({ 
-          text: response.data.message || "Attendance already marked for today", 
-          type: "warning" 
+        setMessage({
+          text: response.data.message || "Attendance already marked for today",
+          type: "warning"
         });
       } else {
         throw new Error(response.data.message || "Failed to submit attendance");
       }
     } catch (error) {
       console.error("Attendance submission error:", error);
-  
+
       // Handle network errors
       if (error.isAxiosError && !error.response) {
         setMessage({ text: "Network error - please check your connection", type: "error" });
@@ -261,7 +270,7 @@ const MarkAttendance = () => {
 
       <div className="card">
         <div className="card-header border-bottom border-gray-100">
-          <h5 className="mb-0">Mark Student Attendance</h5>
+          <h5 className="mb-2">Mark Student Attendance</h5>
           {selectedCourseName && (
             <p className="text-muted mb-0">Course: {selectedCourseName}</p>
           )}
@@ -366,7 +375,7 @@ const MarkAttendance = () => {
                     <thead>
                       <tr>
                         <th>Student Name</th>
-                        <th>Roll Number</th>
+                        <th>Email</th>
                         <th>Status</th>
                       </tr>
                     </thead>
@@ -374,7 +383,7 @@ const MarkAttendance = () => {
                       {students.map((student, index) => (
                         <tr key={student._id}>
                           <td>{student.user_id.first_name} {student.user_id.last_name}</td>
-                          <td>{index + 1}</td>
+                          <td>{student.user_id.email}</td>
                           <td>
                             <div className="btn-group btn-group-sm flex gap-2">
                               <button

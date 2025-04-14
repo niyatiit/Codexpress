@@ -57,57 +57,70 @@ const UploadResource = () => {
   };
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-  
+
     if (!selectedCourse) {
       toast.error("Please select a course.");
       setIsSubmitting(false);
       return;
     }
-  
+
     if (!file) {
       toast.error("Please select a file to upload.");
       setIsSubmitting(false);
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("title", data.title);
-    formData.append("description", data.description || ""); // Make description optional
+    formData.append("description", data.description || "");
     formData.append("course", selectedCourse);
     formData.append("uploadedBy", faculty._id);
     formData.append("file", file);
-  
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/resources/upload", // Updated endpoint path
+        "http://localhost:3000/resources/upload",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Add auth token
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
-  
+
       if (response.data.success) {
         toast.success(response.data.message || "Resource uploaded successfully!");
-        reset();
+        // Reset form fields and validation state
+        reset(
+          { title: "", description: "" },
+          {
+            keepErrors: false,
+            keepDirty: false,
+            keepIsSubmitted: false,
+            keepTouched: false,
+            keepIsValid: false,
+            keepSubmitCount: false,
+          }
+        );
+        // Clear the uncontrolled inputs
         setSelectedCourse("");
         setFile(null);
+        // Manually clear file input value
+        document.querySelector('input[type="file"]').value = "";
       } else {
         toast.error(response.data.message || "Failed to upload resource");
       }
     } catch (error) {
       console.error("Error uploading resource:", error);
-      const errorMessage = error.response?.data?.message 
-        || error.message 
+      const errorMessage = error.response?.data?.message
+        || error.message
         || "Failed to upload resource. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="dashboard-body p-6">
       <ToastContainer />
@@ -131,7 +144,7 @@ const UploadResource = () => {
         </div>
       </div>
       <div className="card rounded-md">
-        <div className="bg-blue-100 card-header">
+        <div className="card-header">
           <h5 className="text-md">Upload New Resource</h5>
         </div>
         <div className="card-body">
@@ -152,9 +165,7 @@ const UploadResource = () => {
                   </option>
                 ))}
               </select>
-              {isSubmitted && !selectedCourse && (
-                <small className="text-danger">Course selection is required.</small>
-              )}
+              
             </div>
 
             {/* Resource Title */}
@@ -174,7 +185,7 @@ const UploadResource = () => {
             <div className="form-group mt-3">
               <label>Description</label>
               <textarea
-                className={`form-control ${isSubmitted && errors.description ? "is-invalid" : ""}`}
+                className={`form-control`}
                 rows="4"
                 {...register("description")}
                 placeholder="Type something..."
@@ -186,11 +197,10 @@ const UploadResource = () => {
               <label>Upload File</label>
               <input
                 type="file"
-                className={`form-control ${isSubmitted && !file ? "is-invalid" : ""}`}
+                className={`form-control`}
                 onChange={handleFileChange}
                 required
               />
-              {isSubmitted && !file && <small className="text-danger">File upload is required.</small>}
             </div>
 
             {/* Submit Button */}

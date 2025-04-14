@@ -23,9 +23,27 @@ router.get('/user/:user_id', async (req, res) => {
     }
 
     // Fetch enrollments for the user
+    // const enrollments = await Enrollment.find({ user_id: userId })
+    // .populate("courses.course_id", "name") // Populate course name
+    // .populate({
+    //   path: "courses.batch_id",
+    //   select: "name start_date end_date faculty_ids",
+    //   populate: {
+    //     path: "faculty_ids",
+    //     select: "name" // Populate faculty names
+    //   }
+    // });
+
     const enrollments = await Enrollment.find({ user_id: userId })
-    .populate("courses.course_id", "name") // Populate course_id with only the "name" field
-    .populate("courses.batch_id", "name"); 
+      .populate({
+        path: "courses.course_id",
+        select: "name description" // Course fields you need
+      })
+      .populate({
+        path: "courses.batch_id",
+        select: "name start_date end_date batch_description",
+      });
+
     // Return the enrollments
     res.status(200).json({ enrollments });
   } catch (error) {
@@ -161,7 +179,7 @@ router.get("/", async (req, res) => {
       .populate("user_id", "username email first_name last_name")
       .populate("courses.course_id", "name");
 
-    res.status(200).json({ success:true,enrollments });
+    res.status(200).json({ success: true, enrollments });
   } catch (error) {
     res.status(500).json({ message: "Error fetching enrollments", error: error.message });
   }

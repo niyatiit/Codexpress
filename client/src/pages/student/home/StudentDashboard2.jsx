@@ -22,6 +22,7 @@ import Notifications from "./Notifications";
 import Settings from "./Settings";
 import Schedule from "./Schedule";
 import axios from 'axios'
+import AssignmentDetail from "./AssignmentDetail";
 
 const StudentDashboard2 = () => {
   const [loading, setLoading] = useState(false); // State to handle loading
@@ -37,10 +38,9 @@ const StudentDashboard2 = () => {
     const fetchuserdata = async () => {
       const response = await axios.get(`http://localhost:3000/profile/${authUser.id}`)
       if (response.data.success) {
-        console.log(response.data.user)
         setUser(response.data.user)
       }
-      
+
     }
     fetchuserdata()
   }, []);
@@ -117,8 +117,8 @@ const StudentDashboard2 = () => {
               {/* Courses Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "courses" || isDropdownActive(["/student/enrolled/courses", "/student/available/courses"])
-                    ? "open"
-                    : ""
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -139,8 +139,8 @@ const StudentDashboard2 = () => {
               {/* Batches Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "batches" || isDropdownActive(["/student/my-batches"])
-                    ? "open"
-                    : ""
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -157,12 +157,41 @@ const StudentDashboard2 = () => {
                   </li>
                 </ul>
               </li>
+              {/* Resources Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === "resources" || isDropdownActive(["/student/view/resources"])
+                  ? "open"
+                  : ""
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleSidebarDropdown("resources")}
+                >
+                  <span className="icon"><i className="ph ph-folder"></i></span>
+                  <span className="text">Study Materials</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive("/student/view/resources") ? "active" : ""}`}>
+                    <Link to="/student/view/resources" className="sidebar-submenu__link">View Materials</Link>
+                  </li>
+                </ul>
+              </li>
 
+
+              {/* Notifications */}
+              <li className={`sidebar-menu__item ${isActive("/student/notifications") ? "active" : ""}`}>
+                <Link to="/student/notifications" className="sidebar-menu__link">
+                  <span className="icon"><i className="ph ph-notification"></i></span>
+                  <span className="text">Notifications</span>
+                </Link>
+              </li>
               {/* Attendance Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "attendance" || isDropdownActive(["/student/scan/qr", "/student/view/attendance"])
-                    ? "open"
-                    : ""
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -182,20 +211,11 @@ const StudentDashboard2 = () => {
                   </li>
                 </ul>
               </li>
-
-              {/* Schedule */}
-              <li className={`sidebar-menu__item ${isActive("/student/schedule") ? "active" : ""}`}>
-                <Link to="/student/schedule" className="sidebar-menu__link">
-                  <span className="icon"><i className="ph ph-calendar-blank"></i></span>
-                  <span className="text">Schedule</span>
-                </Link>
-              </li>
-
-              {/* Assignments Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${openDropdown === "assignments" || isDropdownActive(["/student/view/assignments", "/student/submit/assignment"])
-                    ? "open"
-                    : ""
+  {/* Assignments Dropdown */}
+  <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === "assignments" || isDropdownActive(["/student/assignments", "/student/submit/assignment"])
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -208,7 +228,7 @@ const StudentDashboard2 = () => {
                 </a>
                 <ul className="sidebar-submenu">
                   <li className={`sidebar-submenu__item ${isActive("/student/view/assignments") ? "active" : ""}`}>
-                    <Link to="/student/view/assignments" className="sidebar-submenu__link">View Assignments</Link>
+                    <Link to="/student/assignments" className="sidebar-submenu__link">View Assignments</Link>
                   </li>
                   <li className={`sidebar-submenu__item ${isActive("/student/submit/assignment") ? "active" : ""}`}>
                     <Link to="/student/submit/assignment" className="sidebar-submenu__link">Submit Assignment</Link>
@@ -216,11 +236,20 @@ const StudentDashboard2 = () => {
                 </ul>
               </li>
 
+              {/* Schedule */}
+              <li className={`sidebar-menu__item ${isActive("/student/schedule") ? "active" : ""}`}>
+                <Link to="/student/schedule" className="sidebar-menu__link">
+                  <span className="icon"><i className="ph ph-calendar-blank"></i></span>
+                  <span className="text">Schedule</span>
+                </Link>
+              </li>
+
+            
               {/* Quizzes Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "quizzes" || isDropdownActive(["/student/available/quizzes", "/student/attempted/quizzes", "/student/review/quiz"])
-                    ? "open"
-                    : ""
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -247,8 +276,8 @@ const StudentDashboard2 = () => {
               {/* Exams Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "exams" || isDropdownActive(["/student/upcoming/exams", "/student/exam/results"])
-                    ? "open"
-                    : ""
+                  ? "open"
+                  : ""
                   }`}
               >
                 <a
@@ -269,43 +298,6 @@ const StudentDashboard2 = () => {
                 </ul>
               </li>
 
-              {/* Resources Dropdown */}
-              <li
-                className={`sidebar-menu__item has-dropdown ${openDropdown === "resources" || isDropdownActive(["/student/view/resources"])
-                    ? "open"
-                    : ""
-                  }`}
-              >
-                <a
-                  href="#!"
-                  className="sidebar-menu__link"
-                  onClick={() => toggleSidebarDropdown("resources")}
-                >
-                  <span className="icon"><i className="ph ph-folder"></i></span>
-                  <span className="text">Study Materials</span>
-                </a>
-                <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive("/student/view/resources") ? "active" : ""}`}>
-                    <Link to="/student/view/resources" className="sidebar-submenu__link">View Materials</Link>
-                  </li>
-                </ul>
-              </li>
-
-              {/* Notifications */}
-              <li className={`sidebar-menu__item ${isActive("/student/notifications") ? "active" : ""}`}>
-                <Link to="/student/notifications" className="sidebar-menu__link">
-                  <span className="icon"><i className="ph ph-notification"></i></span>
-                  <span className="text">Notifications</span>
-                </Link>
-              </li>
-
-              {/* Settings */}
-              <li className={`sidebar-menu__item ${isActive("/student/settings") ? "active" : ""}`}>
-                <Link to="/student/settings" className="sidebar-menu__link">
-                  <span className="icon"><i className="ph ph-gear"></i></span>
-                  <span className="text">Settings</span>
-                </Link>
-              </li>
 
               {/* Logout */}
               <li className="sidebar-menu__item">
@@ -395,7 +387,7 @@ const StudentDashboard2 = () => {
             <Route path="my-batches" element={<MyBatches />} />
             <Route path="scan/qr" element={<ScanQRCode />} />
             <Route path="view/attendance" element={<ViewAttendance />} />
-            <Route path="view/assignments" element={<ViewAssignments />} />
+            <Route path="assignments" element={<ViewAssignments />} />
             <Route path="submit/assignment" element={<SubmitAssignment />} />
             <Route path="available/quizzes" element={<AvailableQuizzes />} />
             <Route path="attempted/quizzes" element={<AttemptedQuizzes />} />
@@ -406,6 +398,7 @@ const StudentDashboard2 = () => {
             <Route path="view/resources" element={<ViewResources />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="assignments/:assignmentId" element={<AssignmentDetail />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

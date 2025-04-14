@@ -1,52 +1,112 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ViewBatches = () => {
-  const [courses, setCourses] = useState([]); // List of all courses
-  const [selectedCourse, setSelectedCourse] = useState(""); // Selected course ID
-  const [batches, setBatches] = useState([]); // List of batches for the selected course
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [batches, setBatches] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
   const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  const [searchParams] = useSearchParams();
+  const courseIdFromUrl = searchParams.get("course");
 
-  // Fetch all courses on component mount
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
 
-  // Fetch all courses
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3000/faculty/${userId}/assigned-courses`);
-      setCourses(response.data.courses); // Set the list of courses
-      console.log("Courses fetched:", response.data.courses); // Debugging
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
-  };
+        // Fetch assigned courses
+        const coursesRes = await axios.get(
+          `http://localhost:3000/faculty/${userId}/assigned-courses`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-  // Fetch batches for the selected course
+        setCourses(coursesRes.data.courses || []);
+
+        // Priority 1: Use course ID from URL if provided
+        if (courseIdFromUrl) {
+          setSelectedCourse(courseIdFromUrl);
+          await fetchBatches(courseIdFromUrl);
+        }
+        // Priority 2: Select the first course by default if no URL param
+        else if (coursesRes.data.courses?.length > 0) {
+          const initialCourse = coursesRes.data.courses[0]._id;
+          setSelectedCourse(initialCourse);
+          await fetchBatches(initialCourse);
+        } else {
+          setBatches([]);
+        }
+
+        setHasFetched(true);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+        toast.error("Failed to load initial data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [userId, courseIdFromUrl]);
+
   const fetchBatches = async (courseId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/courses/${courseId}/batches`);
-      console.log("Batches response:", response.data); // Debugging
-      setBatches(response.data.data || []); // Ensure the state is updated to an empty array if no data
+      setIsLoading(true);
+      const response = await axios.get(
+        `http://localhost:3000/courses/${courseId}/batches`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setBatches(response.data.data || []);
     } catch (error) {
       console.error("Error fetching batches:", error);
-      setBatches([]); // Clear batches in case of an error
+      toast.error("Failed to fetch batches");
+      setBatches([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle course selection
-  const handleCourseChange = (event) => {
-    const courseId = event.target.value;
-    console.log("Selected Course ID:", courseId); // Debugging
-    setSelectedCourse(courseId); // Update the selected course
+  const handleCourseChange = async (e) => {
+    const courseId = e.target.value;
+    setSelectedCourse(courseId);
     if (courseId) {
-      fetchBatches(courseId); // Fetch batches for the selected course
+      await fetchBatches(courseId);
     } else {
-      setBatches([]); // Clear batches if no course is selected
+      setBatches([]);
     }
   };
+
+  const isBatchExpired = (endDate) => {
+    if (!endDate) return false;
+
+    // Get current date in UTC (ignoring local timezone)
+    const todayUTC = new Date();
+    todayUTC.setUTCHours(0, 0, 0, 0);
+
+    // Parse the batch end date (already in UTC format)
+    const batchEndDate = new Date(endDate);
+
+    return batchEndDate < todayUTC;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-body p-20">
@@ -81,6 +141,7 @@ const ViewBatches = () => {
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedCourse}
           onChange={handleCourseChange}
+          disabled={isLoading}
         >
           <option value="">-- Select a Course --</option>
           {courses.map((course) => (
@@ -94,36 +155,86 @@ const ViewBatches = () => {
       {/* Batches Table */}
       {selectedCourse && (
         <div className="bg-white rounded-lg p-24 mt-6 shadow-sm">
-          <h5 className="text-xl font-semibold mb-4 text-gray-800">Available Batches</h5>
+          <h5 className="text-xl font-semibold mb-4 text-gray-800">
+            Available Batches for {courses.find(c => c._id === selectedCourse)?.name || "Selected Course"}
+          </h5>
+
           {batches.length > 0 ? (
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Name</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Start Date</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600">End Date</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Type</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-600">Seats Available</th>
-                </tr>
-              </thead>
-              <tbody>
-                {batches.map((batch) => (
-                  <tr key={batch._id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-3 text-sm text-gray-700">{batch.name}</td>
-                    <td className="p-3 text-sm text-gray-700">
-                      {new Date(batch.start_date).toLocaleDateString()}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700">
-                      {new Date(batch.end_date).toLocaleDateString()}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700">{batch.batch_type}</td>
-                    <td className="p-3 text-sm text-gray-700">{batch.seats_available}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Name</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">Start Date</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">End Date</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">Batch Type</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">Seats Available</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-600">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {batches.map((batch) => {
+                    const expired = isBatchExpired(batch.end_date);
+                    return (
+                      <tr
+                        key={batch._id}
+                        className={`border-b border-gray-100 ${expired ? 'bg-gray-100 text-gray-400' : 'hover:bg-gray-50'}`}
+                      >
+                        <td className="p-3 text-sm text-gray-700">
+                          {batch.name}
+                          {expired && <span className="ml-2 text-xs text-red-500">(Expired)</span>}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700">
+                          {new Date(batch.start_date).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: '2-digit',
+                          })}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700">
+                          {new Date(batch.end_date).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: '2-digit',
+                          })}
+                        </td>
+
+                        <td className="p-3 text-sm text-gray-700">{batch.batch_type}</td>
+                        <td className="p-3 text-sm text-gray-700">{batch.seats_available}</td>
+                        <td className="p-3 text-sm">
+                          {expired ? (
+                            <span className="px-2 py-1 bg-gray-200 text-gray-600 rounded-md text-xs">
+                              Inactive
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded-md text-xs">
+                              Active
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <p className="text-gray-500">No batches available for this course.</p>
+            <div className="text-center py-8">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <p className="mt-2 text-gray-500">No batches available for this course.</p>
+            </div>
           )}
         </div>
       )}

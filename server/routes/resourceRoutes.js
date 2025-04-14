@@ -7,6 +7,7 @@ const upload = require('../middleware/multer');
 // Upload Resource (Faculty only)
 router.post('/upload', upload.single('file'),authMiddleware.userVerification,resourceController.uploadResource);
 
+
 router.get(
     '/course/:courseId',
     authMiddleware.userVerification,

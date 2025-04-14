@@ -8,6 +8,7 @@ import ViewBatches from './ViewBatches';
 import AssignStudentsToBatch from './AssignStudentsToBatch';
 import MarkAttendance from './MarkAttendance';
 import QRCodeAttendance from './QRAttendance';
+import GenerateQRAttendance from './GenerateQRAttendance'
 import ViewAttendance from './ViewAttendance';
 import CreateAssignment from './CreateAssignment';
 import AssignmentSubmission from './AssignmentSubmission';
@@ -628,7 +629,7 @@ const FacultyDashboard = () => {
             <Route path="view/batches" element={<ViewBatches />} />
             <Route path="manage/batch/students" element={<AssignStudentsToBatch />} />
             <Route path="manage/attendance" element={<MarkAttendance />} />
-            <Route path="qr/attendance" element={<QRCodeAttendance />} />
+            <Route path="qr/attendance" element={<GenerateQRAttendance />} />
             <Route path="view/attendance" element={<ViewAttendance />} />
             <Route path="create/assignment" element={<CreateAssignment />} />
             <Route path="assignment/submission" element={<AssignmentSubmission />} />
