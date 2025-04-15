@@ -17,7 +17,7 @@ const AssignBatch = () => {
   // Extract course_id from query parameters
   const queryParams = new URLSearchParams(location.search);
   const courseId = queryParams.get("course_id");
-
+  console.log("uid  : ", userId)
   useEffect(() => {
     if (userId) {
       fetchUserEnrollments();
@@ -28,8 +28,8 @@ const AssignBatch = () => {
     if (courseId && enrollments.length > 0) {
       // Find the enrollment related to the course
       const matchedEnrollment = enrollments.find((enrollment) =>
-        enrollment.courses.some((course) => course.course_id === courseId)
-      );
+        enrollment.courses.some((course) => course.course_id._id === courseId));
+      // console.log("hree ",matchedEnrollment)
 
       if (matchedEnrollment) {
         setSelectedEnrollment(matchedEnrollment);
@@ -45,7 +45,7 @@ const AssignBatch = () => {
     try {
       setLoading(true);
       const response = await axios.get(`http://localhost:3000/enrollments/user/${userId}`);
-      console.log("User Enrollments Response:", response.data);
+      console.log("User Enrollments Response:", response.data.enrollments);
       setEnrollments(response.data.enrollments); // Access the `enrollments` array
     } catch (error) {
       console.error("Error fetching user enrollments:", error);
@@ -60,7 +60,7 @@ const AssignBatch = () => {
     try {
       setLoading(true);
       const response = await axios.get(`http://localhost:3000/batches/course/${courseId}`);
-      console.log("Batches Response:", response.data);
+      // console.log("Batches Response:", response.data);
       if (response.data.success) {
         setBatches(response.data.data); // Access the `data` array
       } else {

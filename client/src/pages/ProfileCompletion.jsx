@@ -24,7 +24,7 @@ const ProfileCompletion = () => {
 
     }
     fetchuserdata()
-  }, [user]);
+  }, []);
   // State to manage form inputs
   const [formData, setFormData] = useState({
     username: "",

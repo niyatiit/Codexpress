@@ -1,76 +1,125 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { FiDownload, FiSearch, FiFilter, FiUsers } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 const ManageCertificates = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedBatch, setSelectedBatch] = useState("");
-
-  // Sample data
-  const certificates = [
-    {
-      id: "c1",
-      studentName: "John Doe",
-      course: "Full Stack Development",
-      batch: "Batch A (Jan 2025)",
-      issuedDate: "2025-01-30",
-    },
-    {
-      id: "c2",
-      studentName: "Jane Smith",
-      course: "Data Science",
-      batch: "Batch X (Mar 2025)",
-      issuedDate: "2025-01-29",
-    },
-    {
-      id: "c3",
-      studentName: "Alice Brown",
-      course: "Full Stack Development",
-      batch: "Batch B (Feb 2025)",
-      issuedDate: "2025-01-28",
-    },
-  ];
-
-  const courses = [
-    { id: "1", name: "Full Stack Development" },
-    { id: "2", name: "Data Science" },
-    { id: "3", name: "Cybersecurity" },
-  ];
-
-  const batches = {
-    "1": [
-      { id: "1a", name: "Batch A (Jan 2025)" },
-      { id: "1b", name: "Batch B (Feb 2025)" },
-    ],
-    "2": [
-      { id: "2a", name: "Batch X (Mar 2025)" },
-      { id: "2b", name: "Batch Y (Apr 2025)" },
-    ],
-  };
-
-  // Filter certificates based on search, course, and batch
-  const filteredCertificates = certificates.filter((certificate) => {
-    const matchesSearch =
-      certificate.studentName.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCourse = selectedCourse
-      ? certificate.course === courses.find((c) => c.id === selectedCourse)?.name
-      : true;
-    const matchesBatch = selectedBatch
-      ? certificate.batch ===
-        batches[selectedCourse]?.find((b) => b.id === selectedBatch)?.name
-      : true;
-    return matchesSearch && matchesCourse && matchesBatch;
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [filters, setFilters] = useState({
+    course: '',
+    batch: '',
+    student: '',
+    dateFrom: '',
+    dateTo: ''
   });
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/courses');
+        setCourses(response.data.courses || []);
+      } catch {
+        toast.error('Failed to fetch courses');
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      if (!selectedCourse) return setBatches([]);
+      try {
+        const response = await axios.get(`http://localhost:3000/courses/${selectedCourse}/batches`);
+        setBatches(response.data.data || []);
+      } catch {
+        toast.error('Failed to fetch batches');
+      }
+    };
+    fetchBatches();
+  }, [selectedCourse]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const certsResponse = await axios.get('http://localhost:3000/certificates', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        console.log(certsResponse.data.data);
+        setCertificates(certsResponse.data.data);
+      } catch (error) {
+        toast.error('Failed to load certificates');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const applyFilters = () => {
+    return certificates.filter(cert => (
+      (!filters.course || cert.course_id._id === filters.course) &&
+      (!filters.batch || cert.batch_id._id === filters.batch) &&
+      (!filters.student || cert.user_id._id === filters.student) &&
+      (!filters.dateFrom || new Date(cert.issue_date) >= new Date(filters.dateFrom)) &&
+      (!filters.dateTo || new Date(cert.issue_date) <= new Date(filters.dateTo))
+    ));
+  };
+
+  const filteredCertificates = applyFilters();
+
+  const handleDownloadAll = async () => {
+    try {
+      toast.info('Preparing bulk download...');
+      const response = await axios.post('http://localhost:3000/certificates/admin/download', { filters }, {
+        responseType: 'blob',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const blob = new Blob([response.data], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `certificates_${new Date().toISOString().split('T')[0]}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Bulk download started!');
+    } catch {
+      toast.error('Failed to download certificates');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-blue-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-gray-600">Loading certificate data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="dashboard-body">
+    <div className="dashboard-body p-36">
+ {/* Breadcrumb Navigation */}
       <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <div className="breadcrumb mb-24">
+        <div className="breadcrumb mb-20">
           <ul className="flex-align gap-4">
             <li>
               <Link
                 to="/admin"
-                className="text-gray-800 fw-normal text-15 hover-text-main-600"
+                className="text-gray-200 fw-normal text-15 hover-text-main-600"
               >
                 Home
               </Link>
@@ -81,96 +130,149 @@ const ManageCertificates = () => {
               </span>
             </li>
             <li>
-              <span className="text-main-600 fw-normal text-15">
-                Manage Certificates
-              </span>
+              <span className="text-main-600 fw-normal text-15">Manage Certificates</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header border-bottom border-gray-100 flex-between gap-8">
-          <h5 className="mb-0 text-gray-800">Certificates</h5>
-          <div className="search-bar flex gap-4">
-            <input
-              type="text"
-              placeholder="Search by student name..."
-              className="form-control text-gray-800 border border-gray-300"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <select
-              className="form-control"
-              value={selectedCourse}
-              onChange={(e) => {
-                setSelectedCourse(e.target.value);
-                setSelectedBatch("");
-              }}
+      <div className="max-w-7xl mx-auto">
+       
+
+        <div className="bg-white rounded-xl shadow-md p-16 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-md font-semibold text-blue-700 flex items-center">
+              <FiFilter className="mr-2" /> Filter Certificates
+            </h2>
+            {/* <button
+              onClick={handleDownloadAll}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
             >
-              <option value="">Filter by Course</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.name}
-                </option>
-              ))}
-            </select>
-            <select
-              className="form-control"
-              value={selectedBatch}
-              onChange={(e) => setSelectedBatch(e.target.value)}
-              disabled={!selectedCourse}
-            >
-              <option value="">Filter by Batch</option>
-              {batches[selectedCourse]?.map((batch) => (
-                <option key={batch.id} value={batch.id}>
-                  {batch.name}
-                </option>
-              ))}
-            </select>
+              <FiDownload className="mr-2" /> Download All
+            </button> */}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+              <select
+                name="course"
+                value={selectedCourse}
+                onChange={(e) => {
+                  setSelectedCourse(e.target.value);
+                  setFilters(prev => ({ ...prev, course: e.target.value }));
+                }}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">All Courses</option>
+                {courses.map(course => (
+                  <option key={course._id} value={course._id}>{course.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Batch</label>
+              <select
+                name="batch"
+                value={selectedBatch}
+                onChange={(e) => {
+                  setSelectedBatch(e.target.value);
+                  setFilters(prev => ({ ...prev, batch: e.target.value }));
+                }}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">All Batches</option>
+                {batches.map(batch => (
+                  <option key={batch._id} value={batch._id}>{batch.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+                <input
+                  type="date"
+                  name="dateFrom"
+                  value={filters.dateFrom}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+                <input
+                  type="date"
+                  name="dateTo"
+                  value={filters.dateTo}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div> */}
           </div>
         </div>
-        <div className="card-body">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th className="text-gray-800">Student Name</th>
-                <th className="text-gray-800">Course</th>
-                <th className="text-gray-800">Batch</th>
-                <th className="text-gray-800">Issued Date</th>
-                <th className="text-gray-800">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCertificates.length > 0 ? (
-                filteredCertificates.map((certificate) => (
-                  <tr key={certificate.id}>
-                    <td className="text-gray-800">{certificate.studentName}</td>
-                    <td className="text-gray-800">{certificate.course}</td>
-                    <td className="text-gray-800">{certificate.batch}</td>
-                    <td className="text-gray-800">{certificate.issuedDate}</td>
-                    <td>
-                      <button className="btn btn-sm btn-outline-primary text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 me-2">
-                        View
-                      </button>
-                      <button className="btn btn-sm btn-outline-primary text-blue-600 border-blue-600 hover:text-white hover:bg-blue-600 me-2">
-                        Edit
-                      </button>
-                      <button className="btn btn-sm btn-outline-danger text-red-600 border-red-600 hover:text-white hover:bg-red-600">
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+
+        <div className="bg-white rounded-xl shadow-md p-3 mb-3 overflow-hidden">
+          <div className="px-6 py-2 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-md font-semibold text-blue-700 pb-2">{filteredCertificates.length} Certificates Found</h2>
+            <div className="flex items-center  text-gray-500">
+              {/* <FiSearch className="ml-6" /> */}
+              {/* <input
+                type="text"
+                placeholder="Search certificates..."
+                className="pl-5 py-1 border border-gray-300 rounded-lg"
+              /> */}
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-blue-500">
                 <tr>
-                  <td colSpan="5" className="text-center text-gray-500">
-                    No certificates found.
-                  </td>
+                 <th className="px-16 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Student</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Course</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Batch</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Issue Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Certificate #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredCertificates.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">No certificates found</td>
+                  </tr>
+                ) : (
+                  filteredCertificates.map(cert => (
+                    <tr key={cert._id} className="hover:bg-blue-50">
+                      <td className="px-6 py-4 whitespace-nowrap flex items-center">
+                        {/* <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <FiUsers className="text-blue-600" />
+                        </div> */}
+                        <div className="px-2 text-sm font-medium text-gray-700">{cert.user_id.first_name} {cert.user_id.last_name}</div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">{cert.course_id.name}</td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">{cert.batch_id.name}</td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">{new Date(cert.issue_date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">{cert.certificate_number}</td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        <a
+                          href={cert.download_url}
+                          className="text-blue-600 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Download
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

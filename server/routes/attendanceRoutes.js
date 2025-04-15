@@ -10,7 +10,7 @@ router.post('/', auth.userVerification, attendanceController.markDailyAttendance
 router.get('/', validateAttendanceQuery, attendanceController.getDailyAttendance);
 
 router.get('/student/history', auth.userVerification, attendanceController.getStudentAttendanceHistory);
-
+router.get('/summary',attendanceController.getAttendanceSummary)
 // Update attendance record
 router.put('/:id', validateAttendance, attendanceController.updateStudentAttendance);
 

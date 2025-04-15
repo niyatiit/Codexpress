@@ -132,7 +132,7 @@ exports.deleteBatch = async (req, res) => {
 // Assign a student to a batch
 exports.assignStudentToBatch = async (req, res) => {
   try {
-    console.log(req.body  )
+    console.log("here",req.body)
     const { enrollment_id, batch_id, course_id } = req.body;
 
     // Validate input

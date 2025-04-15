@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { format, parseISO, startOfDay, endOfDay } from "date-fns";
 import DatePicker from "react-datepicker";
@@ -44,8 +44,8 @@ const ManageReports = () => {
         }));
 
         // Validate and process courses data
-        const coursesData = coursesRes?.data?.data || [];
-        
+        const coursesData = coursesRes?.data?.courses || [];
+        console.log(coursesData)
         setEnrollments(processedData);
         setCoursesList(coursesData);
       } catch (error) {
@@ -72,12 +72,12 @@ const ManageReports = () => {
           ].join(" ").toLowerCase();
 
           const matchesSearch = searchFields.includes(searchQuery.toLowerCase());
-          const matchesDate = (!startDate || !endDate) || 
-            (course.enrolled_at >= startOfDay(startDate) && 
-            course.enrolled_at <= endOfDay(endDate))
-          const matchesCourse = selectedCourse === "all" || 
+          const matchesDate = (!startDate || !endDate) ||
+            (course.enrolled_at >= startOfDay(startDate) &&
+              course.enrolled_at <= endOfDay(endDate))
+          const matchesCourse = selectedCourse === "all" ||
             course.course?._id === selectedCourse;
-          const matchesPaymentStatus = selectedPaymentStatus === "all" || 
+          const matchesPaymentStatus = selectedPaymentStatus === "all" ||
             course.payment_status === selectedPaymentStatus;
 
           return matchesSearch && matchesDate && matchesCourse && matchesPaymentStatus;
@@ -99,13 +99,13 @@ const ManageReports = () => {
   const downloadPDF = () => {
     try {
       const doc = new jsPDF();
-      
+
       // Report title and date
       doc.setFontSize(18);
       doc.text("Student Enrollment Report", 14, 15);
       doc.setFontSize(10);
       doc.text(`Generated on: ${format(new Date(), 'MM/dd/yyyy HH:mm')}`, 14, 22);
-      
+
       // Filter information
       let filterInfo = "Filters: ";
       if (searchQuery) filterInfo += `Search: "${searchQuery}" `;
@@ -115,9 +115,9 @@ const ManageReports = () => {
         filterInfo += `Course: ${course?.name || selectedCourse} `;
       }
       if (selectedPaymentStatus !== "all") filterInfo += `Payment: ${selectedPaymentStatus} `;
-      
+
       doc.text(filterInfo, 14, 28);
-      
+
       // Table data
       const tableColumn = ["Name", "Email", "Course", "Payment Status", "Enrollment Date"];
       const tableRows = [];
@@ -133,9 +133,7 @@ const ManageReports = () => {
           ]);
         });
       });
-
-      // Add table to PDF
-      doc.autoTable({
+      autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 35,
@@ -153,6 +151,7 @@ const ManageReports = () => {
         }
       });
 
+
       doc.save(`Student_Enrollment_Report_${format(new Date(), 'yyyyMMdd_HHmm')}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -164,30 +163,30 @@ const ManageReports = () => {
     try {
       // Prepare data
       const data = [];
-      
+
       // Add headers
       data.push(["Name", "Email", "Course", "Payment Status", "Enrollment Date"]);
-      
+      console.log(filteredEnrollments)
       // Add rows
       filteredEnrollments.forEach((enrollment) => {
         (enrollment.courses || []).forEach((course) => {
           data.push([
-            enrollment.user?.name || "Unknown",
-            enrollment.user?.email || "",
+            enrollment.user_id?.username || "Unknown",
+            enrollment.user_id?.email || "",
             course.course?.name || "Unknown",
             (course.payment_status || "unknown").charAt(0).toUpperCase() + (course.payment_status || "").slice(1),
             course.enrolled_at ? format(course.enrolled_at, 'MM/dd/yyyy') : "Unknown"
           ]);
         });
       });
-      
+
       // Create workbook
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(data);
-      
+
       // Add worksheet to workbook
       XLSX.utils.book_append_sheet(wb, ws, "Enrollments");
-      
+
       // Generate and download file
       XLSX.writeFile(wb, `Enrollment_Report_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
     } catch (error) {
@@ -243,14 +242,14 @@ const ManageReports = () => {
           </ul>
         </div>
         <div className="flex-align gap-8 mb-24">
-          <button 
+          <button
             onClick={downloadPDF}
             className="btn btn-danger btn-sm"
             disabled={filteredEnrollments.length === 0}
           >
             <i className="fas fa-file-pdf me-2"></i> Export PDF
           </button>
-          <button 
+          <button
             onClick={downloadExcel}
             className="btn btn-success btn-sm"
             disabled={filteredEnrollments.length === 0}
@@ -358,7 +357,7 @@ const ManageReports = () => {
                   <th width="15%" className="px-5">
                     <div className="d-flex align-items-center">
                       Student
-                      <button 
+                      <button
                         className="btn btn-sm btn-link p-0 ms-2"
                         onClick={() => setSortByDate(sortByDate === "asc" ? "desc" : "asc")}
                       >
@@ -392,10 +391,9 @@ const ManageReports = () => {
                           </span>
                         </td>
                         <td>
-                          <span className={`badge bg-${
-                            course.payment_status === 'paid' ? 'success' : 
-                            course.payment_status === 'pending' ? 'warning' : 'danger'
-                          }`}>
+                          <span className={`badge bg-${course.payment_status === 'paid' ? 'success' :
+                              course.payment_status === 'pending' ? 'warning' : 'danger'
+                            }`}>
                             {(course.payment_status || "unknown").charAt(0).toUpperCase() + (course.payment_status || "").slice(1)}
                           </span>
                         </td>

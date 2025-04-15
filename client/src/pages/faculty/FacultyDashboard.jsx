@@ -340,11 +340,11 @@ const FacultyDashboard = () => {
                       View Notices
                     </Link>
                   </li>
-                  <li className={`sidebar-submenu__item ${isActive('/faculty/send/notice') ? 'active' : ''}`}>
+                  {/* <li className={`sidebar-submenu__item ${isActive('/faculty/send/notice') ? 'active' : ''}`}>
                     <Link to="/faculty/send/notice" className="sidebar-submenu__link">
                       Send Notice
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </li>
 

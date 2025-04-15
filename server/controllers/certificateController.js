@@ -104,7 +104,7 @@ const generateCertificate = async (req, res) => {
     // Verify template exists
     if (!fs.existsSync(templatePath)) {
       throw new Error('Certificate template not found');
-    } 
+    }
 
     const backgroundBytes = fs.readFileSync(templatePath);
     const pdfDoc = await PDFDocument.create();
@@ -275,9 +275,30 @@ const verifyCertificate = async (req, res) => {
     res.status(500).json({ message: 'Error verifying certificate' });
   }
 };
+const getAllCertificates = async (req, res) => {
+  try {
+    const certificates = await Certificate.find()
+      .populate("user_id", "first_name last_name email")
+      .populate("course_id", "name")
+      .populate("batch_id", "name");
+    res.status(200).json({
+      success: true,
+      count: certificates.length,
+      data: certificates,
+    });
+  } catch (error) {
+    console.error("Error fetching certificates:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 
+module.expo
 module.exports = {
   generateCertificate,
   getStudentCertificates,
-  verifyCertificate
+  verifyCertificate,
+  getAllCertificates
 };

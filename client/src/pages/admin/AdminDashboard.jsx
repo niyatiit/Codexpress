@@ -328,11 +328,11 @@ const AdminDashboard = () => {
                   <span className="text">Certificates</span>
                 </a>
                 <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive('/admin/issue/certificate') ? 'active' : ''}`}>
+                  {/* <li className={`sidebar-submenu__item ${isActive('/admin/issue/certificate') ? 'active' : ''}`}>
                     <Link to="/admin/issue/certificate" className="sidebar-submenu__link">
                       Issue Certificate
                     </Link>
-                  </li>
+                  </li> */}
                   <li className={`sidebar-submenu__item ${isActive('/admin/manage/certificates') ? 'active' : ''}`}>
                     <Link to="/admin/manage/certificates" className="sidebar-submenu__link">
                       Manage Certificates
@@ -481,7 +481,7 @@ const AdminDashboard = () => {
           <Route path="manage/feedback" element={<ManageFeedback />} />
           <Route path="manage/certificates" element={<ManageCertificates />} />
           <Route path="manage/attendance" element={<Attendance />} />
-          <Route path="issue/certificate" element={<IssueCertificate />} />
+          {/* <Route path="issue/certificate" element={<IssueCertificate />} /> */}
           <Route path="manage/fees" element={<ManageFees />} />
           <Route path="edit-batch/:id" element={<EditBatch />} />
           <Route path="edit-faculty/:id" element={<EditFaculty />} />

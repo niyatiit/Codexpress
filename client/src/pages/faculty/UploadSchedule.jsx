@@ -42,7 +42,7 @@ const UploadSchedule = () => {
             </span>
           </li>
           <li>
-            <span className="text-main-600 fw-normal text-15">Upload Schedual </span>
+            <span className="text-main-600 fw-normal text-15">Upload Schedule </span>
           </li>
         </ul>
       </div>

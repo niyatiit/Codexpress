@@ -66,7 +66,7 @@ const ViewSchedule = () => {
           </li>
           <li>
             <span className="text-main-600 fw-normal text-15">
-              View Schedual{" "}
+              View Schedule
             </span>
           </li>
         </ul>

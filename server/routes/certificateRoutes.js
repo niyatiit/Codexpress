@@ -3,10 +3,11 @@ const router = express.Router();
 const {
   generateCertificate,
   getStudentCertificates,
-  verifyCertificate
+  verifyCertificate,
+  getAllCertificates
 } = require('../controllers/certificateController');
 const { authenticate, authorize } = require('../middleware/authMiddleware');
-
+router.get('/',authenticate,getAllCertificates)
 // Student routes
 router.get('/student', authenticate, getStudentCertificates);
 router.post('/generate', authenticate, generateCertificate);

@@ -204,7 +204,7 @@ const ViewAssignments = () => {
               </span>
             </li>
             <li>
-              <span className="text-main-600 fw-normal text-15">Course Assignments</span>
+              <span className="text-main-600 fw-normal text-15">View Assignments</span>
             </li>
           </ul>
         </div>

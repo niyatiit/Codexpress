@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
+import axios from 'axios'
 import Cookies from "js-cookie";
 import Dashboard from "./Dashboard";
 import NotFoundPage from "../../NotFoundPage";
@@ -21,7 +22,6 @@ import ViewResources from "./ViewResources";
 import Notifications from "./Notifications";
 import Settings from "./Settings";
 import Schedule from "./Schedule";
-import axios from 'axios'
 import AssignmentDetail from "./AssignmentDetail";
 import StudentCourseDetails from "./StudentCourseDetails";
 import BatchDetails from "./BatchDetails";
@@ -30,6 +30,7 @@ import GenerateCertificate from "./GenerateCertificate";
 
 const StudentDashboard2 = () => {
   const [loading, setLoading] = useState(false); // State to handle loading
+  const [notice, setNotice] = useState([])
   const [error, setError] = useState(null); // State to handle errors
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
   const [openDropdown, setOpenDropdown] = useState(null); // State for sidebar dropdowns
@@ -47,6 +48,28 @@ const StudentDashboard2 = () => {
 
     }
     fetchuserdata()
+  }, []);
+
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        // setLoading(true);
+        const response = await axios.get("http://localhost:3000/notifications", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const studentNotices = (response.data.data || []).filter(
+          (notice) => notice.recipientType === "all"
+        );
+        setNotice(studentNotices);
+      } catch (error) {
+        console.error("Error fetching notices:", error);
+        toast.error("Failed to load notices");
+      }
+    };
+
+    fetchNotices();
   }, []);
 
   // Handle logout
@@ -372,6 +395,17 @@ const StudentDashboard2 = () => {
 
           {/* Right Section: User Profile */}
           <div className="flex-align gap-16">
+            <Link to="/student/notifications" className="relative inline-block">
+              <span className="icon border h-40 w-40 flex items-center justify-center rounded-full text-blue-500 hover:bg-blue-50 transition">
+                <i className="ph ph-bell text-xl"></i>
+              </span>
+              {notice.length > 0 && (
+                <span className="absolute top-2 right-0 inline-flex items-center justify-center p-1 text-[11px] h-24 w-24 font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-blue-600 rounded-full">
+                  {notice.length}
+                </span>
+              )}
+            </Link>
+
             <div className="relative border-[1px] rounded-[100px] py-[7px] hover:bg-zinc-200 transition">
               <button
                 onClick={toggleDropdown}

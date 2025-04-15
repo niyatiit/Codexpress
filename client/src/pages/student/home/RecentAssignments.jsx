@@ -31,12 +31,12 @@ const RecentAssignments = ({ assignments }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-28 mt-8">
-      {/* <div className="flex justify-between items-center mb-30 border-b pb-4">
+      <div className="flex justify-between items-center mb-30 border-b pb-4">
         <h4 className="text-xl font-semibold text-gray-800">Recent Assignments</h4>
-        <a href='student/view/assignments' className="text-blue-600 text-sm font-medium hover:text-blue-800">
+        <Link to='assignments' className="text-blue-600 text-sm font-medium hover:text-blue-800">
           View All
-        </a>
-      </div> */}
+        </Link>
+      </div>
       
       <div className="overflow-x-auto">
         <div className="grid gap-4">

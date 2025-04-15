@@ -103,10 +103,10 @@ router.get("/check-enrollment", async (req, res) => {
       return res.status(400).json({ error: "Invalid userId or courseId format." });
     }
 
-    console.log("Checking for enrollment:", {
-      userId: userObjectId,
-      courseId: courseObjectId,
-    });
+    // console.log("Checking for enrollment:", {
+    //   userId: userObjectId,
+    //   courseId: courseObjectId,
+    // });
 
     const enrollment = await Enrollment.findOne({
       user_id: userObjectId,
@@ -114,7 +114,7 @@ router.get("/check-enrollment", async (req, res) => {
       "courses.enrollment_status": "enrolled",
     });
 
-    console.log("Enrollment found:", enrollment);
+    // console.log("Enrollment found:", enrollment);
 
     res.json({ isEnrolled: !!enrollment });
   } catch (error) {

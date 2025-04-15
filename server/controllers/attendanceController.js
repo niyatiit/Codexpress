@@ -248,8 +248,92 @@ exports.getStudentAttendanceHistory = async (req, res) => {
     });
   }
 };
+exports.getAttendanceSummary = async (req, res) => {
+  try {
+    // Destructure query parameters from the request
+    const { courseId, batchId, startDate, endDate } = req.query;
 
+    // Validate required parameters
+    if (!courseId || !batchId || !startDate || !endDate) {
+      return res
+        .status(400)
+        .json({ error: "Missing required query parameters." });
+    }
 
+    // Convert startDate and endDate into Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Query the attendance records that match the courseId, batchId and date range.
+    // If your course_id and batch_id fields are stored as ObjectId, then convert them.
+    const attendanceRecords = await Attendance.find({
+      course_id: new mongoose.Types.ObjectId(courseId),
+      batch_id: new mongoose.Types.ObjectId(batchId),
+      date: { $gte: start, $lte: end },
+    }).lean();
+
+    // Initialize accumulators
+    let totalPresent = 0;
+    let totalAbsent = 0;
+    let totalLate = 0;
+    let studentIds = new Set();
+    const dailyData = [];
+
+    // Process each attendance record to build daily data and accumulate summary info
+    attendanceRecords.forEach((record) => {
+      // Counters for the current day
+      let presentCount = 0;
+      let absentCount = 0;
+      let lateCount = 0;
+
+      // Loop through the attendance array in the record
+      record.attendance.forEach((entry) => {
+        // Count each status accordingly
+        if (entry.status === "Present") {
+          presentCount++;
+        } else if (entry.status === "Absent") {
+          absentCount++;
+        } else if (entry.status === "Late") {
+          lateCount++;
+        }
+        // Add student id to the set to track total students overall
+        studentIds.add(entry.user_id.toString());
+      });
+
+      // Add the daily summary into the dailyData array.
+      // Optionally, format the date as needed.
+      dailyData.push({
+        date: record.date, // You can use a formatted string if required
+        present: presentCount,
+        absent: absentCount,
+        late: lateCount,
+      });
+
+      // Accumulate totals
+      totalPresent += presentCount;
+      totalAbsent += absentCount;
+      totalLate += lateCount;
+    });
+
+    // Assuming that each record logs attendance for all students,
+    // the total number of unique student ids encountered is the totalStudents.
+    const totalStudents = studentIds.size;
+
+    // Build the summary object
+    const summary = {
+      totalStudents,
+      totalPresent,
+      totalAbsent,
+      totalLate,
+    };
+
+    // Return the data as JSON
+    return res.status(200).json({ dailyData, summary });
+  } catch (error) {
+    console.error("Error in getAttendanceSummary:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 // Update attendance status for a student
 exports.updateStudentAttendance = async (req, res) => {
   const session = await mongoose.startSession();
