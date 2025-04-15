@@ -329,7 +329,6 @@ exports.getBatchesByCourse = async (req, res) => {
     const batches = await Batch.find({
       course_id: courseId
     });
-    console.log(batches);
 
     // Check if batches exist
     if (!batches || batches.length === 0) {
@@ -430,5 +429,27 @@ exports.enrollInCourse = async (req, res) => {
     res.status(201).json({ success: true, enrollment });
   } catch (error) {
     res.status(500).json({ message: "Error enrolling in course", error });
+  }
+};
+
+
+exports.unassignFaculty = async (req, res) => {
+  try {
+    const { courseId, facultyId } = req.params;
+    
+    const course = await Course.findByIdAndUpdate(
+      courseId,
+      { $pull: { faculty_ids: facultyId } },
+      { new: true }
+    );
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    res.json({ success: true, message: 'Faculty unassigned successfully' });
+  } catch (error) {
+    console.error('Error unassigning faculty:', error);
+    res.status(500).json({ success: false, message: 'Failed to unassign faculty' });
   }
 };

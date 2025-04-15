@@ -1,251 +1,112 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { format } from 'date-fns';
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ManageNotifications = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notices, setNotices] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [recipientType, setRecipientType] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const notificationsPerPage = 10;
+
+  const fetchNotices = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://localhost:3000/notifications", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      console.log(response.data.data || []);
+      setNotices(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching notices:", error);
+      toast.error("Failed to load notices");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true);
-        const { data } = await getNotifications();
-        setNotifications(data);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNotifications();
+    fetchNotices();
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this notification?")) {
-      try {
-        await deleteNotification(id);
-        setNotifications(notifications.filter(notification => notification._id !== id));
-      } catch (error) {
-        console.error("Failed to delete notification:", error);
-      }
-    }
-  };
-
-  const handleStatusChange = async (id, currentStatus) => {
-    const newStatus = currentStatus === 'draft' ? 'published' : 'draft';
+    const confirm = window.confirm("Do you want to delete this notice?");
+    if (!confirm) return;
     try {
-      await updateNotificationStatus(id, newStatus);
-      setNotifications(notifications.map(notification => 
-        notification._id === id 
-          ? { ...notification, status: newStatus } 
-          : notification
-      ));
-    } catch (error) {
-      console.error("Failed to update notification status:", error);
+      await axios.delete(`http://localhost:3000/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      toast.success("Notice deleted");
+      fetchNotices();
+    } catch (err) {
+      console.error("Delete error:", err);
+      toast.error("Failed to delete notice");
     }
   };
-
-  const filteredNotifications = notifications.filter(notification => 
-    notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    notification.message.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Pagination logic
-  const indexOfLastNotification = currentPage * notificationsPerPage;
-  const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
-  const currentNotifications = filteredNotifications.slice(
-    indexOfFirstNotification,
-    indexOfLastNotification
-  );
-  const totalPages = Math.ceil(filteredNotifications.length / notificationsPerPage);
-
-  if (loading) {
-    return (
-      <div className="dashboard-body">
-        <div className="text-center py-5">
-          <div className="spinner-border text-main-600" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="dashboard-body">
-      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-        <div className="breadcrumb mb-24">
-          <ul className="flex-align gap-4">
-            <li>
-              <Link to="/admin" className="text-gray-800 fw-normal text-15 hover-text-main-600">
-                Home
-              </Link>
-            </li>
-            <li>
-              <span className="text-gray-500 fw-normal d-flex">
-                <i className="ph ph-caret-right"></i>
-              </span>
-            </li>
-            <li>
-              <span className="text-main-600 fw-normal text-15">Manage Notifications</span>
-            </li>
-          </ul>
-        </div>
+      <ToastContainer />
+      <h2 className="mb-4 text-xl font-semibold">Manage Notifications</h2>
 
-        <div>
-          <Link to="/admin/add/notification" className="btn btn-main rounded-pill py-9">
-            <i className="ph ph-plus-circle me-2"></i> Add Notification
-          </Link>
+      {/* Add Notice */}
+      {/* <div className="card p-4 mb-6">
+        <h5 className="mb-4">Add New Notice</h5>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            className="form-control mb-2"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <select
+            className="form-select mb-3"
+            value={recipientType}
+            onChange={(e) => setRecipientType(e.target.value)}
+          >
+            <option value="all">General (All)</option>
+            <option value="faculty">Faculty Only</option>
+          </select>
+          <button className="btn btn-main rounded-pill" onClick={handleAddNotice}>
+            Add Notice
+          </button>
         </div>
-      </div>
+      </div> */}
 
-      <div className="card">
-        <div className="card-header border-bottom border-gray-100 flex-between gap-8 flex-wrap">
-          <h5 className="mb-0 text-gray-800">Notifications</h5>
-          <div className="search-bar">
-            <div className="input-group">
-              <span className="input-group-text bg-transparent">
-                <i className="ph ph-magnifying-glass"></i>
-              </span>
-              <input
-                type="text"
-                placeholder="Search notifications..."
-                className="form-control text-gray-800"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+      {/* Notices List */}
+      <div className="card p-4">
+        <h5 className="mb-4">All Notices ({notices.length})</h5>
+        {loading ? (
+          <p>Loading...</p>
+        ) : notices.length > 0 ? (
+          <div className="grid gap-4">
+            {notices.map((notice) => (
+              <div key={notice._id} className="p-3 border rounded shadow-sm bg-gray-50">
+                <div className="flex justify-between items-center">
+                  <h6 className="font-semibold text-blue-700">{notice.title}</h6>
+                  <span className={`badge ${notice.recipientType === "faculty" ? "bg-purple-100 text-blue-800" : "bg-green-100 text-green-800"}`}>
+                    {notice.recipientType == "faculty" ? "Faculty" : "General"}
+                  </span>
+                </div>
+                <p className="text-gray-700 my-2">{notice.description}</p>
+                <div className="text-sm text-gray-500 mb-2">{new Date(notice.createdAt).toLocaleString()}</div>
+                <button className="btn btn-danger btn-sm rounded-pill" onClick={() => handleDelete(notice._id)}>
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
-        <div className="card-body">
-          {notifications.length === 0 ? (
-            <div className="text-center py-5">
-              <div className="mb-4">
-                <i className="ph ph-bell-slash text-gray-400" style={{ fontSize: '3rem' }}></i>
-              </div>
-              <h5 className="text-gray-800 mb-2">No Notifications Found</h5>
-              <p className="text-gray-600 mb-4">You haven't created any notifications yet</p>
-              <Link to="/admin/add/notification" className="btn btn-main rounded-pill">
-                Create Your First Notification
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="table-responsive">
-                <table className="table table-hover">
-                  <thead>
-                    <tr>
-                      <th className="text-gray-800">Title</th>
-                      <th className="text-gray-800">Recipient Group</th>
-                      <th className="text-gray-800">Date Sent</th>
-                      <th className="text-gray-800">Status</th>
-                      <th className="text-gray-800">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentNotifications.map((notification) => (
-                      <tr key={notification._id}>
-                        <td className="text-gray-800 fw-medium">{notification.title}</td>
-                        <td className="text-gray-800">
-                          {notification.recipientType === 'all' ? 'Everyone' : 
-                           notification.recipientType === 'student' ? 'Students' : 'Faculty'}
-                          {notification.course && ` (Course: ${notification.course.name})`}
-                          {notification.batch && ` (Batch: ${notification.batch.name})`}
-                        </td>
-                        <td className="text-gray-800">
-                          {format(new Date(notification.createdAt), 'MMM dd, yyyy hh:mm a')}
-                        </td>
-                        <td className="text-gray-800">
-                          <span className={`badge ${
-                            notification.status === 'published' 
-                              ? 'bg-success' 
-                              : 'bg-warning'
-                          }`}>
-                            {notification.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <Link 
-                              to={`/edit-notification/${notification._id}`}
-                              className="btn btn-sm btn-primary"
-                            >
-                              <i className="ph ph-pencil-simple"></i>
-                            </Link>
-                            <button 
-                              onClick={() => handleStatusChange(
-                                notification._id, 
-                                notification.status
-                              )}
-                              className={`btn btn-sm ${
-                                notification.status === 'published'
-                                  ? 'btn-secondary'
-                                  : 'btn-success'
-                              }`}
-                            >
-                              {notification.status === 'published' 
-                                ? <i className="ph ph-eye-slash"></i>
-                                : <i className="ph ph-eye"></i>}
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(notification._id)}
-                              className="btn btn-sm btn-danger"
-                            >
-                              <i className="ph ph-trash"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <nav className="mt-4">
-                  <ul className="pagination justify-content-center">
-                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                      <button 
-                        className="page-link"
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      >
-                        Previous
-                      </button>
-                    </li>
-                    
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                      <li 
-                        key={page} 
-                        className={`page-item ${currentPage === page ? 'active' : ''}`}
-                      >
-                        <button 
-                          className="page-link"
-                          onClick={() => setCurrentPage(page)}
-                        >
-                          {page}
-                        </button>
-                      </li>
-                    ))}
-                    
-                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                      <button 
-                        className="page-link"
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      >
-                        Next
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
-              )}
-            </>
-          )}
-        </div>
+        ) : (
+          <p>No notices available</p>
+        )}
       </div>
     </div>
   );

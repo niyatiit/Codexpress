@@ -11,6 +11,7 @@ const MarkAttendance = () => {
   const [selectedBatchName, setSelectedBatchName] = useState("");
   const [students, setStudents] = useState([]);
   const [attendanceStatus, setAttendanceStatus] = useState({});
+  const [attendanceAlreadyMarked, setAttendanceAlreadyMarked] = useState(false);
   const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
   const [attendanceDate] = useState(() => {
@@ -21,7 +22,8 @@ const MarkAttendance = () => {
     courses: false,
     batches: false,
     students: false,
-    submitting: false
+    submitting: false,
+    checking: false
   });
   const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -50,7 +52,7 @@ const MarkAttendance = () => {
       }
     };
     fetchCourses();
-  }, []);
+  }, [userId]);
 
   // Fetch batches when course is selected
   useEffect(() => {
@@ -64,6 +66,7 @@ const MarkAttendance = () => {
         setSelectedBatchId("");
         setSelectedBatchName("");
         setStudents([]);
+        setAttendanceAlreadyMarked(false);
       } catch (error) {
         setMessage({ text: "Failed to load batches", type: "error" });
         console.error("Error fetching batches:", error);
@@ -74,13 +77,36 @@ const MarkAttendance = () => {
     fetchBatches();
   }, [selectedCourseId]);
 
-  // Fetch students when batch is selected
+  // Fetch students and check attendance when batch is selected
   useEffect(() => {
-    const fetchStudents = async () => {
-      if (!selectedBatchId) return;
+    const fetchStudentsAndCheckAttendance = async () => {
+      if (!selectedBatchId || !selectedCourseId) return;
 
       try {
-        setLoading(prev => ({ ...prev, students: true }));
+        setLoading(prev => ({ ...prev, students: true, checking: true }));
+        
+        // First check if attendance is already marked
+        try {
+          const checkResponse = await axios.get(
+            `http://localhost:3000/attendance/check?date=${attendanceDate}&batch_id=${selectedBatchId}&course_id=${selectedCourseId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          if (checkResponse.data.exists) {
+            setAttendanceAlreadyMarked(true);
+            setMessage({
+              text: "Attendance already marked for today",
+              type: "warning"
+            });
+          }
+        } catch (error) {
+          console.log("Error checking attendance:", error);
+        }
+
+        // Then fetch students
         const response = await axios.get(`http://localhost:3000/enrollments/batch/${selectedBatchId}`);
 
         // Filter out students who don't have user_id populated
@@ -93,18 +119,20 @@ const MarkAttendance = () => {
         // Initialize attendance status with 'Absent' as default
         const initialStatus = {};
         validStudents.forEach(student => {
-          initialStatus[student.user_id._id] = "Absent"; // Default to Absent
+          initialStatus[student.user_id._id] = "Absent";
         });
         setAttendanceStatus(initialStatus);
+
       } catch (error) {
         setMessage({ text: "Failed to load students", type: "error" });
         console.error("Error fetching students:", error);
       } finally {
-        setLoading(prev => ({ ...prev, students: false }));
+        setLoading(prev => ({ ...prev, students: false, checking: false }));
       }
     };
-    fetchStudents();
-  }, [selectedBatchId]);
+
+    fetchStudentsAndCheckAttendance();
+  }, [selectedBatchId, selectedCourseId, attendanceDate]);
 
   const handleCourseChange = (e) => {
     const courseId = e.target.value;
@@ -115,6 +143,7 @@ const MarkAttendance = () => {
     setSelectedBatchName("");
     setStudents([]);
     setAttendanceStatus({});
+    setAttendanceAlreadyMarked(false);
     setMessage({ text: "", type: "" });
   };
 
@@ -125,6 +154,7 @@ const MarkAttendance = () => {
     setSelectedBatchName(batchName);
     setStudents([]);
     setAttendanceStatus({});
+    setAttendanceAlreadyMarked(false);
     setMessage({ text: "", type: "" });
   };
 
@@ -142,8 +172,6 @@ const MarkAttendance = () => {
   };
 
   const handleSubmitAttendance = async () => {
-    // console.log(attendanceStatus);
-
     // Validate batch selection
     if (!selectedBatchId) {
       setMessage({ text: "Please select a batch before submitting attendance", type: "error" });
@@ -175,31 +203,28 @@ const MarkAttendance = () => {
         batch_id: selectedBatchId,
         course_id: selectedCourseId,
         attendance: students.map((student) => ({
-          user_id: student.user_id._id, // ✅ was student_id before
+          user_id: student.user_id._id,
           status: attendanceStatus[student.user_id._id] || "Absent",
         })),
-
       };
-      console.log(attendanceData)
-      // Submit attendance to the server
-      const token = localStorage.getItem("token"); // or wherever you're storing the JWT
 
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:3000/attendance",
         attendanceData,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ✅ Add the token here
+            Authorization: `Bearer ${token}`,
           },
           validateStatus: (status) => status >= 200 && status < 500,
         }
       );
 
-
       // Handle response
       if (response.status === 201) {
         setMessage({ text: "Attendance submitted successfully!", type: "success" });
+        setAttendanceAlreadyMarked(true);
 
         // Reset form state after successful submission
         setTimeout(() => {
@@ -220,6 +245,7 @@ const MarkAttendance = () => {
         }
       } else if (response.status === 409) {
         // Handle conflict (attendance already marked)
+        setAttendanceAlreadyMarked(true);
         setMessage({
           text: response.data.message || "Attendance already marked for today",
           type: "warning"
@@ -252,7 +278,7 @@ const MarkAttendance = () => {
         <div className="breadcrumb mb-24">
           <ul className="flex-align gap-4">
             <li>
-              <Link to="/admin" className="text-gray-200 fw-normal text-15 hover-text-main-600">
+              <Link to="/faculty" className="text-gray-200 fw-normal text-15 hover-text-main-600">
                 Home
               </Link>
             </li>
@@ -347,7 +373,6 @@ const MarkAttendance = () => {
                 type="date"
                 id="attendanceDate"
                 value={attendanceDate}
-                onChange={(e) => setAttendanceDate(e.target.value)}
                 className="form-control"
                 disabled
               />
@@ -380,7 +405,7 @@ const MarkAttendance = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {students.map((student, index) => (
+                      {students.map((student) => (
                         <tr key={student._id}>
                           <td>{student.user_id.first_name} {student.user_id.last_name}</td>
                           <td>{student.user_id.email}</td>
@@ -390,6 +415,7 @@ const MarkAttendance = () => {
                                 type="button"
                                 className={`btn ${attendanceStatus[student.user_id._id] === 'Present' ? 'btn-success' : 'btn-success'}`}
                                 onClick={() => handleAttendanceChange(student.user_id._id, 'Present')}
+                                disabled={attendanceAlreadyMarked}
                               >
                                 Present
                               </button>
@@ -397,6 +423,7 @@ const MarkAttendance = () => {
                                 type="button"
                                 className={`btn ${attendanceStatus[student.user_id._id] === 'Absent' ? 'btn-danger' : 'btn-danger'}`}
                                 onClick={() => handleAttendanceChange(student.user_id._id, 'Absent')}
+                                disabled={attendanceAlreadyMarked}
                               >
                                 Absent
                               </button>
@@ -404,6 +431,7 @@ const MarkAttendance = () => {
                                 type="button"
                                 className={`btn ${attendanceStatus[student.user_id._id] === 'Late' ? 'btn-warning' : 'btn-warning'}`}
                                 onClick={() => handleAttendanceChange(student.user_id._id, 'Late')}
+                                disabled={attendanceAlreadyMarked}
                               >
                                 Late
                               </button>
@@ -424,13 +452,15 @@ const MarkAttendance = () => {
               <button
                 onClick={confirmSubmit}
                 className="btn btn-main rounded-pill"
-                disabled={loading.submitting}
+                disabled={loading.submitting || attendanceAlreadyMarked}
               >
                 {loading.submitting ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Submitting...
                   </>
+                ) : attendanceAlreadyMarked ? (
+                  "Attendance Already Marked"
                 ) : (
                   "Submit Attendance"
                 )}

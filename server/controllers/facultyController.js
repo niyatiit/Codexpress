@@ -46,7 +46,6 @@ exports.getAllFaculty = async (req, res) => {
 
 exports.getFacultyById = async (req, res) => {
   const { id } = req.params;
-  console.log("id is ", id);
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, message: "Invalid faculty ID" });
@@ -55,7 +54,6 @@ exports.getFacultyById = async (req, res) => {
   try {
     const faculty = await Faculty.findById(id).populate("user_id");
     // const faculty = await Faculty.findById(id);
-console.log("Faculty Found:", faculty);
 
     if (!faculty) {
       return res.status(404).json({ success: false, message: "Faculty not found" });
@@ -86,7 +84,6 @@ exports.updateFaculty = async (req, res) => {
 
 exports.getFacultyCourses= async(req,res)=>{
   const { id } = req.params;
-  console.log("id is ", id);
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, message: "Invalid faculty ID" });
@@ -95,7 +92,6 @@ exports.getFacultyCourses= async(req,res)=>{
   try {
     const faculty = await Faculty.findById(id).populate("courses");
     // const faculty = await Faculty.findById(id);
-console.log("Faculty Found:", faculty);
 
     if (!faculty) {
       return res.status(404).json({ success: false, message: "Faculty course not found" });

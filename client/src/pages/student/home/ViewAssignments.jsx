@@ -286,7 +286,7 @@ const ViewAssignments = () => {
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filteredAssignments.map((assignment) => (
-                    <Link to={`/student/assignments/${assignment._id}`}>
+                    // <Link to={`/student/assignments/${assignment._id}`}>
                     <div
                       key={assignment._id}
                       className={`bg-white border rounded-lg shadow-sm overflow-hidden transition-all hover:shadow-md ${isAssignmentDue(assignment.due_date) ? 'border-l-4 border-l-red-500 border-t-0 border-r-0 border-b-0' : 'border-l-4 border-l-blue-500 border-t-0 border-r-0 border-b-0'
@@ -331,20 +331,12 @@ const ViewAssignments = () => {
                         <div className="pt-3 border-t border-gray-100">
                           <div className="flex flex-col sm:flex-col sm:justify-between sm:items-center gap-3">
                             <div className="flex gap-2 flex-start justify-between">
-                              <a
-                                href={`http://localhost:3000/${assignment.file_url}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-2 text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-                                download
-                              >
-                                <i className="ph ph-download mr-1.5"></i> Download
-                              </a>
+                            
                               <Link
-                                to={`/student/assignments/submit/${assignment._id}`}
-                                className="inline-flex items-center px-3 py-2 text-xs font-medium bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-md transition-colors"
+                                to={`/student/assignments/${assignment._id}`}
+                                className="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-100 bg-blue-600 hover:bg-blue-200 rounded-md transition-colors"
                               >
-                                <i className="ph ph-upload mr-1.5"></i> Submit
+                                <i className="ph ph-upload mr-1.5"></i> View & Submit
                               </Link>
                             </div>
 
@@ -352,7 +344,7 @@ const ViewAssignments = () => {
                         </div>
                       </div>
                     </div>
-                    </Link>
+                    // </Link>
                   ))}
                 </div>
               )}

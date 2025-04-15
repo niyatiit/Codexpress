@@ -21,7 +21,7 @@ const Notifications = () => {
           },
         });
         const studentNotices = (response.data.data || []).filter(
-          (notice) => notice.recipientType === "allss"
+          (notice) => notice.recipientType === "all"
         );
         setNotices(studentNotices);
       } catch (error) {
@@ -82,11 +82,11 @@ const Notifications = () => {
 
       {/* Search */}
       <div className="card mb-24">
-        <div className="card-header border-bottom border-gray-100 flex-between">
+        {/* <div className="card-header border-bottom border-gray-100 flex-between">
           <h5 className="mb-0">Search Student Notices</h5>
-        </div>
+        </div> */}
         <div className="card-body">
-          <div className="mb-16">
+          <div className="mb-12">
             <label htmlFor="search" className="form-label fw-medium">
               Search by title or description
             </label>
@@ -105,7 +105,7 @@ const Notifications = () => {
       {/* Notices List */}
       <div className="card">
         <div className="card-header border-bottom border-gray-100 flex-between">
-          <h5 className="mb-0">
+          <h5 className="mb-0 text-md font-semibold">
             Student Notices{" "}
             <span className="text-gray-500 text-14 fw-normal ms-8">
               ({filteredNotices.length} found)

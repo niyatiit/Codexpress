@@ -41,6 +41,7 @@ const AssignmentDetail = () => {
         );
 
         if (submissionRes.data.data) {
+          console.log(submissionRes.data.data);
           setSubmission(submissionRes.data.data);
         }
 
@@ -65,28 +66,29 @@ const AssignmentDetail = () => {
       toast.warning("Please select a file to submit");
       return;
     }
-
+  
     try {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("file", file);
-
+      formData.append("file", file); // Append the actual file object
+  
       const response = await axios.post(
         `http://localhost:3000/assignments/submit/${assignmentId}`,
-        formData,
+        formData, // Send the FormData object directly
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data", // Important for file uploads
           },
         }
       );
-
+  
       setSubmission(response.data.data);
       toast.success("Assignment submitted successfully!");
+      setFile(null); // Reset file state after submission
     } catch (error) {
       console.error("Error submitting assignment:", error);
-      toast.error("Failed to submit assignment");
+      toast.error(error.response?.data?.message || "Failed to submit assignment");
     } finally {
       setIsSubmitting(false);
     }
@@ -188,22 +190,22 @@ const AssignmentDetail = () => {
         <div className="card-body">
           <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
-              <div className="mb-6">
-                <h6 className="text-gray-600 mb-2">Description</h6>
+              <div className="mb-36">
+                <h6 className="text-blue-600 mb-2">Description</h6>
                 <p className="text-gray-800">
                   {assignment.description || "No description provided"}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-2 gap-4 mb-36">
                 <div>
-                  <h6 className="text-gray-600 mb-2">Posted Date</h6>
+                  <h6 className="text-green-600 mb-2">Posted Date</h6>
                   <p className="text-gray-800">
                     {formatDate(assignment.created_at)}
                   </p>
                 </div>
                 <div>
-                  <h6 className="text-gray-600 mb-2">Due Date</h6>
+                  <h6 className="text-red-600 mb-2">Due Date</h6>
                   <p className={`${
                     isAssignmentDue(assignment.due_date) ? 'text-red-500' : 'text-gray-800'
                   }`}>
@@ -216,7 +218,7 @@ const AssignmentDetail = () => {
               <div className="mb-6">
                 <h6 className="text-gray-600 mb-2">Assignment File</h6>
                 <a
-                  href={`http://localhost:3000${assignment.file_url}`}
+                  href={`http://localhost:3000/${assignment.file_url}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn bg-blue-500 hover:bg-blue-600 text-white inline-flex items-center"

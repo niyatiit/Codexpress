@@ -180,6 +180,74 @@ exports.getDailyAttendance = async (req, res) => {
     });
   }
 };
+// In your attendance controller file
+exports.checkAttendanceExists = async (req, res) => {
+  try {
+    const { date, batch_id, course_id } = req.query;
+
+    if (!date || !batch_id || !course_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required parameters'
+      });
+    }
+
+    const attendance = await Attendance.findOne({
+      date: new Date(date),
+      batch_id,
+      course_id
+    });
+
+    res.json({
+      exists: !!attendance
+    });
+  } catch (error) {
+    console.error('Error checking attendance:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error checking attendance'
+    });
+  }
+};
+exports.getStudentAttendanceHistory = async (req, res) => {
+  try {
+    const studentId = req.user.id.toString();
+
+    const records = await Attendance.find({
+      'attendance.user_id': studentId
+    })
+      .select('date batch_id course_id attendance')
+      .populate('batch_id', 'name')
+      .populate('course_id', 'name')
+      .sort({ date: -1 });
+
+    // Filter only this student's attendance from the array
+    const result = records.map((record) => {
+      const studentRecord = record.attendance.find(a => a.user_id.toString() === studentId.toString());
+      return {
+        _id: record._id,
+        date: record.date,
+        status: studentRecord?.status || 'N/A',
+        batch: record.batch_id.name,
+        course: record.course_id.name
+      };
+    });
+    console.log("result : ",result)
+
+    res.status(200).json({
+      success: true,
+      data: result
+    });
+
+  } catch (error) {
+    console.error("Error fetching student attendance history:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch attendance",
+      error: error.message
+    });
+  }
+};
 
 
 // Update attendance status for a student

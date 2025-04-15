@@ -23,6 +23,10 @@ import Settings from "./Settings";
 import Schedule from "./Schedule";
 import axios from 'axios'
 import AssignmentDetail from "./AssignmentDetail";
+import StudentCourseDetails from "./StudentCourseDetails";
+import BatchDetails from "./BatchDetails";
+import Certificates from "./Certificates";
+import GenerateCertificate from "./GenerateCertificate";
 
 const StudentDashboard2 = () => {
   const [loading, setLoading] = useState(false); // State to handle loading
@@ -130,6 +134,10 @@ const StudentDashboard2 = () => {
                   <span className="text">My Courses</span>
                 </a>
                 <ul className="sidebar-submenu">
+
+                  <li className={`sidebar-submenu__item ${isActive("/student/courses/details") ? "active" : ""}`}>
+                    <Link to="/student/courses/details" className="sidebar-submenu__link">Courses Details</Link>
+                  </li>
                   <li className={`sidebar-submenu__item ${isActive("/student/enrolled/courses") ? "active" : ""}`}>
                     <Link to="/student/enrolled/courses" className="sidebar-submenu__link">Enrolled Courses</Link>
                   </li>
@@ -211,8 +219,8 @@ const StudentDashboard2 = () => {
                   </li>
                 </ul>
               </li>
-  {/* Assignments Dropdown */}
-  <li
+              {/* Assignments Dropdown */}
+              <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "assignments" || isDropdownActive(["/student/assignments", "/student/submit/assignment"])
                   ? "open"
                   : ""
@@ -227,24 +235,51 @@ const StudentDashboard2 = () => {
                   <span className="text">Assignments</span>
                 </a>
                 <ul className="sidebar-submenu">
-                  <li className={`sidebar-submenu__item ${isActive("/student/view/assignments") ? "active" : ""}`}>
+                  <li className={`sidebar-submenu__item ${isActive("/student/assignments") ? "active" : ""}`}>
                     <Link to="/student/assignments" className="sidebar-submenu__link">View Assignments</Link>
                   </li>
-                  <li className={`sidebar-submenu__item ${isActive("/student/submit/assignment") ? "active" : ""}`}>
+                  {/* <li className={`sidebar-submenu__item ${isActive("/student/submit/assignment") ? "active" : ""}`}>
                     <Link to="/student/submit/assignment" className="sidebar-submenu__link">Submit Assignment</Link>
+                  </li> */}
+                </ul>
+              </li>
+              {/* Certificate Dropdown */}
+              <li
+                className={`sidebar-menu__item has-dropdown ${openDropdown === "certificates" || isDropdownActive(["/student/assignments", "/student/submit/assignment"])
+                  ? "open"
+                  : ""
+                  }`}
+              >
+                <a
+                  href="#!"
+                  className="sidebar-menu__link"
+                  onClick={() => toggleSidebarDropdown("certificates")}
+                >
+                  <span className="icon"><i className="ph ph-certificate"></i></span>
+                  <span className="text">Certificates</span>
+                </a>
+                <ul className="sidebar-submenu">
+                  <li className={`sidebar-submenu__item ${isActive("/student/certificates") ? "active" : ""}`}>
+                    <Link to="/student/certificates" className="sidebar-submenu__link">View Certificate</Link>
                   </li>
+                  <li className={`sidebar-submenu__item ${isActive("/student/generate/certificates") ? "active" : ""}`}>
+                    <Link to="/student/generate/certificates" className="sidebar-submenu__link">Generate Certificate</Link>
+                  </li>
+                  {/* <li className={`sidebar-submenu__item ${isActive("/student/submit/assignment") ? "active" : ""}`}>
+                    <Link to="/student/submit/assignment" className="sidebar-submenu__link">Submit Assignment</Link>
+                  </li> */}
                 </ul>
               </li>
 
               {/* Schedule */}
-              <li className={`sidebar-menu__item ${isActive("/student/schedule") ? "active" : ""}`}>
+              {/* <li className={`sidebar-menu__item ${isActive("/student/schedule") ? "active" : ""}`}>
                 <Link to="/student/schedule" className="sidebar-menu__link">
                   <span className="icon"><i className="ph ph-calendar-blank"></i></span>
                   <span className="text">Schedule</span>
                 </Link>
-              </li>
+              </li> */}
 
-            
+
               {/* Quizzes Dropdown */}
               <li
                 className={`sidebar-menu__item has-dropdown ${openDropdown === "quizzes" || isDropdownActive(["/student/available/quizzes", "/student/attempted/quizzes", "/student/review/quiz"])
@@ -385,19 +420,22 @@ const StudentDashboard2 = () => {
             <Route path="enrolled/courses" element={<EnrolledCourses />} />
             <Route path="available/courses" element={<AvailableCourses />} />
             <Route path="my-batches" element={<MyBatches />} />
+            <Route path="batch-details/:batchId" element={<BatchDetails />} />
             <Route path="scan/qr" element={<ScanQRCode />} />
             <Route path="view/attendance" element={<ViewAttendance />} />
             <Route path="assignments" element={<ViewAssignments />} />
-            <Route path="submit/assignment" element={<SubmitAssignment />} />
+            {/* <Route path="submit/assignment" element={<SubmitAssignment />} /> */}
             <Route path="available/quizzes" element={<AvailableQuizzes />} />
             <Route path="attempted/quizzes" element={<AttemptedQuizzes />} />
             <Route path="review/quiz" element={<ReviewQuizAnswers />} />
             <Route path="schedule" element={<Schedule />} />
             <Route path="upcoming/exams" element={<UpcomingExams />} />
             <Route path="exam/results" element={<ExamResults />} />
+            <Route path="certificates" element={<Certificates />} />
+            <Route path="generate/certificates" element={<GenerateCertificate />} />
             <Route path="view/resources" element={<ViewResources />} />
             <Route path="notifications" element={<Notifications />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="courses/details" element={<StudentCourseDetails />} />
             <Route path="assignments/:assignmentId" element={<AssignmentDetail />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

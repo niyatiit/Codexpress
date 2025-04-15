@@ -14,7 +14,6 @@ const Dashboard = () => {
         const fetchStudentData = async () => {
             try {
                 const response = await axios.get(`http://localhost:3000/users/${userId}`);
-                console.log("Student Data Response:", response.data); // Log the response
                 if (response.data.length > 0) {
                     setStudent(response.data[0]); // Use the first element in the array
                 }
@@ -31,7 +30,6 @@ const Dashboard = () => {
         const fetchProgress = async () => {
             try {
                 const response = await axios.get(`http://localhost:3000/student/progress/${userId}`);
-                console.log("Enrollments Re sponse:", response.data.enrollments); // Debugging
                 setEnrollments(response.data.enrollments);
             } catch (error) {
                 console.error("Error fetching progress:", error);
@@ -153,7 +151,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-               
                     {/* Recently Uploaded Assignments */}
                     <RecentAssignments assignments={assignments} />
 

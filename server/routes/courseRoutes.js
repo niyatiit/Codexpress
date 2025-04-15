@@ -12,6 +12,7 @@ const {
   getBatchesByCourse,
   checkEnrollment,
   enrollInCourse,
+  unassignFaculty,
   assignFacultyToCourse
 } = require("../controllers/courseController");
 const { authenticate } = require("../middleware/authMiddleware")
@@ -38,6 +39,10 @@ router.post("/:id/enroll", enrollInCourse);
 // Course resources routes (optional)
 router.post("/:id/add-resource", addResourceToCourse); // Add a resource to a course
 // router.delete("/:id/remove-resource/:resourceId", removeResourceFromCourse); // Remove a resource from a course
+router.delete('/courses/:courseId/unassign-faculty/:facultyId', 
+  authenticate, 
+  unassignFaculty
+);
 
 router.post('/:courseId/reviews', reviewController.submitReview);
 router.get('/:courseId/batches', getBatchesByCourse)

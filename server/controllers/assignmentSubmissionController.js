@@ -12,6 +12,7 @@ exports.submitAssignment = async (req, res) => {
 
     // Check if assignment exists
     const assignment = await Assignment.findById(assignment_id);
+    console.log("here : ",assignment)
     if (!assignment) {
       // Delete the uploaded file if assignment doesn't exist
       if (req.file) {
@@ -24,27 +25,27 @@ exports.submitAssignment = async (req, res) => {
     }
 
     // Check if student is enrolled in the course/batch
-    const isEnrolled = await User.findOne({
-      _id: student_id,
-      enrolled_courses: {
-        $elemMatch: {
-          course_id: assignment.course_id,
-          batch_id: assignment.batch_id,
-          enrollment_status: 'enrolled'
-        }
-      }
-    });
+    // const isEnrolled = await User.findOne({
+    //   _id: student_id,
+    //   enrolled_courses: {
+    //     $elemMatch: {
+    //       course_id: assignment.course_id,
+    //       batch_id: assignment.batch_id,
+    //       enrollment_status: 'enrolled'
+    //     }
+    //   }
+    // });
 
-    if (!isEnrolled) {
-      // Delete the uploaded file if student is not enrolled
-      if (req.file) {
-        fs.unlinkSync(req.file.path);
-      }
-      return res.status(403).json({
-        success: false,
-        message: 'You are not enrolled in this course/batch'
-      });
-    }
+    // if (!isEnrolled) {
+    //   // Delete the uploaded file if student is not enrolled
+    //   if (req.file) {
+    //     fs.unlinkSync(req.file.path);
+    //   }
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: 'You are not enrolled in this course/batch'
+    //   });
+    // }
 
     // Determine if submission is late
     const isLate = new Date() > new Date(assignment.due_date);

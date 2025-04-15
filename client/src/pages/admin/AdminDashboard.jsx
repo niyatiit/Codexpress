@@ -36,6 +36,7 @@ import DownloadAll from './DownloadAll';
 import ManageReports from './ManageReports';
 import AttendanceReport from './AttendanceReport';
 import AddCertificate from './AddCertification';
+import FacultyAssignmentView from '../faculty/FacultyAssignmentView';
 const AdminDashboard = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const location = useLocation();
@@ -124,6 +125,11 @@ const AdminDashboard = () => {
                   <li className={`sidebar-submenu__item ${isActive('/admin/manage/courses') ? 'active' : ''}`}>
                     <Link to="/admin/manage/courses" className="sidebar-submenu__link">
                       View All Courses
+                    </Link>
+                  </li>
+                  <li className={`sidebar-submenu__item ${isActive('/admin/view/assigned/courses') ? 'active' : ''}`}>
+                    <Link to="/admin/view/assigned/courses" className="sidebar-submenu__link">
+                      View Courses Assignments
                     </Link>
                   </li>
                 </ul>
@@ -461,6 +467,8 @@ const AdminDashboard = () => {
           <Route path="add/batch" element={<AddBatch />} />
           <Route path="add/faculty" element={<AddFaculty />} />
           <Route path="assign/course" element={<AssignCourse />} />
+          <Route path="view/assigned/courses" element={<FacultyAssignmentView />} />
+
           <Route path="edit/course/:id" element={<EditCourse />} />
           <Route path="manage/courses" element={<ManageCourses />} />
           <Route path="manage/students" element={<ManageStudents />} />

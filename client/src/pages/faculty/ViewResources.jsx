@@ -298,7 +298,7 @@ const ViewResources = () => {
                               download
                             >
                               Download
-                            </a>
+                            </a>  
                             <button
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(resource._id)}

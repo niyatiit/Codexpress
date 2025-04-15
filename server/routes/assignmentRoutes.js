@@ -3,7 +3,9 @@ const upload = require("../config/multerConfig");
 const assignmentController = require("../controllers/assignmentController");
 const Assignment = require("../models/assignment.model");
 const router = express.Router();
-
+const assignmentMulter=require("../utils/assignmentMulterConfig")
+const submissionController=require("../controllers/assignmentSubmissionController")
+const {authenticate}=require("../middleware/authMiddleware")
 // Route to create assignments for multiple batches
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -114,18 +116,36 @@ router.get("/", assignmentController.getAssignments);
 
 router.post(
   "/submit/:assignment_id",
-  assignmentMulter.single("file"),
-  submissionController.submitAssignment
+  authenticate,
+    assignmentController.submitAssignment
 );
 
+router.get(
+  "/submissions/:assignment_id/user/:user_id",
+  authenticate,
+  assignmentController.getSubmissionForAssignmentOfStudent
+);
+
+// Get all submissions for an assignment (admin/faculty only)
 router.get(
   "/submissions/:assignment_id",
-  submissionController.getSubmissionsForAssignment
+  authenticate,
+  // authorize(['admin', 'faculty']), // Only allow admins and faculty
+  assignmentController.getSubmissionsForAssignment
+);
+
+
+// Faculty-specific routes
+router.get(
+  '/submissions/faculty',
+  authenticate,
+  assignmentController.getFacultySubmissions
 );
 
 router.get(
-  "/submission/:submission_id",
-  submissionController.getSubmission
+  '/faculty/assignments',
+  authenticate,
+  assignmentController.getFacultyAssignments
 );
 
 router.put(

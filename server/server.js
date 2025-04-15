@@ -52,8 +52,11 @@ const adminRoutes=require("./routes/adminRoutes")
 const attendanceRoutes=require("./routes/attendanceRoutes") 
 const resourceRoutes=require("./routes/resourceRoutes")
 const notificationRoutes=require("./routes/notificationRoutes")
+const certificateRoutes = require('./routes/certificateRoutes');
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/assignment-submissions', express.static(path.join(__dirname, 'uploads/assignment-submissions')));
+app.use('/certificates', express.static(path.join(__dirname, 'uploads/certificates')));
 
 
 const connectDB = require('./config/db')
@@ -80,7 +83,8 @@ app.use('/notifications',notificationRoutes)
 app.use("/admin", adminRoutes);
 app.use("/attendance", attendanceRoutes);
 app.use("/resources",resourceRoutes)
-    
+app.use('/certificates', certificateRoutes);
+
 app.get('/', async (req, res) => {
     // const saltRounds = 12;
     // const plainPassword = "$2b$12$bum7zP2kb.BLHirqTLEgZ.XuQfdh3nixXWE4lAjwzJiZIMrA0Dajm";

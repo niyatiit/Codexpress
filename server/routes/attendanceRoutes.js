@@ -9,6 +9,7 @@ router.post('/', auth.userVerification, attendanceController.markDailyAttendance
 // Get attendance records (with optional filters)
 router.get('/', validateAttendanceQuery, attendanceController.getDailyAttendance);
 
+router.get('/student/history', auth.userVerification, attendanceController.getStudentAttendanceHistory);
 
 // Update attendance record
 router.put('/:id', validateAttendance, attendanceController.updateStudentAttendance);

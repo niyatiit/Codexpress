@@ -1,770 +1,342 @@
-import React from "react";
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 const AssignmentSubmission = () => {
+  const FACULTY_ID = JSON.parse(localStorage.getItem("user"))?.id;; // Replace with actual faculty ID or pass as prop
+
+  const [loading, setLoading] = useState({
+    courses: false,
+    batches: false,
+    assignments: false,
+    submissions: false
+  });
+  const [error, setError] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedBatchId, setSelectedBatchId] = useState('');
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState('');
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000); // 10 seconds
+
+      return () => clearTimeout(timer); // cleanup in case component unmounts early
+    }
+  }, [error]);
+
+  // Fetch courses assigned to faculty
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(prev => ({ ...prev, courses: true }));
+        const response = await axios.get(`http://localhost:3000/faculty/${FACULTY_ID}/assigned-courses`);
+        setCourses(response.data.courses || []);
+      } catch (err) {
+        setError('Failed to load courses');
+        console.error("Error fetching courses:", err);
+      } finally {
+        setLoading(prev => ({ ...prev, courses: false }));
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  // Fetch batches when course is selected
+  useEffect(() => {
+    const fetchBatches = async () => {
+      if (!selectedCourseId) return;
+
+      try {
+        setLoading(prev => ({ ...prev, batches: true }));
+        const response = await axios.get(`http://localhost:3000/courses/${selectedCourseId}/batches`);
+        setBatches(response.data.data || []);
+        setSelectedBatchId('');
+        setAssignments([]);
+        setSubmissions([]);
+      } catch (err) {
+        setError('Failed to load batches');
+        console.error("Error fetching batches:", err);
+      } finally {
+        setLoading(prev => ({ ...prev, batches: false }));
+      }
+    };
+    fetchBatches();
+  }, [selectedCourseId]);
+
+  // Fetch assignments when batch is selected
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      if (!selectedCourseId || !selectedBatchId) return;
+
+      try {
+        setLoading(prev => ({ ...prev, assignments: true }));
+        const response = await axios.get(
+          `http://localhost:3000/assignments/course/${selectedCourseId}/batch/${selectedBatchId}`
+        );
+        setAssignments(response.data.data || []);
+        setSubmissions([]);
+      } catch (err) {
+        setError('Failed to load assignments');
+        console.error("Error fetching assignments:", err);
+      } finally {
+        setLoading(prev => ({ ...prev, assignments: false }));
+      }
+    };
+    fetchAssignments();
+  }, [selectedCourseId, selectedBatchId]);
+
+  // Fetch submissions for an assignment
+  const fetchSubmissions = async (assignmentId) => {
+    try {
+      setLoading(prev => ({ ...prev, submissions: true }));
+      setSelectedAssignmentId(assignmentId);
+      const response = await axios.get(`http://localhost:3000/assignments/submissions/${assignmentId}`);
+      setSubmissions(response.data.data || []);
+    } catch (err) {
+      setError('Failed to load submissions');
+      console.error("Error fetching submissions:", err);
+    } finally {
+      setLoading(prev => ({ ...prev, submissions: false }));
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString();
+  };
+
   return (
-      <div class="dashboard-body">
-        <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
-          {/* <!-- Breadcrumb Start --> */}
-          <div class="breadcrumb mb-24">
-            <ul class="flex-align gap-4">
-              <li>
-                <a
-                  href="index.html"
-                  class="text-gray-200 fw-normal text-15 hover-text-main-600"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                {" "}
-                <span class="text-gray-500 fw-normal d-flex">
-                  <i class="ph ph-caret-right"></i>
-                </span>{" "}
-              </li>
-              <li>
-                <span class="text-main-600 fw-normal text-15">Assignments</span>
-              </li>
-            </ul>
-          </div>
-          {/* <!-- Breadcrumb End --> */}
-
-          {/* <!-- Breadcrumb Right Start --> */}
-          <div class="flex-align gap-8 flex-wrap">
-            <div class="position-relative text-gray-500 flex-align gap-4 text-13">
-              <span class="text-inherit">Sort by: </span>
-              <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
-                <span class="text-lg">
-                  <i class="ph ph-funnel-simple"></i>
-                </span>
-                <select class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center">
-                  <option value="1" selected>
-                    Popular
-                  </option>
-                  <option value="1">Latest</option>
-                  <option value="1">Trending</option>
-                  <option value="1">Matches</option>
-                </select>
-              </div>
-            </div>
-            <div class="flex-align text-gray-500 text-13 border border-gray-100 rounded-4 ps-20 focus-border-main-600 bg-white">
-              <span class="text-lg">
-                <i class="ph ph-layout"></i>
+    <div className="min-h-screen dashboard-body p-6">
+      <div className="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
+        <div className="breadcrumb mb-24">
+          <ul className="flex-align gap-4">
+            <li>
+              <Link to="/faculty" className="text-gray-200 fw-normal text-15 hover-text-main-600">
+                Home
+              </Link>
+            </li>
+            <li>
+              <span className="text-gray-500 fw-normal d-flex">
+                <i className="ph ph-caret-right"></i>
               </span>
-              <select
-                class="form-control ps-8 pe-20 py-16 border-0 text-inherit rounded-4 text-center"
-                id="exportOptions"
-              >
-                <option value="" selected disabled>
-                  Export
-                </option>
-                <option value="csv">CSV</option>
-                <option value="json">JSON</option>
-              </select>
-            </div>
-          </div>
-          {/* <!-- Breadcrumb Right End --> */}
-        </div>
-
-        <div class="card overflow-hidden">
-          <div class="card-body p-0">
-            <table id="assignmentTable" class="table table-striped">
-              <thead>
-                <tr>
-                  <th class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                        id="selectAll"
-                      />
-                    </div>
-                  </th>
-                  <th class="h6 text-gray-300">Students</th>
-                  <th class="h6 text-gray-300">Lesson</th>
-                  <th class="h6 text-gray-300">Deadline</th>
-                  <th class="h6 text-gray-300">Sent</th>
-                  <th class="h6 text-gray-300">Status</th>
-                  <th class="h6 text-gray-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img1.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Jane Cooper
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Web & Mobile Design
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-teal-50 text-teal-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-teal-600 rounded-circle flex-shrink-0"></span>
-                      Send
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img2.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Albert Flores
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Graphics Design
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Dec 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Feb 18, 2025
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
-                      Checking
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img3.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Leslie Alexander
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">Figma</span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Feb 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-purple-50 text-purple-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-purple-600 rounded-circle flex-shrink-0"></span>
-                      Assigned
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img4.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Guy Hawkins
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Creating Web Design
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      June 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      June 21, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-danger-50 text-danger-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-danger-600 rounded-circle flex-shrink-0"></span>
-                      Decline
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img5.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Jacob Jones
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Complete Wordpress Course
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      June 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      July 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-green-50 text-green-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
-                      Accepted
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img2.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Guy Hawkins
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Webflow Essentials Course
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Aug 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Sep 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img1.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Jacob Jones
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Beginners Guide to Design
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Sep 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Sep 22, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-pink-50 text-pink-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-pink-600 rounded-circle flex-shrink-0"></span>
-                      Not Submitted
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img5.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Albert Flores
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      AngularJS Crash Course{" "}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Oct 19, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img3.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Jenny Wilson
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Complete Wordpress Course
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Sep 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Dec 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img4.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Sunny Maria
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Responsive Web Design
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Oct 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img5.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Eleanor Pena
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Theme Development
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Oct 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Dec 20, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="fixed-width">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input border-gray-200 rounded-4"
-                        type="checkbox"
-                      />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="flex-align gap-8">
-                      <img
-                        src="assets/images/thumbs/student-img1.png"
-                        alt=""
-                        class="w-40 h-40 rounded-circle"
-                      />
-                      <span class="h6 mb-0 fw-medium text-gray-300">
-                        Albert Flores
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Complete Python Bootcamp
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Nov 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="h6 mb-0 fw-medium text-gray-300">
-                      Dec 18, 2024
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-13 py-2 px-8 bg-success-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                      <span class="w-6 h-6 bg-success-600 rounded-circle flex-shrink-0"></span>
-                      Active
-                    </span>
-                  </td>
-                  <td>
-                    <a
-                      href="#"
-                      class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white"
-                    >
-                      View More
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer flex-between flex-wrap">
-            <span class="text-gray-900">Showing 1 to 10 of 12 entries</span>
-            <ul class="pagination flex-align flex-wrap">
-              <li class="page-item active">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  1
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  2
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  3
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  ...
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  8
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  9
-                </a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium"
-                  href="#"
-                >
-                  10
-                </a>
-              </li>
-            </ul>
-          </div>
+            </li>
+            <li>
+              <span className="text-main-600 fw-normal text-15">Assignment Submissions</span>
+            </li>
+          </ul>
         </div>
       </div>
-    
+
+      {/* <h1 className="text-3xl font-bold text-blue-800 mb-6">Assignment Submissions</h1> */}
+      {error && (
+        <div
+          className="bg-red-100 border-l-4 border-red-500 flex items-center justify-between text-red-700 p-4 mb-4"
+          role="alert"
+        >
+          <p>{error}</p>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-700 text-xl font-bold"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Left sidebar - filters */}
+        <div className="lg:col-span-1 bg-white p-16 rounded-lg shadow-md">
+          <h2 className="text-lg text-blue-700 mb-4">Filter Submissions</h2>
+          <div className="space-y-4">
+            {/* Course selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Course</label>
+              <select
+                value={selectedCourseId}
+                onChange={
+                  (e) => {
+                    setSelectedCourseId(e.target.value)
+                    setBatches([])
+                    // selectedBatchId("")
+                  }
+                }
+                disabled={loading.courses}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select a course</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course._id}>
+                    {course.name}
+                  </option>
+                ))}
+              </select>
+              {loading.courses && <div className="mt-2 text-blue-600">Loading courses...</div>}
+            </div>
+
+            {/* Batch selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Batch</label>
+              <select
+                value={selectedBatchId}
+                onChange={(e) => setSelectedBatchId(e.target.value)}
+                disabled={!selectedCourseId || loading.batches}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select a batch</option>
+                {batches.map((batch) => (
+                  <option key={batch._id} value={batch._id}>
+                    {batch.name}
+                  </option>
+                ))}
+              </select>
+              {loading.batches && <div className="mt-2 text-blue-600">Loading batches...</div>}
+            </div>
+
+            {/* Assignments list */}
+            {assignments.length > 0 && (
+              <div className="mt-36 ">
+                <h3 className=" mb-2">Your Assignments</h3>
+                <div className="space-y-3">
+                  {assignments.map((assignment) => (
+                    <div
+                      key={assignment._id}
+                      className="p-3 border-l-4 border-blue-500 bg-blue-100 rounded"
+                    >
+                      <h4 className="font-medium">{assignment.title}</h4>
+                      <p className="text-sm text-gray-600">Due: {formatDate(assignment.due_date)}</p>
+                      <button
+                        onClick={() => fetchSubmissions(assignment._id)}
+                        disabled={loading.submissions && selectedAssignmentId === assignment._id}
+                        className="mt-2 px-3 py-1  bg-blue-500 text-white rounded-md text-sm"
+                      >
+                        {loading.submissions && selectedAssignmentId === assignment._id ? (
+                          'Loading...'
+                        ) : (
+                          'View Submissions'
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main content - submissions */}
+        <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-lg text-blue-700 mb-2 p-2">
+            {selectedAssignmentId ? 'Student Submissions' : 'Select an assignment to view submissions'}
+          </h2>
+
+          {/* Course and Batch Info */}
+          {(selectedCourseId || selectedBatchId) && (
+            <div className="mb-4 p-3 bg-blue-50 rounded-md">
+              <div className="flex flex-wrap flex-col gap-2">
+                {selectedCourseId && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Course: </span>
+                    <span className="text-sm font-semibold text-blue-700">
+                      {courses.find(c => c._id === selectedCourseId)?.name || 'N/A'}
+                    </span>
+                  </div>
+                )}
+                {selectedBatchId && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Batch: </span>
+                    <span className="text-sm font-semibold text-blue-700">
+                      {batches.find(b => b._id === selectedBatchId)?.name || 'N/A'}
+                    </span>
+                  </div>
+                )}
+                {selectedAssignmentId && (
+                  <div>
+                    <span className="text-sm font-medium text-gray-600">Assignment: </span>
+                    <span className="text-sm font-semibold text-blue-700">
+                      {assignments.find(a => a._id === selectedAssignmentId)?.title || 'N/A'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {loading.submissions ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : submissions.length > 0 ? (
+            <div className="overflow-x-auto px-2">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-blue-600">
+                  <tr>
+                    <th className="py-3 text-left text-xs pl-8 font-medium text-white uppercase tracking-wider">
+                      Student Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Submission Time
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      File
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {submissions.map((submission) => (
+                    <tr key={submission._id} className="hover:bg-gray-50">
+                      <td className="pl-8 py-4 whitespace-nowrap">
+                        {submission.student_id?.first_name} {submission.student_id?.last_name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {submission.student_id?.email || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {formatDate(submission.submitted_at)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                  ${submission.graded ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {submission.graded ? 'Graded' : 'Pending'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <a
+                          href={`http://localhost:3000${submission.file_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-700 underline text-sm"
+                          download
+                        >
+                          Download
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : selectedAssignmentId ? (
+            <div className="text-center py-12 text-gray-500">
+              No submissions found for this assignment.
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              Please select an assignment to view submissions.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

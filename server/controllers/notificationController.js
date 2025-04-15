@@ -39,7 +39,8 @@ exports.getNotifications = async (req, res) => {
     const user = req.user;
     let notifications;
 
-    if (user.role === 'faculty') {
+    
+    if (user.role === 'faculty' || user.role=='admin') {
       // Faculty can see all notifications (both faculty and all)
       notifications = await Notification.find()
         .sort({ createdAt: -1 });
