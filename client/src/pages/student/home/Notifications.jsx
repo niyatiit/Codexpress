@@ -21,7 +21,7 @@ const Notifications = () => {
           },
         });
         const studentNotices = (response.data.data || []).filter(
-          (notice) => notice.recipientType === "allss"
+          (notice) => notice.recipientType === "all"
         );
         setNotices(studentNotices);
       } catch (error) {

@@ -1,7 +1,10 @@
 const express = require("express");
 const upload = require("../config/multerConfig");
 const assignmentController = require("../controllers/assignmentController");
+const submissionController = require("../controllers/assignmentSubmissionController");
 const Assignment = require("../models/assignment.model");
+const assignmentMulter = require("../utils/assignmentMulterConfig");
+
 const router = express.Router();
 
 // Route to create assignments for multiple batches

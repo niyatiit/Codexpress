@@ -247,14 +247,7 @@ const CourseDetail = () => {
                   {/* Syllabus */}
                   <div className="mb-8">
                     <h2 className="text-xl font-semibold text-gray-900 mb-3">Syllabus</h2>
-                    <ul className="space-y-2">
-                      {course.syllabus.map((topic, index) => (
-                        <li key={index} className="flex items-center text-gray-700">
-                          <span className="text-blue-500 mr-2">•</span>
-                          {topic}
-                        </li>
-                      ))}
-                    </ul>
+                    <div dangerouslySetInnerHTML={{ __html: course.syllabus }} />
                   </div>
                 </div>
               </div>

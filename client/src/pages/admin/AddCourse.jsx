@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import the styles
 const AddCourse = () => {
   const categories = ["Development", "Design", "Data Science"];
   const statuses = ["open", "closed", "upcoming"];
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [course, setCourse] = useState({
     name: "",
     code: "",
@@ -74,7 +75,6 @@ const AddCourse = () => {
 
     // Validate Tags (optional, but must be comma-separated if provided)
 
-
     // Validate Syllabus (optional, but must be multi-line if provided)
     if (course.syllabus && !/^[\w\s\S]+(\n[\w\s\S]+)*$/.test(course.syllabus)) {
       newErrors.syllabus = "Syllabus must be multi-line";
@@ -91,7 +91,9 @@ const AddCourse = () => {
         // Convert tags from comma-separated string to an array
         const tagsArray = course.tags.split(",").map((tag) => tag.trim());
         // Convert syllabus from multi-line string to an array
-        const syllabusArray = course.syllabus.split("\n").map((line) => line.trim());
+        const syllabusArray = course.syllabus
+          .split("\n")
+          .map((line) => line.trim());
 
         const payload = {
           ...course,
@@ -99,7 +101,10 @@ const AddCourse = () => {
           syllabus: syllabusArray,
         };
 
-        const response = await axios.post("http://localhost:3000/courses/add", payload);
+        const response = await axios.post(
+          "http://localhost:3000/courses/add",
+          payload
+        );
         if (response.status === 201) {
           alert("Course added successfully!");
           // Reset the form
@@ -116,7 +121,7 @@ const AddCourse = () => {
             tags: "",
             syllabus: "",
           });
-          navigate("/admin/manage/courses")
+          navigate("/admin/manage/courses");
         }
       } catch (error) {
         console.error("There was an error adding the course!", error);
@@ -131,7 +136,10 @@ const AddCourse = () => {
         <div className="breadcrumb mb-24">
           <ul className="flex-align gap-4">
             <li>
-              <Link to="/admin" className="text-gray-200 fw-normal text-15 hover-text-main-600">
+              <Link
+                to="/admin"
+                className="text-gray-200 fw-normal text-15 hover-text-main-600"
+              >
                 Home
               </Link>
             </li>
@@ -141,7 +149,9 @@ const AddCourse = () => {
               </span>
             </li>
             <li>
-              <span className="text-main-600 fw-normal text-15">Add New Course</span>
+              <span className="text-main-600 fw-normal text-15">
+                Add New Course
+              </span>
             </li>
           </ul>
         </div>
@@ -156,107 +166,155 @@ const AddCourse = () => {
             <div className="row gy-20">
               {/* Course Title */}
               <div className="col-sm-12">
-                <label className="h5 mb-8 fw-semibold font-heading">Course Title</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Course Title
+                </label>
                 <input
                   type="text"
                   name="name"
                   value={course.name}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.name ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.name ? "is-invalid" : ""
+                  }`}
                   placeholder="Course Title"
                 />
-                {errors.name && <span className="text-danger">{errors.name}</span>}
+                {errors.name && (
+                  <span className="text-danger">{errors.name}</span>
+                )}
               </div>
 
               {/* Course Code */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Course Code</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Course Code
+                </label>
                 <input
                   type="text"
                   name="code"
                   value={course.code}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.code ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.code ? "is-invalid" : ""
+                  }`}
                   placeholder="Course Code (e.g., CS101)"
                 />
-                {errors.code && <span className="text-danger">{errors.code}</span>}
+                {errors.code && (
+                  <span className="text-danger">{errors.code}</span>
+                )}
               </div>
 
               {/* Category */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Category</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Category
+                </label>
                 <select
                   name="category"
                   value={course.category}
                   onChange={handleChange}
-                  className={`form-select py-9 ${errors.category ? "is-invalid" : ""}`}
+                  className={`form-select py-9 ${
+                    errors.category ? "is-invalid" : ""
+                  }`}
                 >
-                  <option disabled value="">Select Course Category</option>
+                  <option disabled value="">
+                    Select Course Category
+                  </option>
                   {categories.map((cat, index) => (
-                    <option key={index} value={cat}>{cat}</option>
+                    <option key={index} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </select>
-                {errors.category && <span className="text-danger">{errors.category}</span>}
+                {errors.category && (
+                  <span className="text-danger">{errors.category}</span>
+                )}
               </div>
 
               {/* Description */}
               <div className="col-sm-12">
-                <label className="h5 mb-8 fw-semibold font-heading">Description</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Description
+                </label>
                 <textarea
                   name="description"
                   value={course.description}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.description ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.description ? "is-invalid" : ""
+                  }`}
                   placeholder="Enter course description"
                 ></textarea>
-                {errors.description && <span className="text-danger">{errors.description}</span>}
+                {errors.description && (
+                  <span className="text-danger">{errors.description}</span>
+                )}
               </div>
 
               {/* Price */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Price</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Price
+                </label>
                 <input
                   type="number"
                   name="price"
                   value={course.price}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.price ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.price ? "is-invalid" : ""
+                  }`}
                   placeholder="Enter price"
                 />
-                {errors.price && <span className="text-danger">{errors.price}</span>}
+                {errors.price && (
+                  <span className="text-danger">{errors.price}</span>
+                )}
               </div>
 
               {/* Discount */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Discount (%)</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Discount (%)
+                </label>
                 <input
                   type="number"
                   name="discount"
                   value={course.discount}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.discount ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.discount ? "is-invalid" : ""
+                  }`}
                   placeholder="Enter discount"
                 />
-                {errors.discount && <span className="text-danger">{errors.discount}</span>}
+                {errors.discount && (
+                  <span className="text-danger">{errors.discount}</span>
+                )}
               </div>
 
               {/* Duration */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Duration</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Duration
+                </label>
                 <input
                   type="text"
                   name="duration"
                   value={course.duration}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.duration ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.duration ? "is-invalid" : ""
+                  }`}
                   placeholder="Duration (e.g., 6 months)"
                 />
-                {errors.duration && <span className="text-danger">{errors.duration}</span>}
+                {errors.duration && (
+                  <span className="text-danger">{errors.duration}</span>
+                )}
               </div>
 
               {/* Status */}
               <div className="col-sm-6">
-                <label className="h5 mb-8 fw-semibold font-heading">Status</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Status
+                </label>
                 <select
                   name="status"
                   value={course.status}
@@ -264,23 +322,31 @@ const AddCourse = () => {
                   className="form-select py-9"
                 >
                   {statuses.map((status, index) => (
-                    <option key={index} value={status}>{status}</option>
+                    <option key={index} value={status}>
+                      {status}
+                    </option>
                   ))}
                 </select>
               </div>
 
               {/* Thumbnail URL */}
               <div className="col-sm-12">
-                <label className="h5 mb-8 fw-semibold font-heading">Thumbnail URL</label>
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Thumbnail URL
+                </label>
                 <input
                   type="text"
                   name="thumbnail"
                   value={course.thumbnail}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.thumbnail ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.thumbnail ? "is-invalid" : ""
+                  }`}
                   placeholder="Enter image URL"
                 />
-                {errors.thumbnail && <span className="text-danger">{errors.thumbnail}</span>}
+                {errors.thumbnail && (
+                  <span className="text-danger">{errors.thumbnail}</span>
+                )}
               </div>
 
               {/* Tags */}
@@ -291,30 +357,53 @@ const AddCourse = () => {
                   name="tags"
                   value={course.tags}
                   onChange={handleChange}
-                  className={`form-control py-11 ${errors.tags ? "is-invalid" : ""}`}
+                  className={`form-control py-11 ${
+                    errors.tags ? "is-invalid" : ""
+                  }`}
                   placeholder="Enter tags (comma-separated, e.g., React, JavaScript, Web Development)"
                 />
-                {errors.tags && <span className="text-danger">{errors.tags}</span>}
+                {errors.tags && (
+                  <span className="text-danger">{errors.tags}</span>
+                )}
               </div>
 
               {/* Syllabus */}
               <div className="col-sm-12">
-                <label className="h5 mb-8 fw-semibold font-heading">Syllabus</label>
-                <textarea
-                  name="syllabus"
+                <label className="h5 mb-8 fw-semibold font-heading">
+                  Syllabus
+                </label>
+                <ReactQuill
+                  theme="snow"
                   value={course.syllabus}
-                  onChange={handleChange}
-                  className={`form-control py-11 ${errors.syllabus ? "is-invalid" : ""}`}
-                  placeholder="Enter syllabus (one topic per line)"
-                  rows={5}
+                  onChange={(value) => {
+                    setCourse({ ...course, syllabus: value });
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      syllabus: "",
+                    }));
+                  }}
+                  className={`${errors.syllabus ? "is-invalid" : ""}`}
+                  placeholder="Enter syllabus (supports rich text formatting)"
                 />
-                {errors.syllabus && <span className="text-danger">{errors.syllabus}</span>}
+                {errors.syllabus && (
+                  <span className="text-danger">{errors.syllabus}</span>
+                )}
               </div>
 
               {/* Buttons */}
               <div className="flex-align justify-content-end gap-8">
-                <Link to="/admin/add/course" className="btn btn-outline-main rounded-pill py-9">Cancel</Link>
-                <button type="submit" className="btn btn-main rounded-pill py-9">Add Course</button>
+                <Link
+                  to="/admin/add/course"
+                  className="btn btn-outline-main rounded-pill py-9"
+                >
+                  Cancel
+                </Link>
+                <button
+                  type="submit"
+                  className="btn btn-main rounded-pill py-9"
+                >
+                  Add Course
+                </button>
               </div>
             </div>
           </form>
