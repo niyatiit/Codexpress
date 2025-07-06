@@ -1,13 +1,69 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the Attendance model
-const AttendanceSchema = new mongoose.Schema({
-  student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'student', required: true }, // Reference to the Student model
-  batch_id: { type: mongoose.Schema.Types.ObjectId, ref: 'batch', required: true },     // Reference to the Batch model
-  course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'course', required: true },   // Reference to the Course model
-  date: { type: Date, required: true }, // Date of the class (e.g., "2025-02-01")
-  status: { type: String, required: true, enum: ['Present', 'Absent', 'Late'], default: 'Absent' }, // Attendance status
-  created_at: { type: Date, default: Date.now }, // Automatically set the creation date
+const attendanceSchema = new mongoose.Schema({
+  date: { 
+    type: Date, 
+    required: true,
+    index: true  // For faster querying by date
+  },
+  batch_id: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Batch', 
+    required: true 
+  },
+  course_id: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Course', 
+    required: true 
+  },
+  faculty_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  attendance: [{
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ['Present', 'Absent', 'Late'],
+      default: 'Absent'
+    },
+    _id: false  // Disable automatic _id for subdocuments
+  }],
+  created_at: { 
+    type: Date, 
+    default: Date.now 
+  }
+}, {
+  // Add compound index to prevent duplicate attendance for same date+batch+course
+  indexes: [
+    {
+      unique: true,
+      partialFilterExpression: { date: { $type: 'date' } },
+      fields: { date: 1, batch_id: 1, course_id: 1 }
+    }
+  ]
 });
 
-module.exports = mongoose.model('attendance', AttendanceSchema); // Use 'attendance' as the model name
+// Add virtual for easier status counting
+attendanceSchema.virtual('summary').get(function() {
+  const present = this.attendance.filter(a => a.status === 'Present').length;
+  const absent = this.attendance.filter(a => a.status === 'Absent').length;
+  const late = this.attendance.filter(a => a.status === 'Late').length;
+  const total = this.attendance.length;
+  
+  return {
+    present,
+    absent,
+    late,
+    total,
+    percentage: total > 0 ? Math.round((present + late * 0.5) / total * 100) : 0
+  };
+});
+
+module.exports = mongoose.model('Attendance', attendanceSchema);
